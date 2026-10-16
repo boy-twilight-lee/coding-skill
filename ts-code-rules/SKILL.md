@@ -1,13 +1,15 @@
 ---
 name: ts-code-rules
-description: "Apply the user's mandatory TypeScript coding, type organization, import, async, constants, source-layer, formatting, and compatibility standards. Use whenever Codex writes, modifies, refactors, reviews, debugs, or completes TypeScript, TSX, Vue script blocks using TypeScript, or TypeScript-backed project architecture."
+description: "Enforce the user's TypeScript rules for code quality, comments, types, imports, async flow, source layers, formatting, and runtime compatibility. Use for any TypeScript or TSX change or review, including TypeScript Vue script blocks and TypeScript-backed architecture."
 ---
 
 # TypeScript Code Rules
 
-Apply all relevant rules below when working on TypeScript or TSX. Preserve established project constraints when they deliberately differ, and keep changes scoped to the request.
+Apply every rule relevant to the TypeScript or TSX created, changed, or reviewed by the task. These are requirements, not suggestions inferred from nearby code. Existing code is context rather than a waiver. Do not migrate untouched code solely to normalize it; fix an existing violation when it is in the changed lines, is necessary for the requested behavior, or prevents the changed code from complying.
 
-Detailed examples live in references grouped by the same major rule sections as this file. Read only the matching reference before writing or reviewing an affected pattern. The references clarify these rules but do not override an established repository convention.
+Higher-priority instructions override this skill. Repository configuration or conventions override a rule only where that rule explicitly delegates the decision to project configuration. If a mandatory rule cannot be followed, make the smallest necessary deviation and report the exact conflict instead of silently skipping it.
+
+Detailed examples live in references grouped by the same major rule sections as this file. Before acting, read every reference linked from each section that the task touches. References clarify the rules; they do not weaken them.
 
 ## Working Process
 
@@ -15,9 +17,9 @@ Detailed examples live in references grouped by the same major rule sections as 
 
 2. Determine which rule sections the task touches and read each matching reference before acting. For TypeScript inside a Vue SFC, also apply `vue-code-rules`; when the same change touches a Vue style block, apply `css-code-rules` as well.
 
-3. Preserve public contracts and existing behavior outside the requested change. If a local convention conflicts with a rule, follow higher-priority instructions and deliberate repository constraints, and do not broaden the task into an unrelated migration or cleanup.
+3. Preserve public contracts and behavior outside the requested change. Do not copy a local violation into new or changed code merely to preserve visual consistency. When an explicit higher-priority instruction conflicts, follow it and document the smallest necessary exception.
 
-4. After the change, inspect the diff against every relevant section below. Run the smallest available checks that exercise the changed code, such as the repository's targeted formatter, TypeScript check, lint, and affected tests. Avoid commands that rewrite unrelated files. If a relevant check cannot be run, state that limitation instead of treating compilation or formatting alone as proof of correctness.
+4. After the change, inspect every changed TypeScript line against each applicable numbered rule and its reference checklist. Run the smallest available checks that exercise the changed code, such as the repository's targeted formatter, TypeScript check, lint, and affected tests. Avoid commands that rewrite unrelated files. If a rule or check cannot be satisfied, report it explicitly instead of treating compilation or formatting alone as proof of correctness.
 
 ## Code Quality
 
@@ -29,9 +31,9 @@ Read [Code Quality Examples](references/code-quality-examples.md) when deciding 
 
 3. Remove unused imports, variables, functions, types, temporary debugging code, obsolete comments, redundant aliases, and pass-through wrappers when they belong to the current change.
 
-4. Add a concise comment for every declared variable and constant, including `const`, `let`, class fields, reactive state, refs, computed values, and destructured bindings. Place the comment immediately above the declaration and explain its business purpose or state meaning; never merely repeat the identifier or syntax. Write comments in Chinese unless another language is strictly necessary because the project explicitly mandates it, an external protocol or third-party term must be quoted exactly, or Chinese would make the technical meaning less accurate. Imports, function parameters, and type-only declarations do not require separate variable comments. In a Vue SFC, the compiler-macro exception defined by `vue-code-rules` takes precedence, so do not add a declaration comment to a compiler macro merely to satisfy this rule.
+4. Add a concise comment for every declared variable and constant, including `const`, `let`, class fields, reactive state, refs, computed values, and destructured bindings. Place the comment immediately above the declaration and explain its business purpose or state meaning; never merely repeat the identifier or syntax. Write comments in Chinese unless another language is strictly necessary because the project explicitly mandates it, an external protocol or third-party term must be quoted exactly, or Chinese would make the technical meaning less accurate. Imports, function parameters, and type-only declarations do not require separate variable comments. In a Vue SFC, follow the declaration-comment and compiler-macro exceptions in `vue-code-rules`; do not apply this rule a second time with different placement.
 
-5. Add a concise comment for every function, method, composable, callback, event handler, and lifecycle hook. Place the comment immediately above its declaration or definition and explain its responsibility, side effect, or return meaning. Extract an inline callback into a named, commented function only when it has an independent responsibility, real reuse, or a concrete testing or readability benefit. Keep a callback inline at its only registration site when it merely continues the containing action or API workflow and an adjacent comment can describe it clearly; callback length alone is not a reason to split the flow into a one-use handler.
+5. Add a concise comment for every function, method, composable, callback, event handler, and lifecycle hook. Place the comment immediately above its declaration or definition and explain its responsibility, side effect, or return meaning. In a Vue SFC, use the callback and lifecycle comment placement defined by `vue-code-rules`. Extract an inline callback into a named, commented function only when it has an independent responsibility, real reuse, or a concrete testing or readability benefit. Keep a callback inline at its only registration site when it merely continues the containing action or API workflow and an adjacent comment can describe it clearly; callback length alone is not a reason to split the flow into a one-use handler.
 
 6. Inside a function or method, comment only key business logic, non-obvious transformations, important branches, side effects, and error handling. Do not comment every statement or restate self-explanatory implementation details. Declaration-level comments required by rules 4 and 5 remain mandatory even when the implementation is obvious.
 
@@ -45,7 +47,7 @@ Read [Imports and Source Layers Examples](references/imports-and-source-layers-e
 
 1. Ensure every directory directly under `src` exposes public content through `index.ts`, except `src/assets` and `src/pages`. Prefer those barrel exports over deep imports and never climb two or more parent directories; use the project's configured alias.
 
-2. Order imports as third-party libraries, type-only dependencies, other internal imports, then component imports. Import types with standard `import` declarations for readability. Never use type-only import declarations or inline type modifiers; within type-only dependencies, place component-local or module-local types before shared types. In Vue code, first apply the Vite auto-import inspection required by `vue-code-rules`: do not explicitly import a covered `vue` or `vue-router` API, and apply this ordering rule only to APIs that still require imports.
+2. Order imports as third-party runtime dependencies, type-only dependencies, other internal runtime imports, then component imports. Prefer standard `import` declarations for types when the compiler and bundler safely erase type-only usage. Use `import type` when required by `verbatimModuleSyntax`, lint rules, package runtime exports, or another verified build constraint; do not use inline `type` modifiers. Within the type group, place component-local or module-local types before shared types. In Vue code, first apply the Vite auto-import inspection required by `vue-code-rules`: do not explicitly import a covered `vue` or `vue-router` runtime API, and apply this ordering rule only to APIs that still require imports.
 
 3. Keep `.d.ts` declarations under `src/type`. Put complex or reusable component-private types in the owning sibling type module; allow concise inline prop literals where they improve readability. Do not declare non-trivial interfaces or type aliases inside a Vue `<script setup lang="ts">` block.
 
@@ -59,8 +61,8 @@ Read [Imports and Source Layers Examples](references/imports-and-source-layers-e
 
 Read [Async and Compatibility Examples](references/async-and-compatibility-examples.md) when handling promises, errors, fire-and-forget contracts, newer APIs, target support, or final formatting checks.
 
-1. Prefer `await` to `.then()` and use `try/catch` for asynchronous errors. Do not discard a Promise with the unary `void` pattern; await and handle it, or call it only where an intentional synchronous fire-and-forget contract exists.
+1. Prefer `await` to `.then()` for ordinary sequential flow. Use `try/catch` only at the layer that can recover, translate, enrich, or report the error; otherwise let the rejection propagate. Do not discard a Promise with unary `void`. Await it when completion matters; for an intentional fire-and-forget boundary, ensure the operation handles or explicitly reports its own rejection.
 
-2. Prefer stable, broadly supported ES6 APIs. Before introducing a newer JavaScript or browser API, confirm support in the target environment or use a project-approved polyfill.
+2. Use APIs supported by the repository's actual TypeScript target, runtime versions, Browserslist, and polyfill strategy. Before introducing an API outside that verified baseline, confirm support in every target environment or use a project-approved fallback or polyfill. Do not assume transpilation supplies runtime APIs.
 
 3. Format only files changed for the task with the repository's configured Prettier formatter, then check the result against these rules and the established local convention.

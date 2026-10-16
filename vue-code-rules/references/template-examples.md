@@ -127,18 +127,26 @@ Avoid wrappers with no independent responsibility:
 
 A wrapper is justified when it owns layout, positioning, animation, interaction, or a meaningful group. Its class name should express that responsibility.
 
-## Scenario 6: Choose General-Purpose or Semantic Elements
+## Scenario 6: Choose General-Purpose, Interactive, or Semantic Elements
 
-For ordinary business UI, use predictable general-purpose elements:
+For non-interactive business layout, use predictable general-purpose elements. A decorative icon placeholder may use `i` when it is hidden from assistive technology:
 
 ```vue
 <div class="user-card">
   <span class="user-card-name">{{ user.name }}</span>
-  <i class="user-card-status-icon" />
+  <i class="user-card-status-icon" aria-hidden="true" />
 </div>
 ```
 
-Use semantic elements deliberately for page structure, SEO, or accessibility:
+Use native interactive elements when their behavior applies; do not attach button behavior to a `div` merely to keep the DOM generic:
+
+```vue
+<button class="user-card-action" type="button" @click="openUserDetail">
+  查看详情
+</button>
+```
+
+Use semantic elements deliberately for real page structure, data relationships, SEO, or accessibility:
 
 ```vue
 <main class="article-page">
@@ -146,7 +154,7 @@ Use semantic elements deliberately for page structure, SEO, or accessibility:
 </main>
 ```
 
-Do not use heading or emphasis tags solely to obtain browser-default visual styling; use a business class and CSS instead.
+Do not use heading or emphasis tags solely to obtain browser-default visual styling; use a business class and CSS instead. Conversely, do not replace a real button, link, label, heading, list, or table with a generic element when that would discard useful semantics or keyboard behavior.
 
 ## Scenario 7: Compose Multiple Classes with One Array Binding
 
@@ -245,6 +253,6 @@ The array requirement begins when an element combines multiple sources. It is no
 - Custom tags are kebab-case and empty components self-close.
 - Slots represent intentional extension points.
 - Every wrapper has an independent responsibility.
-- Semantic tags are tied to structure, SEO, or accessibility.
+- Interactive and semantic elements match actual behavior, structure, SEO, data relationships, or accessibility.
 - Elements with multiple class sources use one readable `:class` array.
 - Static and dynamic classes are not split across separate attributes or concatenated into long strings.

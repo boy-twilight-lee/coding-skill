@@ -41,14 +41,14 @@ Make target-specific presentation changes in the matching tree. Do not merge the
 
 ## Scenario 3: Evaluate Dependencies before Reimplementation
 
-Before hand-writing a capability:
+Before hand-writing a substantial capability:
 
 1. Inspect installed dependencies and existing project wrappers.
 2. Check whether an established library already solves the requirement reliably.
-3. Verify maintenance activity, license, provenance, browser support, and commercial-use safety.
-4. Prefer the existing dependency when it meets the requirement without disproportionate cost.
+3. Prefer the installed capability when it meets the requirement without disproportionate cost.
+4. Only if the installed stack has a demonstrated gap and the task permits dependency changes, evaluate a new package's maintenance activity, license, provenance, browser support, and bundle impact from package metadata or authoritative sources.
 
-Do not add a second library for a capability already covered by the project, and do not introduce packages with unclear or commercially risky terms.
+Do not add a second library for a capability already covered by the project. If provenance or commercial-use terms cannot be verified, report that constraint instead of silently adding the package or claiming it is safe.
 
 Concrete case: `package.json` already includes a maintained, commercially acceptable date library:
 
@@ -82,11 +82,11 @@ export const formatCandidateUpdatedAt = (value: Date) => {
 }
 ```
 
-If the installed dependency cannot meet a demonstrated requirement, document that gap first, then verify the replacement's maintenance, license, provenance, bundle impact, and target compatibility before introducing it.
+If the installed dependency cannot meet a demonstrated requirement, document that gap first. Add a replacement only when dependency changes are in scope and its maintenance, license, provenance, bundle impact, and target compatibility can be verified.
 
-## Scenario 4: Extract a Reusable Stateless Utility
+## Scenario 4: Extract a Proven Reusable Stateless Utility
 
-Move reusable date logic into a focused implementation module:
+When more than one owner consumes the same stateless date behavior, or the formatter is an independently reusable domain capability, move it into a focused implementation module:
 
 ```text
 src/utils/date.ts
@@ -108,12 +108,12 @@ Re-export it from the barrel without placing implementation there:
 export * from './date'
 ```
 
-Extend an existing matching module before creating another. Do not leave a reusable helper inside a component, and do not collect unrelated helpers in catch-all modules.
+Extend an existing matching module before creating another. Keep a one-use, owner-specific helper with its owner instead of extracting it for hypothetical reuse. Do not leave a helper with actual cross-owner consumers inside one component, and do not collect unrelated helpers in catch-all modules.
 
 ## Review Checklist
 
 - Route orchestration, reusable UI, and layouts live in their intended layers.
 - Private modules remain beside their owner until cross-page reuse is real.
 - Mobile and PC presentation trees remain separate.
-- Dependencies are reused or introduced only after capability and license checks.
-- Reusable stateless helpers use focused `src/utils` modules and barrel exports.
+- New dependencies are introduced only when changes are in scope and capability, provenance, compatibility, bundle impact, and license checks succeed.
+- Proven cross-owner or independently reusable stateless helpers use focused `src/utils` modules and barrel exports; hypothetical reuse does not trigger extraction.

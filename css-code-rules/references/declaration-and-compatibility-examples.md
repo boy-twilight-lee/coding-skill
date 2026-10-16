@@ -126,13 +126,13 @@ The category sequence is:
 8. Animation and transition.
 9. Nested selectors.
 
-The example demonstrates order, not a required declaration set. Omit every property that does not affect the result.
+The example demonstrates order, not a required declaration set. Omit every property that does not affect the result. If the active Stylelint configuration enforces another property order, follow that executable configuration and record the scoped exception rather than leaving the file lint-invalid.
 
 ## Scenario 4: Consolidate Duplicate Selector Blocks
 
 Situation: one child selector was repeated for spacing, border, and layout edits.
 
-Consolidate it beneath its immediate owner:
+Consolidate it beneath its nearest meaningful owner:
 
 ```less
 .talent-card {
@@ -203,7 +203,7 @@ Run the repository's configured formatter against the changed file only. Do not 
 
 After formatting, re-check the changed file for rules a generic formatter cannot enforce:
 
-- Business-root ownership and immediate-parent nesting.
+- Business-root ownership and nearest meaningful owner nesting.
 - Correct `:deep(...)` consolidation.
 - Meaningful blank lines.
 - Required declaration category order.
@@ -216,7 +216,7 @@ Formatter success confirms syntax and configured formatting, not architectural c
 
 - Comments exist only for non-obvious constraints and explain why.
 - Blank lines communicate real selector or logical boundaries.
-- Declarations follow the required category order.
+- Declarations follow the required category order, or the active Stylelint order with the conflict reported.
 - Nested selectors appear after declarations.
 - Duplicate selector or state blocks are consolidated under their owners.
 - Newer CSS features match actual target-browser and tooling support.

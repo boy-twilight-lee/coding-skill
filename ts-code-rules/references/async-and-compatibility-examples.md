@@ -57,9 +57,9 @@ reportCandidateExposure()
 
 Fire-and-forget is justified only when the caller intentionally does not depend on completion and the operation owns its failure path.
 
-## Scenario 3: Check Newer API Support
+## Scenario 3: Check API Support Against the Configured Baseline
 
-Before using a newer JavaScript or browser API:
+Before using an API outside the repository's already verified baseline:
 
 1. Read the repository's TypeScript target, Browserslist, runtime version, and polyfill setup.
 2. Confirm native support in every target environment.
@@ -96,7 +96,7 @@ Formatter success does not prove architectural or compatibility compliance.
 
 - Ordinary asynchronous flow uses `await`.
 - Errors are handled at the layer that owns recovery, reporting, or translation.
-- No promise is discarded with unary `void`.
+- No promise is discarded with unary `void`; an intentional fire-and-forget boundary owns its rejection path.
 - Fire-and-forget operations own their rejection path.
 - Newer APIs match actual runtime targets or approved polyfills.
 - Only changed files are formatted and then manually reviewed.

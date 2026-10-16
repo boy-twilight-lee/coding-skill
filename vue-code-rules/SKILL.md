@@ -1,29 +1,31 @@
 ---
 name: vue-code-rules
-description: "Apply the user's mandatory Vue 3 template, component structure, component naming, composition, and application architecture standards. Use whenever Codex writes, modifies, refactors, reviews, debugs, or completes Vue project code, including .vue components, composables, pages, layouts, and component directories."
+description: "Enforce the user's Vue 3 template, SFC, component-structure, naming, composition, and application-architecture rules. Use for any Vue code change or review, including .vue files, composables, pages, layouts, and component directories."
 ---
 
 # Vue Code Rules
 
-Apply all relevant rules below when working on Vue project code. Preserve established project constraints when they deliberately differ, and keep changes scoped to the request. For TypeScript or style changes within a Vue file, also apply the `ts-code-rules` or `css-code-rules` skill respectively.
+Apply every rule relevant to the Vue code created, changed, or reviewed by the task. These are requirements, not suggestions inferred from nearby code. Existing code is context rather than a waiver. Do not migrate untouched code solely to normalize it; fix an existing violation when it is in the changed lines, is necessary for the requested behavior, or prevents the changed code from complying.
 
-Detailed examples live in references grouped by the same major rule sections as this file. Read only the matching reference before writing or reviewing an affected pattern. The references clarify these rules but do not override an established repository convention.
+Higher-priority instructions override this skill. Repository configuration or conventions override a rule only where that rule explicitly delegates the decision to project configuration. If a mandatory rule cannot be followed, make the smallest necessary deviation and report the exact conflict instead of silently skipping it. For TypeScript or style changes within a Vue file, also apply `ts-code-rules` or `css-code-rules` respectively.
+
+Detailed examples live in references grouped by the same major rule sections as this file. Before acting, read every reference linked from each section that the task touches. References clarify the rules; they do not weaken them.
 
 ## Working Process
 
-1. Before changing or reviewing Vue code, read the repository instructions and inspect the affected component, its nearest related components, and the relevant build, lint, formatter, and TypeScript configuration. Identify deliberate local conventions before applying the defaults in this skill.
+1. Before changing or reviewing Vue code, read the repository instructions and inspect the affected component, its nearest related components, and the relevant build, lint, formatter, and TypeScript configuration. Use that evidence for configuration-dependent decisions and to avoid unnecessary unrelated churn.
 
 2. Determine which rule sections the task touches and read each matching reference before acting. When a Vue SFC contains TypeScript or style changes, load and apply `ts-code-rules` or `css-code-rules` as well; do not assume this skill replaces them.
 
-3. Keep the implementation and cleanup within the requested scope. If a local convention conflicts with a rule, follow higher-priority instructions and deliberate repository constraints, and preserve the surrounding pattern unless the task explicitly asks to change it.
+3. Keep implementation and cleanup within the requested scope. Do not copy a local violation into new or changed code merely to preserve visual consistency. When an explicit higher-priority instruction conflicts, follow it and document the smallest necessary exception.
 
-4. After the change, inspect the diff against every relevant section below. Run the smallest available checks that exercise the changed Vue code, such as the repository's targeted formatter, lint, Vue type-check, and affected tests. Avoid commands that rewrite unrelated files. If a relevant check cannot be run, state that limitation instead of treating formatting or visual inspection as proof of correctness.
+4. After the change, inspect every changed Vue line against each applicable numbered rule and its reference checklist. Run the smallest available checks that exercise the changed Vue code, such as the repository's targeted formatter, lint, Vue type-check, and affected tests. Avoid commands that rewrite unrelated files. If a rule or check cannot be satisfied, report it explicitly instead of treating formatting or visual inspection as proof of correctness.
 
 ## Template Rules
 
 Read [Template Examples](references/template-examples.md) when deciding SFC block order, list rendering, template expressions, component tags, slots, DOM depth, or semantic elements.
 
-1. Keep Vue single-file component blocks in strict order: `<template>`, then `<script>`, then `<style>`. Do not place script before template or style before script.
+1. Keep the SFC blocks that are present in strict relative order: `<template>`, then `<script>`, then `<style>`. Omit an unused block; never add an empty block solely to complete the sequence.
 
 2. Render repeated UI from structured data with `v-for`; use a stable, unique key and never use an array index when item identity can change.
 
@@ -35,7 +37,7 @@ Read [Template Examples](references/template-examples.md) when deciding SFC bloc
 
 6. Avoid meaningless DOM. Do not nest elements solely for styling or layout when the target element can be styled directly. Keep the DOM shallow and node count low. Add a container only when it has a clear, independent layout, positioning, animation, interaction, or grouping responsibility, and give it a name that expresses that purpose.
 
-7. In business component DOM, prefer `div` for block-level grouping, `span` for inline content, and `i` for icon placeholders. Minimize semantic tags and implement purely visual emphasis with CSS classes. Use semantic elements only deliberately for top-level page structure, SEO, or accessibility requirements.
+7. In non-interactive business layout, prefer `div` for block grouping and `span` for inline content. Use `i` only for decorative icon placeholders and mark it appropriately when accessibility tooling requires it. Use native interactive elements such as `button`, `a`, `input`, and `label` when their behavior or accessibility semantics apply. Use landmarks, headings, lists, tables, and other semantic elements only when they express real document structure, SEO meaning, data relationships, or accessibility—not merely for browser-default styling.
 
 8. When an element has multiple class sources, combine them in one bound `:class` array. Put permanent class strings, reusable class values, and conditional class objects in that array, and expand it across lines when needed to prevent an unreadably long attribute. Do not split the same element's classes across `class` and `:class`, or construct a long concatenated class string. A single static class may remain in `class`, and a lone dynamic object or value does not need an array wrapper.
 
@@ -109,6 +111,6 @@ Read [Application Architecture Examples](references/application-architecture-exa
 
 3. When a project has separate mobile and PC page/component trees, preserve that separation. Do not merge them through runtime device branches unless the request explicitly requires shared behavior.
 
-4. Before hand-writing a capability, check the project's installed dependencies and then established third-party libraries. When an existing dependency or a mature library already implements the requirement reliably, use it instead of building a custom replacement. Introduce only actively maintained packages whose licenses and usage terms are verified as safe for commercial use; never use a package with unknown, restrictive, copyleft, source-available, or otherwise commercially risky licensing or provenance.
+4. Before hand-writing a substantial capability, inspect the project's installed dependencies and wrappers. Reuse an installed dependency when it already satisfies the requirement without disproportionate cost. Add a new package only when the task authorizes dependency changes and the existing stack has a demonstrated gap; verify maintenance, provenance, target compatibility, bundle impact, and license from available package metadata or authoritative sources. If commercial-use safety cannot be verified, do not claim that it is safe or add it silently—report the unresolved constraint.
 
-5. Extract every stateless utility function that can be reused beyond its current call site into `src/utils`. Organize utilities by business domain or technical capability in focused modules: extend the matching module when one exists, otherwise create a clearly named module. Export public utilities through `src/utils/index.ts`; do not place implementations directly in the barrel, leave reusable helpers inside Vue components or composables, or collect unrelated functions in vague catch-all files.
+5. Extract a stateless helper into `src/utils` when it has an actual cross-owner consumer or represents an independently reusable technical or domain capability. Do not extract a one-use helper based only on hypothetical reuse. Organize extracted utilities by business domain or technical capability in focused modules: extend the matching module when one exists, otherwise create a clearly named module. Export public utilities through `src/utils/index.ts`; do not place implementations directly in the barrel or collect unrelated functions in vague catch-all files.

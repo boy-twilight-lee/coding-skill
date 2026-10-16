@@ -28,7 +28,7 @@ import { formatCandidateDate } from '../../../utils/date'
 
 A private module may use relative imports within its own ownership directory when that matches the repository convention.
 
-## Scenario 2: Order Imports and Import Types Normally
+## Scenario 2: Order Imports and Choose Type-Import Syntax from the Build Contract
 
 In Vue code, first inspect the active Vite auto-import configuration. The following explicit `vue` import is correct only when `computed` and `ref` are not covered; APIs covered from `vue` or `vue-router` must be used without redundant explicit imports.
 
@@ -40,16 +40,21 @@ import { loadCandidates } from '@/apis'
 import CandidateFilter from './component/candidate-filter/index.vue'
 ```
 
-The groups are third-party libraries, type-only dependencies, other internal imports, then component imports. Within the type group, component-local types precede shared types.
+The groups are third-party runtime libraries, type-only dependencies, other internal runtime imports, then component imports. Within the type group, component-local types precede shared types. Standard imports are preferred when the compiler and bundler safely erase type-only usage.
 
-Do not use `import type` or inline type modifiers:
+When `verbatimModuleSyntax`, an active lint rule, or a package's runtime exports require type-only syntax, use a separate `import type` declaration:
 
 ```ts
 import type { Candidate } from '@/type'
-import { type PageResult } from '@/type'
 ```
 
-Use standard imports even when a symbol is consumed only as a type, preserving the grouping rule and established formatter behavior.
+Do not use inline type modifiers, because they mix runtime and type-only symbols inside one declaration and weaken the visible grouping:
+
+```ts
+import { loadCandidate, type Candidate } from '@/apis'
+```
+
+Inspect `tsconfig`, the active linter, and the package exports before deciding. Do not force a standard import that survives at runtime for a symbol the package does not export as a value, and do not mechanically convert a repository that safely uses standard erased imports.
 
 ## Scenario 3: Place Declarations and Component-Private Types
 
@@ -80,7 +85,7 @@ export interface CandidateEditorProps {
 }
 ```
 
-Consume it from the owning component with a standard import:
+Consume it from the owning component with the import form required by the active build contract. In a project that safely erases type-only usage, use a standard import:
 
 ```ts
 import { CandidateEditorProps } from './type'
@@ -206,7 +211,8 @@ Do not introduce a named constant only to replace one readable literal. Extracti
 
 - Public directory APIs flow through required barrels and aliases.
 - Vue and Vue Router APIs covered by active Vite auto-import configuration have no explicit imports.
-- Imports follow the required four groups without `import type` syntax.
+- Imports follow the required four groups; type-only syntax matches the verified compiler, linter, bundler, and package runtime contract.
+- Inline `type` modifiers are not used.
 - Ambient, shared, and private types live with the correct owner.
 - APIs, utilities, constants, stores, and routes stay in their source layers.
 - Private constants and types are promoted only after real cross-page reuse.

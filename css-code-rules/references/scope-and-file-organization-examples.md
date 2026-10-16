@@ -22,7 +22,7 @@ Use Less for a new component only when the repository has not deliberately stand
 </style>
 ```
 
-Do not convert an existing SCSS file to Less merely to match the default preference. First inspect neighboring components, build configuration, shared variables, and formatter rules. Repository intent wins over the default for new Vue styles.
+Do not convert an existing SCSS file to Less merely to match the default preference. First inspect neighboring components, build configuration, shared variables, and formatter rules. Preserve the verified stylesheet language or mechanism, including CSS Modules or another configured solution, rather than emitting invalid Less-specific syntax.
 
 ## Scenario 2: Choose Scoped or Unscoped Vue Styles
 
@@ -71,7 +71,7 @@ Do not use a generic teleported root such as `.popper` or `.dropdown`. A global 
 
 ## Scenario 3: Extract a Growing Component Style
 
-Situation: `index.vue` has reached 200 lines of component styles.
+Situation: the inline component style block in `index.vue` has reached 200 physical lines after formatting.
 
 For one scoped stylesheet, keep both files beside each other:
 
@@ -81,7 +81,7 @@ talent-card/
 `-- index.less
 ```
 
-Import the extracted stylesheet through the scoped block so Vue continues to apply scope attributes:
+Move the whole owned stylesheet rather than splitting it by visual region. Import the extracted stylesheet through the scoped block so Vue continues to apply scope attributes:
 
 ```vue
 <style lang="less" scoped>
@@ -140,7 +140,7 @@ Move an override to the established global library-override file only when it in
 
 ## Review Checklist
 
-- The stylesheet language matches deliberate repository usage.
+- The stylesheet language and Vue style mechanism match verified repository usage.
 - Ordinary component styles remain scoped.
 - Teleported or global rules have a collision-resistant business root.
 - A single extracted component stylesheet stays beside its entry point.

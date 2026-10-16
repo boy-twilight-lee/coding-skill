@@ -164,7 +164,7 @@ Do not mix abbreviations for the same business term:
 
 Abbreviations are a controlled fallback for unavoidable length, not permission to sacrifice meaning. When no shared abbreviation exists, establish one consistently within the feature instead of inventing a different shorthand in each selector.
 
-## Scenario 3: Mirror Immediate Ownership in Nesting
+## Scenario 3: Mirror the Nearest Meaningful Ownership in Nesting
 
 Situation: the DOM contains a card, its header, and a title owned by that header.
 
@@ -176,7 +176,7 @@ Situation: the DOM contains a card, its header, and a title owned by that header
 </div>
 ```
 
-Match every immediate owner in Less:
+The header establishes layout ownership for the title, so retain it in Less:
 
 ```less
 .talent-card {
@@ -197,7 +197,7 @@ Do not float a child at the stylesheet root:
 }
 ```
 
-Do not skip the header merely to reduce nesting depth:
+Do not skip a meaningful owner merely to reduce nesting depth:
 
 ```less
 .talent-card {
@@ -206,7 +206,7 @@ Do not skip the header merely to reduce nesting depth:
 }
 ```
 
-The rule follows ownership rather than an arbitrary maximum nesting depth. If the DOM hierarchy is needlessly deep, simplify the component markup and ownership model instead of flattening only the stylesheet.
+The rule follows ownership rather than an arbitrary maximum nesting depth. An incidental wrapper that has no class and establishes no layout, state, or behavior does not create a required nesting level. If the DOM hierarchy is needlessly deep, simplify the component markup and ownership model instead of flattening only the stylesheet.
 
 ## Scenario 4: Decide Whether a Direct-Child Selector Is Necessary
 
@@ -368,7 +368,7 @@ The teleported root must remain fully qualified. A generic `.popper`, `.option`,
 - Names describe meaning rather than color, position, or incidental markup.
 - Overlong names are simplified before abbreviations are introduced.
 - Unavoidable long names use consistent, recognizable character abbreviations rather than opaque letter strings.
-- Every descendant is nested beneath its immediate owner.
+- Every descendant is nested beneath its nearest meaningful layout, state, or behavior owner.
 - Direct-child combinators express a stable boundary and use `& >`.
 - Deep rules target a named selector and share the nearest useful library ancestor.
 - Pseudo-classes and business-state child changes remain beneath their owners.
