@@ -1,0 +1,5 @@
+interface:
+  display_name: "TypeScript Code Rules"
+  short_description: "Apply mandatory TypeScript coding and architecture standards."
+  icon_small: "./assets/typescript-logo.png"
+  icon_large: "./assets/typescript-logo.png"

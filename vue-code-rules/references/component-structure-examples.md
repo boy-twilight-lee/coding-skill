@@ -1,0 +1,188 @@
+# Component Structure Examples
+
+## Scenario 1: Split by Responsibility
+
+Situation: one page handles filters, results, pagination, editing, and dialog state.
+
+Keep route orchestration in the page and extract cohesive private units:
+
+```text
+candidate-list/
+|-- index.vue
+|-- index.ts
+|-- component/
+|   |-- candidate-filter.vue
+|   `-- candidate-table/
+|       |-- index.vue
+|       |-- index.ts
+|       `-- hooks/
+|           `-- useCandidateSelection.ts
+`-- hooks/
+    `-- useCandidateList.ts
+```
+
+The filter is a cohesive SFC, so it needs no directory. The table owns selection behavior extracted into a hook, so its directory groups real supporting files. Keep table rendering and selection interaction together unless a further independent UI responsibility emerges.
+
+Do not extract a component that only wraps one element or forwards one prop without adding responsibility. Do not move a continuous event flow into several one-use wrappers. Line count is a signal, not the split criterion; responsibility and reuse determine the boundary.
+
+## Scenario 2: Extract Reusable Behavior into a Composable
+
+Move state, derived values, actions, and side effects that form one reusable behavior into a focused composable:
+
+```ts
+// 管理候选人筛选条件及其重置行为。
+export const useCandidateFilters = () => {
+  // 保存当前候选人筛选条件。
+  const filters = ref(createDefaultFilters())
+  // 标识当前是否存在已应用的筛选条件。
+  const hasActiveFilters = computed(() => hasFilters(filters.value))
+  // 恢复候选人筛选条件的默认值。
+  const resetFilters = () => {
+    filters.value = createDefaultFilters()
+  }
+  return { filters, hasActiveFilters, resetFilters }
+}
+```
+
+Keep one-off presentation state in its component. Use a `use**Context` facade only when the same owned state and actions must cross several descendant levels; do not introduce provide/inject for a direct parent-child exchange.
+
+## Scenario 3: Apply Naming Conventions
+
+```text
+components/
+|-- user-avatar/
+|   |-- index.vue
+|   `-- index.ts
+`-- user-card/
+    |-- index.vue
+    |-- index.ts
+    |-- component/
+    |   `-- user-card-label.vue
+    `-- hooks/
+        `-- useUserCard.ts
+
+candidate-page/
+|-- index.vue
+|-- index.ts
+`-- hooks/
+    `-- useCandidateList.ts
+```
+
+```vue
+<user-card />
+```
+
+Component directories, private single-file children, custom tags, and ordinary composable files use kebab-case. Hook files inside `hooks/` use camelCase. Every directory-managed component has both `index.vue` and `index.ts`; `index.less` remains optional. First-level `user-avatar` uses a directory even when simple. Only the simple private child `user-card-label.vue` uses the named single-file form inside `component/`.
+
+## Scenario 4: Keep Private Children and Hooks with Their Owner
+
+```text
+workbench/
+|-- index.vue
+|-- index.ts
+|-- component/
+|   `-- workbench-toolbar.vue
+`-- hooks/
+    |-- useWorkbenchContext.ts
+    `-- useWorkbenchSearch.ts
+```
+
+Do not promote a private toolbar or hook to `src/components` or a global hooks directory before another page has a clear consumer. Local ownership reduces accidental public API surface.
+
+## Scenario 5: Choose Directory or Single-File Form
+
+First-level pages, views, and shared components always use directories, even if they need no hooks, children, or separate styles:
+
+```text
+src/pages/candidate-list/index.vue
+src/pages/candidate-list/index.ts
+src/views/workbench/index.vue
+src/views/workbench/index.ts
+src/components/user-avatar/index.vue
+src/components/user-avatar/index.ts
+```
+
+The `pages` and `views` paths above illustrate alternative project conventions; use the tree the project already has.
+
+Only simple children inside an owner's private `component/` directory use named `.vue` files:
+
+```text
+src/pages/candidate-list/component/empty-hint.vue
+src/views/workbench/component/workbench-toolbar.vue
+src/components/user-card/component/user-card-label.vue
+```
+
+For example, `user-card-label.vue` can keep its props, derived display text, and local styles in one file. Having a script or a style block does not require separate files.
+
+Avoid wrapping that same simple private child in an otherwise unnecessary directory:
+
+```text
+src/components/user-card/component/user-card-label/
+|-- index.vue
+`-- index.ts
+```
+
+Choose the form from the actual responsibility and supporting files:
+
+| Situation | Form |
+| --- | --- |
+| First-level unit under `pages/`, `views/`, or `components/`, even when simple | `unit-name/index.vue` + `unit-name/index.ts` |
+| First-level unit under an existing target-specific tree such as `components-pc/` | The same required directory and two entries |
+| Simple private child in an owner's `component/` directory | `component/child-name.vue` |
+| Private child needs extracted logic, styles, children, or hooks | `component/child-name/index.vue` + `index.ts`, with only the needed supporting files |
+| Simple private child is promoted to a first-level shared component | Convert to `src/components/child-name/` with `index.vue` and `index.ts` |
+
+## Scenario 6: Organize a Component That Needs Supporting Files
+
+A candidate picker owns search state, a results child, and substantial styling that benefits from a separate Less file in a project already configured for Less:
+
+```text
+src/components/candidate-picker/
+|-- index.vue
+|-- index.ts
+|-- index.less
+|-- component/
+|   `-- candidate-option.vue
+`-- hooks/
+    `-- useCandidateSearch.ts
+```
+
+`index.vue` coordinates the picker UI and connects its hook. `useCandidateSearch.ts` owns the cohesive search behavior. `candidate-option.vue` remains a simple file inside its parent's private `component/`. The entry references `index.less` through the project's supported style mechanism; preserve its intended scope.
+
+Beyond the required `index.vue` and `index.ts`, each supporting file needs its own reason to exist. If the styles are short and local, retain them in the SFC and omit `index.less`. If no child or hook is needed, omit those directories. Keep ordinary setup logic in the SFC rather than moving all of it to `index.ts` just to produce three files.
+
+Every directory-managed component, including a private child, must have this minimal `index.ts`:
+
+```ts
+export { default } from './index.vue'
+```
+
+This forwards the component's default export; `export * from './index.vue'` alone does not forward a default export. Public type exports are optional. Keep business behavior in the SFC or a focused logic module.
+
+For the page in Scenario 1, import the directory-managed table through its `index.ts` and the simple filter directly:
+
+```ts
+import CandidateTable from './component/candidate-table'
+import CandidateFilter from './component/candidate-filter.vue'
+```
+
+Use the established public barrel for cross-module imports when one exists. Do not bypass a component directory's export entry with a consumer import ending in `/index.vue`.
+
+When `component/user-card-label.vue` later needs several private files, convert it to `component/user-card-label/index.vue`, add `component/user-card-label/index.ts`, and place those files beside it. If it instead becomes a first-level shared component, move it to `src/components/user-card-label/` with both entries even if its implementation is still simple. Update consumers and check automatic component discovery so the registered name and imports still resolve. Do not convert unrelated components during that change.
+
+## Scenario 7: Handle the 1000-Line Limit
+
+When a `.vue` file approaches 1000 lines, identify cohesive responsibilities first: data orchestration, filter UI, results UI, dialogs, or reusable behavior. Extract those units and keep their private dependencies beside them. Do not mechanically move arbitrary line ranges into files that still share hidden state or duplicate parent logic.
+
+## Review Checklist
+
+- Each split creates a cohesive responsibility boundary.
+- Reusable behavior, not trivial syntax, drives composable extraction.
+- Context is reserved for repeated multi-level state/action sharing.
+- First-level pages, views, and shared components always use directories, even when simple.
+- Only simple children inside private `component/` directories use named `.vue` files without an extra directory.
+- Every directory-managed component has `index.vue` and an `index.ts` forwarding its default component export.
+- Consumers use component directory exports or established public barrels; separate styles and other supporting files remain optional.
+- Names and directory entries follow the required casing.
+- Private children and hooks remain beside their owner.
+- Every `.vue` file stays within 1000 lines through responsibility-based splits.
