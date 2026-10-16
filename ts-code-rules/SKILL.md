@@ -51,7 +51,7 @@ Read [Imports and Source Layers Examples](references/imports-and-source-layers-e
 
 3. Keep `.d.ts` declarations under `src/type`. Put complex or reusable component-private types in the owning sibling type module; allow concise inline prop literals where they improve readability. Do not declare non-trivial interfaces or type aliases inside a Vue `<script setup lang="ts">` block.
 
-4. Put endpoint declarations in `src/apis`; keep request-client configuration, response normalization, and general-purpose stateless helpers in `src/utils`. Keep app-wide immutable values in `src/constants`, Pinia state in `src/store`, and route definitions and guards in `src/router`.
+4. Put endpoint declarations in `src/apis`; keep application-wide request-client configuration and response normalization in `src/utils`. Promote page- or component-owned stateless helpers to `src/utils` only after actual cross-page reuse exists; sharing within one page or hypothetical future reuse does not qualify. Keep app-wide immutable values in `src/constants`, Pinia state in `src/store`, and route definitions and guards in `src/router`.
 
 5. Keep a page or component's private `constants/` and `type/` directories beside the owner. Promote code to `src/constants` or `src/type` only when it has a clear cross-page consumer. Do not scatter status values, options, enums, or magic numbers through templates and implementation code.
 
@@ -65,4 +65,4 @@ Read [Async and Compatibility Examples](references/async-and-compatibility-examp
 
 2. Use APIs supported by the repository's actual TypeScript target, runtime versions, Browserslist, and polyfill strategy. Before introducing an API outside that verified baseline, confirm support in every target environment or use a project-approved fallback or polyfill. Do not assume transpilation supplies runtime APIs.
 
-3. Format only files changed for the task with the repository's configured Prettier formatter, then check the result against these rules and the established local convention.
+3. Use the repository's configured Prettier formatter only on files changed for the task. Compare its output with the pre-format state and restore formatting-only changes outside the task's affected regions, preserving pre-existing user edits. Keep formatting adjustments necessary for the changed syntax. If a whole-file formatter check still fails solely on untouched formatting, report that limitation instead of broadening the edit silently. Re-check the final diff against these rules and the established local convention.

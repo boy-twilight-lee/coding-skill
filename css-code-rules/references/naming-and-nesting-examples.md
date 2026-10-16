@@ -2,6 +2,8 @@
 
 Use these scenarios to translate component ownership and DOM hierarchy into class names and Less/Sass nesting.
 
+The mandatory nesting forms below apply to Less/Sass or plain CSS with verified nesting support from the build pipeline or target browsers. For plain CSS without that support, use the equivalent expanded ownership selectors shown in Scenario 8. Do not migrate the stylesheet language solely to satisfy nesting syntax.
+
 ## Scenario 1: Name a Component Root, Elements, and States
 
 Situation: a candidate card has a header, title, action, selected state, and disabled state.
@@ -361,6 +363,35 @@ Two top-level roots are valid because they belong to separate rendered trees:
 
 The teleported root must remain fully qualified. A generic `.popper`, `.option`, or `.dropdown-item` selector would leak into unrelated content.
 
+## Scenario 8: Preserve Ownership in Plain CSS without Nesting Support
+
+When neither the build pipeline nor the target browsers provide the required nesting support, keep plain CSS and expand the selectors. Pseudo-classes and business states retain their owning root:
+
+```css
+.talent-card .talent-card-header .talent-card-title {
+  color: var(--text-color-primary);
+}
+.talent-card:hover {
+  border-color: var(--color-primary);
+}
+.talent-card.talent-card-active .talent-card-header .talent-card-title {
+  color: var(--color-primary);
+}
+```
+
+In a Vue scoped CSS block, keep the library-owned path inside `:deep(...)` so descendant selectors are not accidentally scoped to the parent component:
+
+```css
+.result-table :deep(.arco-table .arco-table-th:first-child) {
+  border-radius: 8px 0 0 8px;
+}
+.result-table :deep(.arco-table .arco-table-th .arco-table-cell) {
+  min-height: 40px;
+}
+```
+
+The repeated library ancestor is intentional in this compatibility form. Keep these related rules together. Bare child selectors, omitted business roots, and changes to descendant versus direct-child matching are not permitted by this exception.
+
 ## Review Checklist
 
 - Every top-level component selector names a business root or justified teleported root.
@@ -368,7 +399,7 @@ The teleported root must remain fully qualified. A generic `.popper`, `.option`,
 - Names describe meaning rather than color, position, or incidental markup.
 - Overlong names are simplified before abbreviations are introduced.
 - Unavoidable long names use consistent, recognizable character abbreviations rather than opaque letter strings.
-- Every descendant is nested beneath its nearest meaningful layout, state, or behavior owner.
-- Direct-child combinators express a stable boundary and use `& >`.
-- Deep rules target a named selector and share the nearest useful library ancestor.
-- Pseudo-classes and business-state child changes remain beneath their owners.
+- With nesting support, every descendant is nested beneath its nearest meaningful layout, state, or behavior owner; otherwise expanded selectors preserve that path.
+- Direct-child combinators express a stable boundary, using `& >` in nested form or the equivalent expanded selector in plain CSS without nesting support.
+- Deep rules target named selectors and share the nearest useful library ancestor; expanded plain CSS keeps the full library-owned path inside each deep argument.
+- Pseudo-classes and business-state child changes retain their owning selector in either syntax.

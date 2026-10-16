@@ -1,6 +1,6 @@
 # Script Structure Examples
 
-## Scenario 1: Keep Contract Macros at the Top and `defineExpose` at the Bottom
+## Scenario 1: Order Contract Macros and Handle Async Exposure
 
 Do not place compiler macros after unrelated runtime declarations or inside nested control flow:
 
@@ -23,12 +23,12 @@ const openEditor = () => {
   visible.value = true
 }
 defineExpose({ openEditor })
-// ❌ defineExpose 后面不能再出现其他声明或可执行语句。
+// ❌ 没有顶层 await 时，defineExpose 后面不能再出现声明或可执行语句。
 onMounted(loadCandidate)
 </script>
 ```
 
-Keep every macro except `defineExpose` together as the first declaration group after required imports. Put `defineExpose` last, after every declaration and executable statement. Macro declarations do not receive declaration comments:
+Keep every macro except `defineExpose` together as the first declaration group after required imports. Without top-level `await`, put `defineExpose` last, after every declaration and executable statement. Macro declarations do not receive declaration comments:
 
 ```vue
 <script setup lang="ts">
@@ -56,7 +56,26 @@ defineExpose({ openEditor })
 </script>
 ```
 
-The bottom placement ensures every exposed binding has already been initialized and gives the component one predictable public-boundary marker. Do not place declarations, watchers, lifecycle calls, or other statements after `defineExpose`.
+In a script without top-level `await`, bottom placement ensures exposed bindings are initialized and gives the component one predictable public-boundary marker. No statements follow `defineExpose` in that case.
+
+When top-level `await` is needed, initialize the public bindings and expose them before the first suspension. Async initialization may follow; update the already exposed refs instead of delaying exposure until the data arrives:
+
+```vue
+<script setup lang="ts">
+import { ref } from 'vue'
+import { loadCandidateName } from '@/apis'
+
+const props = defineProps<{ candidateId: string }>()
+// 保存候选人的展示名称，详情加载完成后更新。
+const candidateName = ref('')
+
+defineExpose({ candidateName })
+
+candidateName.value = await loadCandidateName(props.candidateId)
+</script>
+```
+
+The explicit `ref` import assumes auto-import does not cover it. The API returns the candidate name as a string. This exception applies to top-level `await`, not to an `await` inside a function or lifecycle callback. Do not move exposure ahead of the initialization of its public bindings. See [Vue template refs](https://vuejs.org/guide/essentials/template-refs.html#ref-on-component) for the exposure-before-await requirement.
 
 ## Scenario 2: Omit Imports Covered by Vite Auto-Import
 
@@ -147,6 +166,6 @@ Check configuration branches, modes, shared plugin factories, and target-specifi
 
 - Every compiler macro call is in `<script setup>` script scope, never inside nested control flow.
 - Every macro except `defineExpose` forms the first declaration group after required imports.
-- `defineExpose` is the final statement in `<script setup>`, with nothing after it.
+- Without top-level `await`, `defineExpose` is the final statement; with top-level `await`, initialized public bindings are exposed before the first suspension.
 - Vite and referenced auto-import configuration are checked before adding Vue or Vue Router imports.
 - Covered APIs have no redundant explicit imports; uncovered APIs are imported normally.

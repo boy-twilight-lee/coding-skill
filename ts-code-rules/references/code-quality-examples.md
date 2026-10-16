@@ -4,7 +4,7 @@
 
 Situation: a defect fix changes one status branch in a service that also contains unrelated naming and formatting issues.
 
-Change the defective branch and its directly affected imports, comments, tests, and types. Do not rename neighboring functions, reorder unrelated imports, or reformat the whole file. Preserve existing comments unless the current change makes them inaccurate or obsolete.
+Change the defective branch and its directly affected imports, comments, tests, and types. Do not rename neighboring functions, reorder unrelated imports, or retain unrelated whole-file formatting changes. A formatter may process the changed file, but restore its formatting-only changes outside the affected regions against the pre-format state, preserving pre-existing user edits. Preserve existing comments unless the current change makes them inaccurate or obsolete.
 
 If the defect is an inclusive retry boundary, keep the correction local:
 

@@ -84,9 +84,9 @@ export const formatCandidateUpdatedAt = (value: Date) => {
 
 If the installed dependency cannot meet a demonstrated requirement, document that gap first. Add a replacement only when dependency changes are in scope and its maintenance, license, provenance, bundle impact, and target compatibility can be verified.
 
-## Scenario 4: Extract a Proven Reusable Stateless Utility
+## Scenario 4: Promote a Stateless Utility Only for Cross-Page Sharing
 
-When more than one owner consumes the same stateless date behavior, or the formatter is an independently reusable domain capability, move it into a focused implementation module:
+When two different pages actually consume the same stateless date behavior, move it into a focused implementation module:
 
 ```text
 src/utils/date.ts
@@ -108,7 +108,7 @@ Re-export it from the barrel without placing implementation there:
 export * from './date'
 ```
 
-Extend an existing matching module before creating another. Keep a one-use, owner-specific helper with its owner instead of extracting it for hypothetical reuse. Do not leave a helper with actual cross-owner consumers inside one component, and do not collect unrelated helpers in catch-all modules.
+Extend an existing matching module before creating another. If only a candidate page's filter and table share the helper, keep it in a focused module beside that page and import it locally; two components on the same page do not establish cross-page reuse. Promote it when another page becomes an actual consumer. Real complexity or focused testing needs can justify a private module, but not a `src/utils` promotion. Do not collect unrelated helpers in catch-all modules. Application-wide infrastructure such as the request client retains its designated layer; it is not a promotion of page-private code.
 
 ## Review Checklist
 
@@ -116,4 +116,4 @@ Extend an existing matching module before creating another. Keep a one-use, owne
 - Private modules remain beside their owner until cross-page reuse is real.
 - Mobile and PC presentation trees remain separate.
 - New dependencies are introduced only when changes are in scope and capability, provenance, compatibility, bundle impact, and license checks succeed.
-- Proven cross-owner or independently reusable stateless helpers use focused `src/utils` modules and barrel exports; hypothetical reuse does not trigger extraction.
+- Owner-private stateless helpers move to focused `src/utils` modules and barrel exports only for actual cross-page sharing; same-page sharing stays with the page or nearest common owner.

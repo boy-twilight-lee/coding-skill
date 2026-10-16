@@ -81,6 +81,8 @@ The fallback is illustrative; actual support decisions must come from the reposi
 
 Run the configured Prettier command only for TypeScript, TSX, or Vue files changed by the task. Do not format an entire directory when unrelated user changes may exist.
 
+Before formatting, retain the current file content so existing user edits can be distinguished from formatter output. After formatting, restore formatting-only changes outside the task's affected regions from that pre-format content, not from `HEAD`. Keep adjustments needed for the changed syntax. If a whole-file formatter check still fails because of untouched legacy formatting, report that limitation without expanding the edit or claiming the check passed.
+
 After formatting, manually re-check rules Prettier cannot enforce:
 
 - Change scope and absence of drive-by cleanup.
@@ -99,4 +101,4 @@ Formatter success does not prove architectural or compatibility compliance.
 - No promise is discarded with unary `void`; an intentional fire-and-forget boundary owns its rejection path.
 - Fire-and-forget operations own their rejection path.
 - Newer APIs match actual runtime targets or approved polyfills.
-- Only changed files are formatted and then manually reviewed.
+- Only changed files are formatted; unrelated formatter changes are restored without losing user edits, and legacy formatting failures are reported.

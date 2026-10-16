@@ -37,10 +37,10 @@ import { computed, ref } from 'vue'
 import { CandidateFormProps } from './type'
 import { Candidate, PageResult } from '@/type'
 import { loadCandidates } from '@/apis'
-import CandidateFilter from './component/candidate-filter/index.vue'
+import CandidateFilter from './component/candidate-filter'
 ```
 
-The groups are third-party runtime libraries, type-only dependencies, other internal runtime imports, then component imports. Within the type group, component-local types precede shared types. Standard imports are preferred when the compiler and bundler safely erase type-only usage.
+The groups are third-party runtime libraries, type-only dependencies, other internal runtime imports, then component imports. Within the type group, component-local types precede shared types. Standard imports are preferred when the compiler and bundler safely erase type-only usage. Here `candidate-filter` is directory-managed and its `index.ts` re-exports the default from `index.vue`; consumers import that directory entry. A simple private single-file child is imported directly as `./component/candidate-filter.vue` instead.
 
 When `verbatimModuleSyntax`, an active lint rule, or a package's runtime exports require type-only syntax, use a separate `import type` declaration:
 
@@ -68,6 +68,7 @@ src/type/global.d.ts
 ```text
 candidate-editor/
 |-- index.vue
+|-- index.ts
 `-- type/
     `-- index.ts
 ```
@@ -117,7 +118,7 @@ src/router/index.ts
 ```
 
 - Endpoint declarations belong in `src/apis`.
-- Request configuration, response normalization, and stateless helpers belong in `src/utils`.
+- Application-wide request configuration and response normalization belong in `src/utils`. Owner-private stateless helpers move there only when different pages actually share them; sharing among components of one page stays with that page or nearest common owner.
 - Application-wide immutable values belong in `src/constants`.
 - Pinia state belongs in `src/store`.
 - Routes and guards belong in `src/router`.
@@ -159,6 +160,7 @@ Start page-private values beside the page:
 ```text
 candidate-list/
 |-- index.vue
+|-- index.ts
 |-- constants/
 |   `-- index.ts
 `-- type/

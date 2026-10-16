@@ -201,6 +201,8 @@ Situation: a task changes `src/components/talent-card/index.less` while unrelate
 
 Run the repository's configured formatter against the changed file only. Do not format the entire style tree, because broad formatting can overwrite unrelated user work and obscure the functional diff.
 
+Retain the pre-format content and restore formatting-only changes outside the task's affected regions from that content, preserving existing user edits rather than resetting to `HEAD`. Keep formatting required by the changed syntax. If a whole-file formatting check still fails solely because of untouched legacy formatting, report the failure instead of silently widening the task.
+
 After formatting, re-check the changed file for rules a generic formatter cannot enforce:
 
 - Business-root ownership and nearest meaningful owner nesting.
@@ -220,4 +222,4 @@ Formatter success confirms syntax and configured formatting, not architectural c
 - Nested selectors appear after declarations.
 - Duplicate selector or state blocks are consolidated under their owners.
 - Newer CSS features match actual target-browser and tooling support.
-- Only changed style files are formatted and then manually rechecked.
+- Only changed style files are formatted; unrelated formatter changes are restored without losing user edits, and legacy formatting failures are reported.
