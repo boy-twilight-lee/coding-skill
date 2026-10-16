@@ -1,6 +1,0 @@
-interface:
-  display_name: "Git Commit Rules"
-  short_description: "Chinese-first messages following Conventional Commits"
-  icon_small: "./assets/git-logo.png"
-  icon_large: "./assets/git-logo.png"
-  default_prompt: "Use $git-rules to write a Chinese Git commit message based on the actual changes and Conventional Commits."
