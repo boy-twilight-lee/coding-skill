@@ -75,13 +75,13 @@ candidate-list/
 Move state, derived values, actions, and side effects that form one reusable behavior into a focused composable:
 
 ```ts
-// Manages candidate filters and their reset behavior.
+// [Write in Chinese: manage candidate filters and their reset behavior.]
 export const useCandidateFilters = () => {
-  // Stores the current candidate filters.
+  // [Write in Chinese: store the current candidate filters.]
   const filters = ref(createDefaultFilters())
-  // Indicates whether any filters are currently applied.
+  // [Write in Chinese: indicate whether any filters are currently applied.]
   const hasActiveFilters = computed(() => hasFilters(filters.value))
-  // Restores the default candidate filters.
+  // [Write in Chinese: restore the default candidate filters.]
   const resetFilters = () => {
     filters.value = createDefaultFilters()
   }
@@ -92,7 +92,7 @@ export const useCandidateFilters = () => {
 Keep one-off presentation state in its component. For a one-off dialog state, keep the ref in the owning component:
 
 ```ts
-// Indicates whether the candidate dialog is visible.
+// [Write in Chinese: indicate whether the candidate dialog is visible.]
 const candidateDialogVisible = ref(false)
 ```
 
@@ -103,9 +103,9 @@ Use a `use**Context` facade only when the same owned state and actions must cros
 Do not extract that same one-off dialog ref into a composable without reusable behavior or an independent responsibility:
 
 ```ts
-// Creates the visibility state for the candidate dialog.
+// [Write in Chinese: create the visibility state for the candidate dialog.]
 export const useCandidateDialogVisible = () => {
-  // Indicates whether the candidate dialog is visible.
+  // [Write in Chinese: indicate whether the candidate dialog is visible.]
   const visible = ref(false)
   return { visible }
 }

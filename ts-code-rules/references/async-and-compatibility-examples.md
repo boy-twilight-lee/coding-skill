@@ -15,14 +15,14 @@
 **Positive example:**
 
 ```ts
-// Loads candidate details and synchronizes the page state.
+// [Write in Chinese: load candidate details and synchronize the page state.]
 const loadCandidate = async () => {
   try {
-    // Stores the candidate details returned by the API.
+    // [Write in Chinese: store the candidate details returned by the API.]
     const candidate = await getCandidate(candidateId)
     detail.value = candidate
   } catch (error) {
-    // Reports the load failure and delegates handling to the page error boundary.
+    // [Write in Chinese: report the load failure and delegate handling to the page error boundary.]
     reportCandidateLoadError(error)
     throw error
   }
@@ -54,9 +54,9 @@ await saveCandidate(payload)
 For an intentional fire-and-forget contract, make the boundary explicit and handle rejection inside the called operation:
 
 ```ts
-// Reports candidate-page exposure without blocking the current interaction flow.
+// [Write in Chinese: report candidate-page exposure without blocking the current interaction flow.]
 const reportCandidateExposure = () => {
-  // Captures exposure-reporting failures and sends them to the telemetry error channel.
+  // [Write in Chinese: capture exposure-reporting failures and send them to the telemetry error channel.]
   reportExposureRequest().catch((error) => {
     reportTelemetryError(error)
   })
@@ -91,7 +91,7 @@ Do not assume transpilation adds runtime APIs. Syntax transformation and API pol
 When `Array.prototype.at` is not supported by the actual targets, use the approved compatible form:
 
 ```ts
-// Reads the last item in the candidate list.
+// [Write in Chinese: read the last item in the candidate list.]
 const lastCandidate = candidates[candidates.length - 1]
 ```
 
@@ -100,7 +100,7 @@ const lastCandidate = candidates[candidates.length - 1]
 Do not use the unsupported API for that same last-item lookup:
 
 ```ts
-// Reads the last item in the candidate list.
+// [Write in Chinese: read the last item in the candidate list.]
 const lastCandidate = candidates.at(-1)
 ```
 

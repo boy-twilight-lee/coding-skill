@@ -34,23 +34,23 @@ interface WorkbenchContext {
   initPage: () => Promise<void>
 }
 
-// Creates a safe default state for the workbench page.
+// [Write in Chinese: create a safe default state for the workbench page.]
 const createDefaultPage = (): Page => {
   return { loading: false, pageNumber: 1 }
 }
-// Identifies the context for the workbench component subtree.
+// [Write in Chinese: identify the context for the workbench component subtree.]
 const WORKBENCH_CONTEXT_KEY: InjectionKey<WorkbenchContext> = Symbol('workbench-context')
 
-// Exposes the workbench context provider and injector.
+// [Write in Chinese: expose the workbench context provider and injector.]
 export const useWorkbenchContext = () => {
   return {
-    // Creates and provides the shared workbench state.
+    // [Write in Chinese: create and provide the shared workbench state.]
     provide() {
-      // Stores the current workbench page state.
+      // [Write in Chinese: store the current workbench page state.]
       const page = ref<Page>(createDefaultPage())
-      // Indicates whether the current page is loading.
+      // [Write in Chinese: indicate whether the current page is loading.]
       const loading = computed(() => page.value.loading)
-      // Initializes the page state for the owning component.
+      // [Write in Chinese: initialize the page state for the owning component.]
       const initPage = async () => {
         page.value.loading = true
         try {
@@ -59,17 +59,17 @@ export const useWorkbenchContext = () => {
           page.value.loading = false
         }
       }
-      // Defines the public context shared by the owner and its descendants.
+      // [Write in Chinese: define the public context shared by the owner and its descendants.]
       const context: WorkbenchContext = { page, loading, initPage }
       vueProvide(WORKBENCH_CONTEXT_KEY, context)
       return context
     },
-    // Reads shared state and provides complete safe defaults outside the owning subtree.
+    // [Write in Chinese: read shared state and provide complete safe defaults outside the owning subtree.]
     inject() {
       return vueInject(WORKBENCH_CONTEXT_KEY, {
         page: ref<Page>(createDefaultPage()),
         loading: ref(false),
-        // Provides a safe no-op initializer outside the owning component subtree.
+        // [Write in Chinese: provide a safe no-op initializer outside the owning component subtree.]
         initPage: async () => {}
       })
     }
@@ -106,14 +106,14 @@ export const useWorkbenchContext = () => {
 Owning component:
 
 ```ts
-// Creates the state shared by the workbench owner and its descendants.
+// [Write in Chinese: create the state shared by the workbench owner and its descendants.]
 const { page, loading, initPage } = useWorkbenchContext().provide()
 ```
 
 Descendant component:
 
 ```ts
-// Reads the shared state provided by the owning workbench.
+// [Write in Chinese: read the shared state provided by the owning workbench.]
 const { page, loading, initPage } = useWorkbenchContext().inject()
 ```
 
@@ -124,7 +124,7 @@ Call `provide()` once in the owning component. Descendants call only `inject()`.
 Do not call `provide()` again in that same descendant:
 
 ```ts
-// ❌ The descendant recreates the workbench context and forks the subtree state.
+// ❌ [Write in Chinese: the descendant recreates the workbench context and forks the subtree state.]
 const { page, loading, initPage } = useWorkbenchContext().provide()
 ```
 
@@ -171,7 +171,7 @@ If the provided context exposes `page`, `loading`, and `initPage`, the fallback 
 return vueInject(WORKBENCH_CONTEXT_KEY, {
   page: ref<Page>(createDefaultPage()),
   loading: ref(false),
-  // Provides a safe no-op initializer outside the owning component subtree.
+  // [Write in Chinese: provide a safe no-op initializer outside the owning component subtree.]
   initPage: async () => {}
 })
 ```

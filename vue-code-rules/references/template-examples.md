@@ -107,7 +107,7 @@ import { computed } from 'vue'
 const props = defineProps<{
   status: string
 }>()
-// Provides the business-mapped status text for the current order.
+// [Write in Chinese: provide the business-mapped status text for the current order.]
 const orderStatusText = computed(() => getOrderStatusText(props.status))
 </script>
 ```
@@ -278,7 +278,7 @@ import { computed } from 'vue'
 import { CandidateCardProps } from './type'
 
 const props = defineProps<CandidateCardProps>()
-// Provides the class name for the current candidate-card density.
+// [Write in Chinese: provide the class name for the current candidate-card density.]
 const densityClass = computed(() => `candidate-card-${props.density}`)
 </script>
 ```

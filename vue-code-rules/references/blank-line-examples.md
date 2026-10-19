@@ -93,12 +93,12 @@ Do not split the same label/value group with decorative blank lines:
 One blank line may separate different responsibilities, while comments remain attached to their declarations:
 
 ```js
-// Stores the identifier of the currently selected user.
+// [Write in Chinese: store the identifier of the currently selected user.]
 const selectedUserId = ref('')
-// Indicates whether a user is currently selected.
+// [Write in Chinese: indicate whether a user is currently selected.]
 const hasSelectedUser = computed(() => Boolean(selectedUserId.value))
 
-// Clears the current user selection.
+// [Write in Chinese: clear the current user selection.]
 const clearSelectedUser = () => {
   selectedUserId.value = ''
 }
@@ -111,11 +111,11 @@ For a TypeScript script, use the corresponding `ts-code-rules` blank-line rule r
 Do not detach those same comments or add blank lines at function edges:
 
 ```js
-// Stores the identifier of the currently selected user.
+// [Write in Chinese: store the identifier of the currently selected user.]
 
 const selectedUserId = ref('')
 
-// Clears the current user selection.
+// [Write in Chinese: clear the current user selection.]
 const clearSelectedUser = () => {
 
   selectedUserId.value = ''
