@@ -32,8 +32,8 @@
 ```text
 请检查当前 coding-skill 仓库，并完成以下配置：
 
-1. 将 command-execution-rules、ts-code-rules、vue-code-rules、css-code-rules 四个 Skill 安装或更新到 Codex 的 skills 目录。优先使用 CODEX_HOME；未配置时使用当前用户目录下的 .codex。必须复制每个 Skill 的 SKILL.md、agents、references、assets 等运行所需内容，不能只复制 SKILL.md。
-2. `translation` 目录仅供人工阅读和评审，不属于 Skill 运行内容。安装或更新时必须忽略所有 `translation` 目录，不要将其中的 `*-cn.md` 文件复制到 Codex 的 skills 目录，也不要用翻译文件覆盖 references。
+1. 将 command-execution-rules、ts-code-rules、vue-code-rules、css-code-rules 四个 Skill 目录安装或更新到 Codex 的 skills 目录。优先使用 CODEX_HOME；未配置时使用当前用户目录下的 .codex。必须复制每个 Skill 的 SKILL.md、agents、references、assets 等运行所需内容，不能只复制 SKILL.md。
+2. 仓库根目录的 `translation/<skill-name>/` 仅供人工阅读和评审，不属于 Skill 运行内容。安装或更新时不要复制根目录 `translation`，也不要用翻译文件覆盖 references。
 3. 写入前确认源目录和目标目录，保留其他已安装 Skill，不要删除或覆盖这四个目标之外的内容。
 4. 更新 Codex 根目录的 AGENTS.md；文件不存在时创建，存在时保留其他规则。删除以下四个 Skill 的旧版或重复 routing，然后加入：
 
@@ -54,7 +54,7 @@ For every task that writes, modifies, refactors, reviews, debugs, or completes T
 For every task that writes, modifies, refactors, reviews, debugs, or completes CSS, Less, Sass, SCSS, or a Vue <style> block, always use the css-code-rules skill and treat its style architecture, naming, scope, layout, and compatibility rules as mandatory unless higher-priority instructions conflict.
 
 5. 使用 skill-creator 的 quick_validate.py 校验四个安装后的 Skill；如果该校验器不可用，就检查目录名、frontmatter name、引用文件和 agents/openai.yaml 是否完整一致。
-6. 比较仓库源文件与安装后的文件时排除 `translation` 目录，确认其余安装内容一致；最后报告安装目录、AGENTS.md 路径、校验结果以及是否需要重启 Codex。不要提交、推送或修改本仓库中的其他文件。
+6. 比较四个 Skill 源目录与安装后的文件，确认运行内容一致；仓库根目录 `translation` 不参与比较。最后报告安装目录、AGENTS.md 路径、校验结果以及是否需要重启 Codex。不要提交、推送或修改本仓库中的其他文件。
 ```
 
 安装或更新后，请在新的 Codex 任务中使用；如果暂时没有识别新 Skill，重启 Codex 后再试。
@@ -75,30 +75,30 @@ python scripts/validate_skills.py --check-installed
 
 ## 🌏 中文阅读版
 
-Codex 执行时以各 Skill 的 `SKILL.md` 和按需加载的 references 为准。`translation/` 只翻译对应的 reference，并使用同名 `*-cn.md` 文件保持一一对应：
+Codex 执行时以各 Skill 的 `SKILL.md` 和按需加载的 references 为准。仓库根目录 `translation/<skill-name>/` 只翻译对应 Skill 的 reference，并使用同名 `*-cn.md` 文件保持一一对应：
 
 - Command Execution
-  - [command-execution-examples-cn.md](./command-execution-rules/translation/command-execution-examples-cn.md)
+  - [command-execution-examples-cn.md](./translation/command-execution-rules/command-execution-examples-cn.md)
 - TypeScript
-  - [code-quality-examples-cn.md](./ts-code-rules/translation/code-quality-examples-cn.md)
-  - [imports-and-types-cn.md](./ts-code-rules/translation/imports-and-types-cn.md)
-  - [async-and-compatibility-examples-cn.md](./ts-code-rules/translation/async-and-compatibility-examples-cn.md)
+  - [code-quality-examples-cn.md](./translation/ts-code-rules/code-quality-examples-cn.md)
+  - [imports-and-types-cn.md](./translation/ts-code-rules/imports-and-types-cn.md)
+  - [async-and-compatibility-examples-cn.md](./translation/ts-code-rules/async-and-compatibility-examples-cn.md)
 - Vue
-  - [template-examples-cn.md](./vue-code-rules/translation/template-examples-cn.md)
-  - [class-binding-examples-cn.md](./vue-code-rules/translation/class-binding-examples-cn.md)
-  - [blank-line-examples-cn.md](./vue-code-rules/translation/blank-line-examples-cn.md)
-  - [script-structure-examples-cn.md](./vue-code-rules/translation/script-structure-examples-cn.md)
-  - [script-comment-examples-cn.md](./vue-code-rules/translation/script-comment-examples-cn.md)
-  - [component-structure-examples-cn.md](./vue-code-rules/translation/component-structure-examples-cn.md)
-  - [complex-component-context-examples-cn.md](./vue-code-rules/translation/complex-component-context-examples-cn.md)
-  - [application-architecture-examples-cn.md](./vue-code-rules/translation/application-architecture-examples-cn.md)
+  - [template-examples-cn.md](./translation/vue-code-rules/template-examples-cn.md)
+  - [class-binding-examples-cn.md](./translation/vue-code-rules/class-binding-examples-cn.md)
+  - [blank-line-examples-cn.md](./translation/vue-code-rules/blank-line-examples-cn.md)
+  - [script-structure-examples-cn.md](./translation/vue-code-rules/script-structure-examples-cn.md)
+  - [script-comment-examples-cn.md](./translation/vue-code-rules/script-comment-examples-cn.md)
+  - [component-structure-examples-cn.md](./translation/vue-code-rules/component-structure-examples-cn.md)
+  - [complex-component-context-examples-cn.md](./translation/vue-code-rules/complex-component-context-examples-cn.md)
+  - [application-architecture-examples-cn.md](./translation/vue-code-rules/application-architecture-examples-cn.md)
 - CSS
-  - [scope-and-file-organization-examples-cn.md](./css-code-rules/translation/scope-and-file-organization-examples-cn.md)
-  - [naming-examples-cn.md](./css-code-rules/translation/naming-examples-cn.md)
-  - [nesting-and-deep-examples-cn.md](./css-code-rules/translation/nesting-and-deep-examples-cn.md)
-  - [design-and-layout-examples-cn.md](./css-code-rules/translation/design-and-layout-examples-cn.md)
-  - [reuse-and-redundancy-examples-cn.md](./css-code-rules/translation/reuse-and-redundancy-examples-cn.md)
-  - [declaration-and-compatibility-examples-cn.md](./css-code-rules/translation/declaration-and-compatibility-examples-cn.md)
+  - [scope-and-file-organization-examples-cn.md](./translation/css-code-rules/scope-and-file-organization-examples-cn.md)
+  - [naming-examples-cn.md](./translation/css-code-rules/naming-examples-cn.md)
+  - [nesting-and-deep-examples-cn.md](./translation/css-code-rules/nesting-and-deep-examples-cn.md)
+  - [design-and-layout-examples-cn.md](./translation/css-code-rules/design-and-layout-examples-cn.md)
+  - [reuse-and-redundancy-examples-cn.md](./translation/css-code-rules/reuse-and-redundancy-examples-cn.md)
+  - [declaration-and-compatibility-examples-cn.md](./translation/css-code-rules/declaration-and-compatibility-examples-cn.md)
 
 ## 📄 License
 

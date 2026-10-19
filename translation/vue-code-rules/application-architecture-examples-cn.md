@@ -17,7 +17,6 @@ src/
 
 1. 保留既有页面树和移动端/PC 端分离，不创建竞争目录，也不通过运行时设备分支合并目标专属实现，除非请求明确要求。
 2. 页面私有组件和 hooks 跟随页面；只有真实跨页面复用后才提升到 `src` 一级目录。TypeScript 辅助模块所有权、共享工具模块和公开入口以 `ts-code-rules` 为准。
-3. 手写大型能力前检查已有依赖和包装层。只有获得授权且现有栈确有缺口时才新增包，并核实维护情况、来源、目标兼容性、包体积和许可证；商业使用安全无法确认时必须报告。
 
 ## 场景 1：放置路由编排与可复用 UI
 
@@ -86,42 +85,6 @@ import CandidateCardPc from '@/components-pc/candidate-card'
 // 读取当前运行环境对应的展示目标端。
 const deviceTarget = getRuntimeDeviceTarget()
 </script>
-```
-
-## 场景 3：重新实现前评估依赖
-
-手写大功能前检查现有依赖；新增包需获授权并核实维护、来源、兼容性、体积和许可证。
-
-**场景配置：**
-
-```json
-{
-  "dependencies": {
-    "date-fns": "^4.0.0"
-  }
-}
-```
-
-**正例：**
-
-```ts
-import { format } from 'date-fns'
-
-// 将候选人更新时间格式化为列表展示文本。
-export const formatCandidateUpdatedAt = (value: Date) => {
-  return format(value, 'yyyy-MM-dd HH:mm')
-}
-```
-
-**反例：**
-
-```ts
-import dayjs from 'dayjs'
-
-// 将候选人更新时间格式化为列表展示文本。
-export const formatCandidateUpdatedAt = (value: Date) => {
-  return dayjs(value).format('YYYY-MM-DD HH:mm')
-}
 ```
 
 ## 复核清单

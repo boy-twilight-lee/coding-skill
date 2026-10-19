@@ -72,7 +72,10 @@ def check_translation_pairs(root: Path, report: ValidationReport) -> None:
     for skill_name in SKILL_NAMES:
         skill_root = root / skill_name
         reference_root = skill_root / "references"
-        translation_root = skill_root / "translation"
+        translation_root = root / "translation" / skill_name
+        legacy_translation_root = skill_root / "translation"
+        if legacy_translation_root.exists():
+            report.fail(f"Translation directory must be outside the skill package: {legacy_translation_root}")
         references = {path.stem for path in reference_root.glob("*.md")}
         translations = {
             path.stem.removesuffix("-cn")

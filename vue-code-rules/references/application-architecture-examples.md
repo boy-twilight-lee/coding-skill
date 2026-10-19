@@ -17,7 +17,6 @@ src/
 
 1. Preserve the established page tree and any mobile/PC separation. Do not create a competing tree or merge target-specific implementations through runtime device branches unless the request requires it.
 2. Keep page-private components and hooks beside the page. Promote them to a `src`-level directory only after actual cross-page reuse. TypeScript helper ownership, shared utility modules, and public entries are governed by `ts-code-rules`.
-3. Before hand-writing a substantial capability, inspect installed dependencies and wrappers. Add a package only with authorization and a demonstrated gap, after checking maintenance, provenance, target compatibility, bundle impact, and license; report unresolved commercial-use safety.
 
 ## Scenario 1: Place Route Orchestration and Reusable UI
 
@@ -94,58 +93,8 @@ const deviceTarget = getRuntimeDeviceTarget()
 
 This runtime branch makes both target implementations part of one ownership and loading path, weakens route-level separation, and encourages target-specific behavior to leak into shared code. Keep the target entries separate. When both targets genuinely share data or behavior, extract only that neutral capability to the nearest common owner; do not merge their presentation roots merely to reuse it.
 
-## Scenario 3: Evaluate Dependencies before Reimplementation
-
-Before hand-writing a substantial capability:
-
-1. Inspect installed dependencies and existing project wrappers.
-2. Check whether an established library already solves the requirement reliably.
-3. Prefer the installed capability when it meets the requirement without disproportionate cost.
-4. Only if the installed stack has a demonstrated gap and the task permits dependency changes, evaluate a new package's maintenance activity, license, provenance, browser support, and bundle impact from package metadata or authoritative sources.
-
-Do not add a second library for a capability already covered by the project. If provenance or commercial-use terms cannot be verified, report that constraint instead of silently adding the package or claiming it is safe.
-
-Concrete case: `package.json` already includes a maintained, commercially acceptable date library:
-
-```json
-{
-  "dependencies": {
-    "date-fns": "^4.0.0"
-  }
-}
-```
-
-**Positive example:**
-
-Reuse the installed capability:
-
-```ts
-import { format } from 'date-fns'
-
-// <zh: format the candidate update time for list display.>
-export const formatCandidateUpdatedAt = (value: Date) => {
-  return format(value, 'yyyy-MM-dd HH:mm')
-}
-```
-
-**Negative example:**
-
-Do not add and wrap a second date library solely to implement the same formatting behavior:
-
-```ts
-import dayjs from 'dayjs'
-
-// <zh: format the candidate update time for list display.>
-export const formatCandidateUpdatedAt = (value: Date) => {
-  return dayjs(value).format('YYYY-MM-DD HH:mm')
-}
-```
-
-If the installed dependency cannot meet a demonstrated requirement, document that gap first. Add a replacement only when dependency changes are in scope and its maintenance, license, provenance, bundle impact, and target compatibility can be verified.
-
 ## Review Checklist
 
 - Route orchestration, reusable UI, and layouts live in their intended layers.
 - Private components and hooks remain beside their owner until cross-page reuse is real.
 - Mobile and PC presentation trees remain separate.
-- New dependencies are introduced only when changes are in scope and capability, provenance, compatibility, bundle impact, and license checks succeed.

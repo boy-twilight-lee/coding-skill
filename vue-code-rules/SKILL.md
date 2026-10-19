@@ -22,7 +22,7 @@ In examples, `<zh: ...>` marks required Chinese comment content. Replace the mar
 - Read [Script Comment Examples](references/script-comment-examples.md) for Vue-specific compiler-macro, watcher, and lifecycle comment placement, and for the generic script baseline in JavaScript SFCs. For TypeScript SFCs, `ts-code-rules` owns the generic declaration, callback, internal-comment, and redundancy rules.
 - Read [Component Structure Examples](references/component-structure-examples.md) when deciding component splits, composable extraction, naming, directory layout, public entries, or private ownership.
 - Read [Complex Component Context Examples](references/complex-component-context-examples.md) before implementing or reviewing any `use**Context` composable, provider, injector, fallback, or consumer.
-- Read [Application Architecture Examples](references/application-architecture-examples.md) when placing pages, components, layouts, target-specific trees, or dependencies.
+- Read [Application Architecture Examples](references/application-architecture-examples.md) when placing pages, components, layouts, or target-specific trees.
 
 ## Working Process
 
