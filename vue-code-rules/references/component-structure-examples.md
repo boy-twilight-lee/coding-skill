@@ -1,5 +1,32 @@
 # Component Structure Examples
 
+## Mandatory Rules
+
+Use this map for a directory-managed page or component. Omit optional directories and files until they have a real owner-specific purpose.
+
+```text
+<owner>/
+|-- index.vue
+|-- index.ts              Public component export
+|-- index.less            Optional extracted local style
+|-- component/
+|   |-- simple-child.vue  Cohesive private child
+|   `-- complex-child/
+|       |-- index.vue
+|       |-- index.ts
+|       |-- component/    Child-private components
+|       `-- hooks/        Child-private composables
+|-- hooks/                Owner-private composables
+|-- constants/            Owner-private constants
+`-- type/                 Owner-private types
+```
+
+1. Split by independent UI responsibility, cohesive reusable behavior, or genuine maintenance difficulty. Keep tightly coupled template, state, and actions together; use a dedicated `use**Context` composable when shared state is repeatedly passed and updated across several component levels.
+2. Use kebab-case for component files, directories, and custom tags. Use kebab-case for composable files except hooks inside `hooks/`, which use camelCase.
+3. Every first-level page or component under the established page/component trees uses the directory form with `index.vue` and `index.ts`. Only a simple child inside an owner's private `component/` may use the single-file form; use a child directory when supporting files become meaningful.
+4. A directory-managed component's `index.ts` re-exports `index.vue` and any intentional public types. Keep ordinary setup and styles in the SFC; add `index.less`, hooks, constants, types, or private children only when they provide real ownership or maintenance value.
+5. Keep private units under their owner and each `.vue` file at or below 1000 lines. Promote a private child only after real cross-page reuse, update its public entry and consumers, and do not migrate unrelated components merely to normalize structure.
+
 ## Scenario 1: Split by Responsibility
 
 Situation: one page handles filters, results, pagination, editing, and dialog state.

@@ -1,5 +1,19 @@
 # Declaration and Compatibility Examples
 
+## Mandatory Rules
+
+1. Avoid comments in CSS, Less, Sass, SCSS, and Vue `<style>` blocks. Do not add routine section labels, selector descriptions, declaration explanations, commented-out code, or comments that merely restate the stylesheet. Add a comment only when a non-obvious compatibility workaround, external-library constraint, or temporary exception cannot be expressed clearly through naming or structure; keep that exceptional comment concise, explain why it is necessary, and write it in Chinese unless another language is strictly necessary for an exact external term or project-mandated convention.
+
+2. Do not leave meaningless blank lines in CSS, Less, Sass, SCSS, or Vue `<style>` blocks. A blank line is allowed only when one line materially separates distinct selector groups or logical regions; never use consecutive blank lines, file-leading or file-trailing blank lines, blank lines immediately inside a selector or at-rule block, or blank lines between related declarations and nested selectors. Keep at most one intentional blank line between genuinely separate groups and remove every blank line that does not improve structural readability.
+
+3. Within a selector, order declarations as: positioning and overflow; interaction; dimensions (height before width); margin and padding; background, border, radius, and effects; typography and color; display and layout; animation and transition. Put nested selectors after declarations. If the repository's active Stylelint configuration enforces a different property order, follow the executable configuration and report that scoped exception instead of producing lint-failing code.
+
+4. Do not duplicate blocks for padding, border, layout, or state. Consolidate related child selectors under their parent and extract repeated patterns only when the reuse is real.
+
+5. Do not introduce CSS APIs, selectors, units, or properties with known target-browser compatibility problems. Confirm support or use the repository-approved fallback before adding newer features.
+
+6. Run the repository formatter only on changed style files. Compare with the pre-format state and restore formatting-only changes outside the task's affected regions while preserving pre-existing user edits. Keep formatting necessary for the changed syntax; report any whole-file check failure caused solely by untouched formatting instead of silently expanding the edit. Re-check the final diff against these structure rules and the established local convention.
+
 Use these scenarios to keep declarations readable, non-duplicated, compatible with project targets, and limited to the files changed by the task.
 
 ## Scenario 1: Decide Whether a Comment Is Justified

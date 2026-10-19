@@ -1,5 +1,23 @@
 # Template Examples
 
+## Mandatory Rules
+
+1. Keep the SFC blocks that are present in strict relative order: `<template>`, then `<script>`, then `<style>`. Omit an unused block; never add an empty block solely to complete the sequence.
+
+2. Render repeated UI from structured data with `v-for`; use a stable, unique key and never use an array index when item identity can change.
+
+3. Keep business transformations and non-trivial conditions out of the template. Name them in computed state or functions so the template remains a readable declaration of the UI.
+
+4. Use kebab-case custom component tags and self-close components that have no slots or child content.
+
+5. Keep each component root and its template hierarchy aligned with the business responsibility. Use named slots for intentional extension points; do not add wrapper elements only to satisfy an abstract convention.
+
+6. Avoid meaningless DOM. Do not nest elements solely for styling or layout when the target element can be styled directly. Keep the DOM shallow and node count low. Add a container only when it has a clear, independent layout, positioning, animation, interaction, or grouping responsibility, and give it a name that expresses that purpose.
+
+7. In non-interactive business layout, prefer `div` for block grouping and `span` for inline content. Use `i` only for decorative icon placeholders and mark it appropriately when accessibility tooling requires it. Use native interactive elements such as `button`, `a`, `input`, and `label` when their behavior or accessibility semantics apply. Use landmarks, headings, lists, tables, and other semantic elements only when they express real document structure, SEO meaning, data relationships, or accessibility—not merely for browser-default styling.
+
+8. When an element has multiple class sources, combine them in one bound `:class` array. Put permanent class strings, reusable class values, and conditional class objects in that array, and expand it across lines when needed to prevent an unreadably long attribute. Do not split the same element's classes across `class` and `:class`, or construct a long concatenated class string. A single static class may remain in `class`, and a lone dynamic object or value does not need an array wrapper.
+
 ## Scenario 1: Keep SFC Blocks in Order
 
 Correct:

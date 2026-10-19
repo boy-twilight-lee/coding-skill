@@ -1,5 +1,15 @@
 # Script Comment Examples
 
+## Mandatory Rules
+
+1. In every Vue `<script>` block, add a concise comment immediately above every declared variable or constant, including reactive state, refs, computed values, destructured bindings, and class fields. Explain the business purpose or state meaning instead of repeating the identifier. Write comments in Chinese unless another language is strictly necessary because the project explicitly mandates it, an external protocol or third-party term must be quoted exactly, or Chinese would make the technical meaning less accurate. Imports, function parameters, and type-only declarations do not require separate variable comments. Vue compiler macros are also explicit exceptions: never add a declaration comment immediately above `defineProps`, `withDefaults(defineProps(...))`, `defineEmits`, `defineExpose`, `defineOptions`, `defineSlots`, or another compiler macro, including a variable or destructuring declaration that receives the macro's result.
+
+2. Add a concise comment immediately above every function, method, composable, callback, event handler, watcher callback, and lifecycle hook. Explain its responsibility, side effect, or return meaning. An inline callback is sufficiently documented when an immediately adjacent comment above its containing API call, watcher, lifecycle call, object property, or declaration unambiguously describes the callback; do not insert a separate comment inside the expression merely to satisfy this rule. Extract an inline callback into a named, commented function only when it has an independent responsibility, real reuse, or a concrete testing or readability benefit. Keep a callback inline at its only registration site when it merely continues the containing action, watcher, lifecycle, or API workflow; callback length alone is not a reason to split the flow into a one-use `handle*` or reset function.
+
+3. Inside functions and methods, comment only key business logic, non-obvious transformations, important branches, side effects, and error handling. Do not comment every statement. These declaration-level comment rules are mandatory for both JavaScript and TypeScript Vue scripts; TypeScript scripts must also follow `ts-code-rules`.
+
+4. Do not introduce or preserve redundant code merely to create a name or comment target. Prohibit pass-through functions that only call and return another function, one-use callback wrappers that separate a continuous workflow without an independent responsibility, single-use intermediate variables that add no business meaning, reuse, type narrowing, or readability, and validation or guard conditions already guaranteed by the only caller, Vue, or the called API's verified contract. Inline the underlying expression, callback, or call instead. Keep a wrapper, intermediate value, callback extraction, or guard only when it has an independent responsibility or a concrete correctness benefit; a comment does not justify redundant structure.
+
 ## Scenario 1: Comment Variables by Business Meaning
 
 ```ts

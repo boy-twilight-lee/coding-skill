@@ -1,5 +1,19 @@
 # Design, Layout, and Reuse Examples
 
+## Mandatory Rules
+
+1. Reuse the repository's tokens, utilities, and existing semantic values for colors, spacing, radii, typography, and state. Avoid near-duplicate literal values. Use Less/Sass variables, mixins, and loops only where repetition makes ownership clearer.
+
+2. Avoid CSS Grid. Use Flexbox plus `gap` for layouts unless Flexbox cannot correctly express a genuinely two-dimensional alignment requirement; Grid is allowed only as a last resort when it is demonstrably necessary. Use `flex: 1` for the region that fills remaining space and `flex-shrink: 0` for fixed-size regions. Add `overflow: hidden` wherever flex shrinking or ellipsis depends on it.
+
+3. Keep desktop and mobile presentation in the repository's separate page/component trees when they exist. Do not add component-local media-query forks for an implementation already split by target tree.
+
+4. Use the repository's configured unit strategy. For these projects, write ordinary spacing, sizes, and typography in `px`; let the configured PostCSS conversion handle mobile `vw` output. Use viewport units only when the value represents an actual viewport relationship.
+
+5. Prefer documented library CSS custom properties for local customization. Do not increase selector specificity or use `!important` when a scoped variable or ordinary nested selector is sufficient.
+
+6. Define `box-sizing: border-box` once in the established global or top-level rule; never repeat it in components. When a fixed dimension already establishes the minimum size, do not repeat the corresponding minimum dimension or an equivalent fixed flex basis. Omit declarations that have no effect in the element's actual formatting context. Extract recurring layout, truncation, transition, or animation patterns into a focused Less/Sass mixin, variable, or established utility only after genuine repetition exists. Do not redeclare values already provided by the established global reset or browser defaults. Keep an otherwise redundant declaration only when it is necessary for a specific, observable layout or typographic result.
+
 Use these scenarios to choose semantic values, layout primitives, units, local customization, and reusable abstractions without adding redundant CSS.
 
 ## Scenario 1: Reuse Existing Tokens

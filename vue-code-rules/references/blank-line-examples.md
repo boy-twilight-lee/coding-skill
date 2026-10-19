@@ -1,5 +1,11 @@
 # Blank Line Examples
 
+## Mandatory Rules
+
+1. Do not leave meaningless blank lines anywhere in a Vue file, including its template, script, and style blocks. A blank line is allowed only when one line materially separates distinct logical regions; never use consecutive blank lines, leading or trailing blank lines inside an SFC block, blank lines immediately inside an opening or closing code block, blank lines between a required comment and its declaration, or blank lines between tightly coupled statements or markup nodes.
+
+2. Keep at most one intentional blank line between top-level SFC blocks or genuinely separate logical groups. Remove any blank line that does not make the component structure easier to understand.
+
 ## Scenario 1: Separate SFC Blocks
 
 Use at most one blank line between top-level blocks:

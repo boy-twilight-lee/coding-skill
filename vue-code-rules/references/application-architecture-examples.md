@@ -1,5 +1,25 @@
 # Application Architecture Examples
 
+## Mandatory Rules
+
+Use the established equivalents of these directories; optional target-specific trees exist only when the repository already separates those targets.
+
+```text
+src/
+|-- pages/ (or views/)    Route-level page units
+|-- pages-pc/             Optional target-specific pages
+|-- components/           Cross-page reusable UI
+|-- components-pc/        Optional target-specific reusable UI
+|-- layout/               Page frames
+|-- hooks/                Cross-page reusable composables
+|-- styles/               Application-wide styles
+`-- utils/                Cross-page stateless utilities
+```
+
+1. Preserve the established page tree and any mobile/PC separation. Do not create a competing tree or merge target-specific implementations through runtime device branches unless the request requires it.
+2. Keep page-private components, hooks, and helpers beside the page. Promote them to a `src`-level directory only after actual cross-page reuse; organize promoted utilities by focused business domain or technical capability and export them through the directory entry.
+3. Before hand-writing a substantial capability, inspect installed dependencies and wrappers. Add a package only with authorization and a demonstrated gap, after checking maintenance, provenance, target compatibility, bundle impact, and license; report unresolved commercial-use safety.
+
 ## Scenario 1: Place Route Orchestration and Reusable UI
 
 ```text

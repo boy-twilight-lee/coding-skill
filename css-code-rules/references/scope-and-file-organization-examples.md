@@ -1,5 +1,17 @@
 # Scope and File Organization Examples
 
+## Mandatory Rules
+
+1. Preserve the project's chosen stylesheet language. Do not migrate CSS, Less, Sass, or SCSS merely for consistency. In the user's Vue projects, use Less for newly created component styles unless the target repository deliberately uses another solution.
+
+2. Scope ordinary Vue component styles. In a Less-based project, use `<style lang="less" scoped>` in that attribute order. In a repository deliberately using CSS, Sass, SCSS, CSS Modules, or another configured solution, preserve that language or mechanism and its valid syntax. Use an unscoped style block only for true global rules or content rendered outside the component root.
+
+3. Keep a component's extracted styles beside its entry point. Use the repository's matching extension, such as `index.less` beside `index.vue`, for one style file; introduce a `style/` directory only when scoped and unscoped styles genuinely must be isolated. When an inline component style block reaches 200 physical lines after formatting, move the whole owned stylesheet to the sibling file and include it through the component's scoped style block. Do not split the file by visual region merely to meet the threshold.
+
+4. Keep all styles for one component in one stylesheet. Do not split files by visual region or feature. Separate stylesheets are justified only when CSS scope itself requires it.
+
+5. Keep application-wide resets, theme tokens, library overrides, and utilities in the repository's established `src/styles` files. Keep a component-specific Element Plus or Vant override within the owning component's root through `:deep`.
+
 Read the scenario that matches the current change. Each scenario explains the ownership decision, shows the preferred result, and identifies the failure mode to avoid.
 
 ## Scenario 1: Preserve the Existing Stylesheet Language

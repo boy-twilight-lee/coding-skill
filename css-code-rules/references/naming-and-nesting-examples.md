@@ -1,5 +1,23 @@
 # Naming and Nesting Examples
 
+## Mandatory Rules
+
+1. Give every component a meaningful business root class and keep all of its owned selectors beneath that root. Teleported content may use a separate fully qualified business root because it is rendered outside the component tree.
+
+2. Follow the project's single-hyphen BEM-like convention: write complete names in the form `block-element-modifier`, using one hyphen as the separator and never `__` or `--` in project-owned class names. Because the same delimiter also appears inside multiword business terms, choose the shortest unambiguous complete name and rely on the owning selector hierarchy—not punctuation alone—to communicate the relationship. Library-owned selectors retain their library naming.
+
+3. Describe a component, element, state, or business meaning in every class. Avoid ambiguous names and arbitrary suffix chains.
+
+4. Prohibit overly long class names. First remove redundant ownership words, duplicated business terms, visual descriptions, and unnecessary suffixes while retaining enough meaning to identify the component, element, or state. Do not preserve a verbose name merely because it mirrors every DOM ancestor.
+
+5. When a class name cannot be kept reasonably short after removing redundant wording, shorten repeated business segments with consistent, comprehensible character abbreviations. Prefer abbreviations already established by the repository or feature glossary, and use the same abbreviation for the same term throughout the ownership subtree. Never create ambiguous, opaque, concatenated, or arbitrary letter sequences merely to reduce character count.
+
+6. In Less/Sass, nest every child or descendant selector beneath its nearest meaningful owning selector, following component ownership and the stable DOM relationship. An owning selector is the nearest ancestor class that establishes layout, state, or behavior for that child; an incidental wrapper with no such responsibility does not create a required nesting level. Never leave component children as standalone root-level rules or flatten them merely to reduce nesting depth. Only true stylesheet roots, global rules, and separately rendered teleported roots may be top-level. Keep complete class names when nesting rather than generating opaque names through string concatenation. Use `& >` only when styling must be limited to direct children to prevent unintended descendant matches and that boundary is a stable part of the DOM contract. Otherwise use ordinary nested descendant selectors. Never begin a nested selector with a bare `>`.
+
+7. In Vue scoped styles using Less/Sass or verified CSS nesting support through the build pipeline or target browsers, every deep selector must name its target directly through `&:deep(...)`; never call `:deep` without a selector argument. When multiple deep rules belong to the same library-owned subtree, put `&:deep(...)` on the nearest suitable shared parent and nest its descendants beneath it. Do not repeat `:deep` on those descendants. This applies equally to descendant and combinator selectors, pseudo-classes, and pseudo-elements: nest each one under the selector it belongs to inside the shared deep block. Multiple sibling `&:deep(...)` blocks are allowed only when the targets have no suitable shared library-owned parent below the component root, so their only common parent is the component root itself. Under these nesting-capable conditions, do not flatten the business root plus `:deep()` or scatter comma-separated deep rules. In plain CSS without verified nesting support, use equivalent expanded selectors such as `.business-root :deep(.library-parent .library-child)`, keeping every library-owned descendant inside the deep argument. Preserve the business root and library ownership path in each selector; this compatibility exception does not permit unscoped child rules.
+
+8. When nesting is supported, nest pseudo-classes under their owning selector. Express business states as an explicit complete class chained to that owner; keep child changes inside the state block. In plain CSS without verified nesting support, expand pseudo-class and state selectors while preserving the same ownership and matching behavior.
+
 Use these scenarios to translate component ownership and DOM hierarchy into class names and Less/Sass nesting.
 
 The mandatory nesting forms below apply to Less/Sass or plain CSS with verified nesting support from the build pipeline or target browsers. For plain CSS without that support, use the equivalent expanded ownership selectors shown in Scenario 8. Do not migrate the stylesheet language solely to satisfy nesting syntax.

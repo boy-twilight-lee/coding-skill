@@ -1,6 +1,6 @@
 ---
 name: css-code-rules
-description: "Enforce the user's CSS, Less, Sass, and SCSS rules for ownership, naming, nesting, layout, scope, reuse, declaration order, and compatibility. Use for any stylesheet change or review, including Vue style blocks."
+description: "Apply mandatory stylesheet rules when editing or reviewing CSS, Less, Sass, SCSS, or Vue style blocks."
 ---
 
 # CSS Code Rules
@@ -9,7 +9,16 @@ Apply every rule relevant to the CSS, Less, Sass, SCSS, or Vue style code create
 
 Higher-priority instructions override this skill. Repository configuration or conventions override a rule only where that rule explicitly delegates the decision to project configuration. If a mandatory rule cannot be followed, make the smallest necessary deviation and report the exact conflict instead of silently skipping it.
 
-Detailed examples live in references grouped by the same major rule sections as this file. Before acting, read every reference linked from each section that the task touches. References clarify the rules; they do not weaken them.
+Detailed rules and examples live in references grouped by the decisions they govern. Read every reference matching the current task before acting. References are authoritative requirements, not optional background, and they do not weaken the rules.
+
+## Reference Routing
+
+- Read [Scope and File Organization Examples](references/scope-and-file-organization-examples.md) when deciding stylesheet language, Vue scope, extraction layout, ownership, or override placement.
+- Read [Naming and Nesting Examples](references/naming-and-nesting-examples.md) when deciding business roots, BEM names, ownership nesting, direct-child boundaries, deep selectors, pseudo-classes, or business states.
+- Read [Design, Layout, and Reuse Examples](references/design-layout-and-reuse-examples.md) when deciding token use, layout choice, target-specific presentation, units, library customization, redundancy removal, or reusable abstractions.
+- Read [Declaration and Compatibility Examples](references/declaration-and-compatibility-examples.md) when deciding comments, blank lines, declaration order, consolidation, browser support, fallbacks, or final formatting checks.
+
+For a Vue style block, also apply `vue-code-rules`; if the same SFC change touches TypeScript, apply `ts-code-rules` as well. Apply each relevant skill once; do not recursively reread a skill that is already loaded for the task.
 
 ## Working Process
 
@@ -20,69 +29,3 @@ Detailed examples live in references grouped by the same major rule sections as 
 3. Keep selectors, overrides, extraction, and cleanup within the requested ownership boundary. Do not copy a local violation into new or changed styles merely to preserve visual consistency. When an explicit higher-priority instruction conflicts, follow it and document the smallest necessary exception; do not use a style task to restructure unrelated markup or global styling.
 
 4. After the change, inspect every changed style line against each applicable numbered rule and its reference checklist. Verify affected visual states when a preview or existing visual test is available. Run the smallest available targeted formatter, style lint, build, or affected test commands without rewriting unrelated files. If a rule, visual check, or automated check cannot be satisfied, report it explicitly instead of inferring correctness from valid syntax alone.
-
-## Scope and File Organization
-
-Read [Scope and File Organization Examples](references/scope-and-file-organization-examples.md) when deciding stylesheet language, Vue scope, extraction layout, ownership, or override placement.
-
-1. Preserve the project's chosen stylesheet language. Do not migrate CSS, Less, Sass, or SCSS merely for consistency. In the user's Vue projects, use Less for newly created component styles unless the target repository deliberately uses another solution.
-
-2. Scope ordinary Vue component styles. In a Less-based project, use `<style lang="less" scoped>` in that attribute order. In a repository deliberately using CSS, Sass, SCSS, CSS Modules, or another configured solution, preserve that language or mechanism and its valid syntax. Use an unscoped style block only for true global rules or content rendered outside the component root.
-
-3. Keep a component's extracted styles beside its entry point. Use the repository's matching extension, such as `index.less` beside `index.vue`, for one style file; introduce a `style/` directory only when scoped and unscoped styles genuinely must be isolated. When an inline component style block reaches 200 physical lines after formatting, move the whole owned stylesheet to the sibling file and include it through the component's scoped style block. Do not split the file by visual region merely to meet the threshold.
-
-4. Keep all styles for one component in one stylesheet. Do not split files by visual region or feature. Separate stylesheets are justified only when CSS scope itself requires it.
-
-5. Keep application-wide resets, theme tokens, library overrides, and utilities in the repository's established `src/styles` files. Keep a component-specific Element Plus or Vant override within the owning component's root through `:deep`.
-
-## Naming and Nesting
-
-Read [Naming and Nesting Examples](references/naming-and-nesting-examples.md) when deciding business roots, BEM names, ownership nesting, direct-child boundaries, deep selectors, pseudo-classes, or business states.
-
-1. Give every component a meaningful business root class and keep all of its owned selectors beneath that root. Teleported content may use a separate fully qualified business root because it is rendered outside the component tree.
-
-2. Follow the project's single-hyphen BEM-like convention: write complete names in the form `block-element-modifier`, using one hyphen as the separator and never `__` or `--` in project-owned class names. Because the same delimiter also appears inside multiword business terms, choose the shortest unambiguous complete name and rely on the owning selector hierarchy—not punctuation alone—to communicate the relationship. Library-owned selectors retain their library naming.
-
-3. Describe a component, element, state, or business meaning in every class. Avoid ambiguous names and arbitrary suffix chains.
-
-4. Prohibit overly long class names. First remove redundant ownership words, duplicated business terms, visual descriptions, and unnecessary suffixes while retaining enough meaning to identify the component, element, or state. Do not preserve a verbose name merely because it mirrors every DOM ancestor.
-
-5. When a class name cannot be kept reasonably short after removing redundant wording, shorten repeated business segments with consistent, comprehensible character abbreviations. Prefer abbreviations already established by the repository or feature glossary, and use the same abbreviation for the same term throughout the ownership subtree. Never create ambiguous, opaque, concatenated, or arbitrary letter sequences merely to reduce character count.
-
-6. In Less/Sass, nest every child or descendant selector beneath its nearest meaningful owning selector, following component ownership and the stable DOM relationship. An owning selector is the nearest ancestor class that establishes layout, state, or behavior for that child; an incidental wrapper with no such responsibility does not create a required nesting level. Never leave component children as standalone root-level rules or flatten them merely to reduce nesting depth. Only true stylesheet roots, global rules, and separately rendered teleported roots may be top-level. Keep complete class names when nesting rather than generating opaque names through string concatenation. Use `& >` only when styling must be limited to direct children to prevent unintended descendant matches and that boundary is a stable part of the DOM contract. Otherwise use ordinary nested descendant selectors. Never begin a nested selector with a bare `>`.
-
-7. In Vue scoped styles using Less/Sass or verified CSS nesting support through the build pipeline or target browsers, every deep selector must name its target directly through `&:deep(...)`; never call `:deep` without a selector argument. When multiple deep rules belong to the same library-owned subtree, put `&:deep(...)` on the nearest suitable shared parent and nest its descendants beneath it. Do not repeat `:deep` on those descendants. This applies equally to descendant and combinator selectors, pseudo-classes, and pseudo-elements: nest each one under the selector it belongs to inside the shared deep block. Multiple sibling `&:deep(...)` blocks are allowed only when the targets have no suitable shared library-owned parent below the component root, so their only common parent is the component root itself. Under these nesting-capable conditions, do not flatten the business root plus `:deep()` or scatter comma-separated deep rules. In plain CSS without verified nesting support, use equivalent expanded selectors such as `.business-root :deep(.library-parent .library-child)`, keeping every library-owned descendant inside the deep argument. Preserve the business root and library ownership path in each selector; this compatibility exception does not permit unscoped child rules.
-
-8. When nesting is supported, nest pseudo-classes under their owning selector. Express business states as an explicit complete class chained to that owner; keep child changes inside the state block. In plain CSS without verified nesting support, expand pseudo-class and state selectors while preserving the same ownership and matching behavior.
-
-## Design, Layout, and Reuse
-
-Read [Design, Layout, and Reuse Examples](references/design-layout-and-reuse-examples.md) when deciding token use, layout choice, target-specific presentation, units, library customization, redundancy removal, or reusable abstractions.
-
-1. Reuse the repository's tokens, utilities, and existing semantic values for colors, spacing, radii, typography, and state. Avoid near-duplicate literal values. Use Less/Sass variables, mixins, and loops only where repetition makes ownership clearer.
-
-2. Avoid CSS Grid. Use Flexbox plus `gap` for layouts unless Flexbox cannot correctly express a genuinely two-dimensional alignment requirement; Grid is allowed only as a last resort when it is demonstrably necessary. Use `flex: 1` for the region that fills remaining space and `flex-shrink: 0` for fixed-size regions. Add `overflow: hidden` wherever flex shrinking or ellipsis depends on it.
-
-3. Keep desktop and mobile presentation in the repository's separate page/component trees when they exist. Do not add component-local media-query forks for an implementation already split by target tree.
-
-4. Use the repository's configured unit strategy. For these projects, write ordinary spacing, sizes, and typography in `px`; let the configured PostCSS conversion handle mobile `vw` output. Use viewport units only when the value represents an actual viewport relationship.
-
-5. Prefer documented library CSS custom properties for local customization. Do not increase selector specificity or use `!important` when a scoped variable or ordinary nested selector is sufficient.
-
-6. Define `box-sizing: border-box` once in the established global or top-level rule; never repeat it in components. When a fixed dimension already establishes the minimum size, do not repeat the corresponding minimum dimension or an equivalent fixed flex basis. Omit declarations that have no effect in the element's actual formatting context. Extract recurring layout, truncation, transition, or animation patterns into a focused Less/Sass mixin, variable, or established utility only after genuine repetition exists. Do not redeclare values already provided by the established global reset or browser defaults. Keep an otherwise redundant declaration only when it is necessary for a specific, observable layout or typographic result.
-
-## Declaration and Compatibility Discipline
-
-Read [Declaration and Compatibility Examples](references/declaration-and-compatibility-examples.md) when deciding comments, blank lines, declaration order, consolidation, browser support, fallbacks, or final formatting checks.
-
-1. Avoid comments in CSS, Less, Sass, SCSS, and Vue `<style>` blocks. Do not add routine section labels, selector descriptions, declaration explanations, commented-out code, or comments that merely restate the stylesheet. Add a comment only when a non-obvious compatibility workaround, external-library constraint, or temporary exception cannot be expressed clearly through naming or structure; keep that exceptional comment concise, explain why it is necessary, and write it in Chinese unless another language is strictly necessary for an exact external term or project-mandated convention.
-
-2. Do not leave meaningless blank lines in CSS, Less, Sass, SCSS, or Vue `<style>` blocks. A blank line is allowed only when one line materially separates distinct selector groups or logical regions; never use consecutive blank lines, file-leading or file-trailing blank lines, blank lines immediately inside a selector or at-rule block, or blank lines between related declarations and nested selectors. Keep at most one intentional blank line between genuinely separate groups and remove every blank line that does not improve structural readability.
-
-3. Within a selector, order declarations as: positioning and overflow; interaction; dimensions (height before width); margin and padding; background, border, radius, and effects; typography and color; display and layout; animation and transition. Put nested selectors after declarations. If the repository's active Stylelint configuration enforces a different property order, follow the executable configuration and report that scoped exception instead of producing lint-failing code.
-
-4. Do not duplicate blocks for padding, border, layout, or state. Consolidate related child selectors under their parent and extract repeated patterns only when the reuse is real.
-
-5. Do not introduce CSS APIs, selectors, units, or properties with known target-browser compatibility problems. Confirm support or use the repository-approved fallback before adding newer features.
-
-6. Run the repository formatter only on changed style files. Compare with the pre-format state and restore formatting-only changes outside the task's affected regions while preserving pre-existing user edits. Keep formatting necessary for the changed syntax; report any whole-file check failure caused solely by untouched formatting instead of silently expanding the edit. Re-check the final diff against these structure rules and the established local convention.

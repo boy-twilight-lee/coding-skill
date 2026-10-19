@@ -1,5 +1,15 @@
 # Complex Component Context Examples
 
+## Mandatory Rules
+
+1. Implement every composable named `use**Context` as a context facade that returns exactly two methods: `provide()` for the owning component and `inject()` for descendants. Keep it in the owning page or component's `hooks/` directory, and define a module-level, business-qualified context key.
+
+2. Create all context-owned reactive state, computed values, template refs, watchers, side effects, and actions inside `provide()`. Assemble the public values into one `context` object, pass that exact object to Vue's `provide`, and return it so the owner and descendants share the same API and instances. Do not implement `use**Context` as a module-level reactive singleton or as unrelated standalone provider and injector functions.
+
+3. Implement `inject()` with Vue's `inject` and a complete fallback object. The fallback must have exactly the same public fields as the provided `context`, with safe empty refs and no-op functions of the correct types; never omit a provided field, add an inject-only field, or use unsafe partial casting to conceal a mismatch.
+
+4. Use the context only across the owning complex component subtree: call `use**Context().provide()` once in the owning component and `use**Context().inject()` in descendants. Do not call `provide()` in multiple descendants, and do not use this pattern as application-global state.
+
 Use this pattern only inside one owning complex component subtree.
 
 ## Scenario 1: Implement the Complete Context Facade
