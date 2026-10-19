@@ -1,69 +1,173 @@
 # coding-skill
 
-一组面向 Codex 的可组合编码规则技能，用于统一 Python 命令执行、TypeScript、Vue 3 和样式代码的实现与审查标准。
+<p align="center">
+  <img src="./ts-code-rules/assets/typescript-logo.svg" width="56" height="56" alt="TypeScript" />
+  &nbsp;&nbsp;&nbsp;
+  <img src="./vue-code-rules/assets/vuejs-logo.svg" width="56" height="56" alt="Vue" />
+  &nbsp;&nbsp;&nbsp;
+  <img src="./css-code-rules/assets/css3-logo.svg" width="56" height="56" alt="CSS" />
+</p>
 
-## 包含的技能
+<p align="center">
+  <strong>面向 Codex 的 TypeScript、Vue 3 与 CSS 可组合编码规则。</strong>
+</p>
 
-| 技能 | 适用范围 | 主要内容 |
-| --- | --- | --- |
-| `python-command-rules` | Python、脚本、自动化及系统命令 | Python 优先、`subprocess` 调用、结构化结果、错误处理和文件操作 |
-| `ts-code-rules` | TypeScript、TSX、Vue 中的 TypeScript | 修改范围、注释、导入与类型组织、异步流程和运行时兼容性 |
-| `vue-code-rules` | Vue 3 SFC、组件、页面、布局及 composable | 模板、编译器宏、组件结构、Context、目录归属和应用架构 |
-| `css-code-rules` | CSS、Less、Sass、SCSS 及 Vue style 区块 | scope、命名与嵌套、布局、复用、声明顺序和浏览器兼容性 |
+<p align="center">
+  🧭 明确实现边界　🧩 按代码类型组合　🔍 同时指导编写与审查　🛡️ 控制无关改动
+</p>
 
-## 组合方式
+## ✨ 这组 Skill 能做什么
 
-这些技能按代码边界组合，而不是互相替代：
+`coding-skill` 将常用的前端工程约束整理成 Codex 可以按任务加载的技能。它不只是统一格式，而是帮助 Codex 在编写、修改、重构、调试和审查代码时作出更稳定的工程决策：
 
-- Vue SFC 中的 TypeScript 同时应用 `vue-code-rules` 和 `ts-code-rules`。
-- Vue style 区块同时应用 `vue-code-rules` 和 `css-code-rules`。
-- 执行本地命令或编写自动化脚本时应用 `python-command-rules`。
-- 同一任务中的每个相关技能只需加载一次。
+- 🎯 **减少模糊判断**：明确导入、类型、注释、组件边界、样式所有权和兼容性要求。
+- 🧩 **按代码边界组合**：TypeScript、Vue 与样式规则各自负责自己的领域，避免一份大规则重复和漂移。
+- 🔍 **提供正反场景**：不仅说明推荐写法，也展示常见错误、风险和适用例外。
+- 🛡️ **尊重修改范围**：避免顺手重构、全量格式化或为了统一风格改动无关代码。
+- ⚙️ **结合项目配置**：在自动导入、类型擦除、浏览器支持、预处理器等问题上，以仓库真实配置为判断依据。
 
-通用规则由对应语言技能负责，Vue 技能只补充编译器宏、watcher、生命周期、SFC 区块和组件架构等 Vue 特有约束，以减少重复和规则漂移。
+## 🧰 包含的 Skill
 
-## 目录结构
+| 图标 | Skill | 主要作用 | 典型关注点 |
+| --- | --- | --- | --- |
+| 🟦 | `ts-code-rules` | 约束 TypeScript、TSX 和 Vue 中的 TypeScript 实现与审查 | 修改范围、注释、导入分组、类型归属、异步流程、错误处理、运行时兼容性 |
+| 🟩 | `vue-code-rules` | 约束 Vue 3 SFC、组件、页面、布局和 composable 的实现与架构 | 模板、编译器宏、watcher、生命周期、组件拆分、Context、目录归属、应用架构 |
+| 🎨 | `css-code-rules` | 约束 CSS、Less、Sass、SCSS 和 Vue style 区块 | scope、业务命名、嵌套、`:deep()`、布局、设计令牌、声明顺序、浏览器兼容性 |
 
-每个技能都是独立目录，通常包含：
+### 🟦 TypeScript：让代码边界和运行时行为更可靠
 
-```text
-skill-name/
-|-- SKILL.md          技能入口、适用范围和 reference 路由
-|-- agents/           Codex 展示与调用元数据
-|-- references/       按决策类型拆分的强制规则和示例
-|-- assets/           技能图标等静态资源
-`-- translation/      仅供人工阅读的中文合并版本
+`ts-code-rules` 负责通用 TypeScript 质量要求。它会指导 Codex：
+
+- 保持修改聚焦，清理由当前改动产生的无用代码，但不扩大到无关区域；
+- 为运行时声明和函数补充有业务含义的中文注释，避免机械复述；
+- 按项目配置决定普通导入与 `import type`，并通过公开入口跨模块访问；
+- 使用清晰的 `await` 流程，不静默丢弃 Promise；
+- 根据真实 TypeScript target、Browserslist、运行时和 polyfill 策略判断 API 兼容性。
+
+### 🟩 Vue：让组件保持清晰的职责和所有权
+
+`vue-code-rules` 负责 Vue 特有的模板、SFC 和组件架构决策。它会指导 Codex：
+
+- 保持 `<template>`、`<script>`、`<style>` 的正确相对顺序；
+- 控制模板复杂度、列表 key、组件标签、slot、DOM 深度和 class 绑定；
+- 正确排列编译器宏，并根据 Vite 自动导入配置决定是否显式导入 Vue API；
+- 按真实职责拆分组件和 composable，避免机械拆文件或过早提升私有模块；
+- 在复杂组件子树中规范 `provide` / `inject` Context，并保持安全回退对象；
+- 尊重已有移动端、PC 端、页面、共享组件和布局的架构边界。
+
+### 🎨 CSS：让样式跟随组件所有权而不是不断堆叠
+
+`css-code-rules` 负责样式作用域、命名、布局与兼容性。它会指导 Codex：
+
+- 保持项目既有的 CSS、Less、Sass、SCSS 或 CSS Modules 方案；
+- 使用有业务含义的根类和单连字符 BEM 风格，控制过长或含糊的类名；
+- 让嵌套、状态、伪类、直接子元素和 `:deep()` 选择器反映真实 DOM 所有权；
+- 优先复用设计令牌、Flexbox、组件库 CSS 变量和已经验证的公共样式能力；
+- 删除无效或重复声明，同时保留对布局、截断和交互确有影响的规则；
+- 根据目标浏览器与构建工具决定新 CSS 特性是否可用。
+
+## 🔗 如何组合
+
+三个 Skill 可以独立使用，也可以在同一个任务中叠加：
+
+| 代码场景 | 应用的 Skill |
+| --- | --- |
+| 独立 `.ts` / `.tsx` 文件 | `ts-code-rules` |
+| Vue 模板或组件结构 | `vue-code-rules` |
+| Vue `<script setup lang="ts">` | `vue-code-rules` + `ts-code-rules` |
+| 独立 CSS / Less / Sass / SCSS | `css-code-rules` |
+| Vue `<style>` 区块 | `vue-code-rules` + `css-code-rules` |
+| 同时修改完整 Vue SFC | `vue-code-rules` + `ts-code-rules` + `css-code-rules` |
+
+Vue Skill 只补充 Vue 特有规则；通用 TypeScript 和样式规则仍由对应 Skill 负责。同一任务中的每个相关 Skill 加载一次即可。
+
+## 📦 安装到 Codex
+
+### 方式一：安装全部 Skill
+
+先克隆仓库：
+
+```bash
+git clone https://github.com/boy-twilight-lee/coding-skill.git
 ```
 
-`translation/` 不会被 `SKILL.md` 或 Codex 自动路由引用。部署到 Codex 时可以省略该目录；仓库中保留它是为了方便人工查阅。
+#### 🪟 Windows PowerShell
 
-## 安装到 Codex
+```powershell
+$codexRoot = if ($env:CODEX_HOME) { $env:CODEX_HOME } else { Join-Path $env:USERPROFILE '.codex' }
+$codexSkills = Join-Path $codexRoot 'skills'
+New-Item -ItemType Directory -Force -Path $codexSkills | Out-Null
 
-将需要的技能目录复制到 `$CODEX_HOME/skills/`。未设置 `CODEX_HOME` 时，Windows 的默认位置通常是 `%USERPROFILE%\.codex\skills\`。
-
-安装后的结构示例：
-
-```text
-$CODEX_HOME/skills/
-|-- python-command-rules/
-|-- ts-code-rules/
-|-- vue-code-rules/
-`-- css-code-rules/
+Copy-Item -Recurse -Force .\coding-skill\ts-code-rules $codexSkills
+Copy-Item -Recurse -Force .\coding-skill\vue-code-rules $codexSkills
+Copy-Item -Recurse -Force .\coding-skill\css-code-rules $codexSkills
 ```
 
-复制时保留 `SKILL.md`、`agents/`、`references/` 和 `assets/`，可以排除 `translation/`。新安装或更新的技能将在 Codex 后续任务中可用。
+#### 🐧 macOS / Linux
 
-## 使用
+```bash
+codex_root="${CODEX_HOME:-$HOME/.codex}"
+mkdir -p "$codex_root/skills"
 
-技能描述支持 Codex 根据任务内容自动选择，也可以在请求中显式指定技能名称。项目级 `AGENTS.md` 可以进一步规定强制路由，例如要求所有 Vue 修改始终应用 `vue-code-rules`。
+cp -R ./coding-skill/ts-code-rules "$codex_root/skills/"
+cp -R ./coding-skill/vue-code-rules "$codex_root/skills/"
+cp -R ./coding-skill/css-code-rules "$codex_root/skills/"
+```
 
-修改技能时：
+请完整复制需要的 Skill，不要只复制 `SKILL.md`；详细规则、正反示例和图标资源会由同一 Skill 中的其他文件提供。
 
-1. 将入口保持在 `SKILL.md`，只保留适用范围、关键约束和 reference 路由。
-2. 将详细规则与示例放在 `references/`，避免在多个技能中复制同一大段内容。
-3. 使用 Codex 内置 `skill-creator/scripts/quick_validate.py` 分别校验每个技能目录。
-4. 检查 reference 链接、Markdown 代码围栏和最终差异，避免把无关格式化带入修改。
+### 方式二：只安装需要的 Skill
 
-## License
+三个 Skill 没有强制绑定关系。只写 TypeScript 时可以仅安装 `ts-code-rules`；Vue 项目通常建议同时安装三项，以便覆盖 SFC 的模板、脚本和样式。
+
+安装或更新后，在新的 Codex 任务中使用。如果 Codex 暂时没有识别新 Skill，重启 Codex 后再试。
+
+## 🚀 使用方式
+
+### 自动匹配
+
+安装后，Codex 可以根据 Skill 的描述自动选择相关规则。例如修改 Vue SFC 时加载 Vue Skill，遇到其中的 TypeScript 或样式区块时再组合对应 Skill。
+
+### 显式指定
+
+也可以在请求中直接指定：
+
+```text
+请使用 $vue-code-rules、$ts-code-rules 和 $css-code-rules 完成这个 Vue 页面，并检查所有修改行。
+```
+
+代码审查时同样适用：
+
+```text
+请使用 $ts-code-rules 审查这次 TypeScript 修改，重点检查异步错误处理和模块边界。
+```
+
+### 在项目中强制路由
+
+如果希望项目内的相关任务始终使用这些 Skill，可以在项目级 `AGENTS.md` 中加入路由说明：
+
+```markdown
+# Vue Skill Routing
+
+For every task that writes, modifies, refactors, reviews, debugs, or completes Vue project code, always use the vue-code-rules skill.
+
+# TypeScript Skill Routing
+
+For every task that writes, modifies, refactors, reviews, debugs, or completes TypeScript, TSX, or Vue TypeScript code, always use the ts-code-rules skill.
+
+# CSS Skill Routing
+
+For every task that writes, modifies, refactors, reviews, debugs, or completes CSS, Less, Sass, SCSS, or a Vue style block, always use the css-code-rules skill.
+```
+
+## 🌏 中文阅读版
+
+Codex 执行时以各 Skill 的 `SKILL.md` 和按需加载的 references 为准。仓库同时提供合并后的中文版本，方便人工通读和评审：
+
+- 🟦 [TypeScript Code Rules 中文版](./ts-code-rules/translation/ts-code-rules-zh-CN.md)
+- 🟩 [Vue Code Rules 中文版](./vue-code-rules/translation/vue-code-rules-zh-CN.md)
+- 🎨 [CSS Code Rules 中文版](./css-code-rules/translation/css-code-rules-zh-CN.md)
+
+## 📄 License
 
 本项目采用 [MIT License](LICENSE)。
