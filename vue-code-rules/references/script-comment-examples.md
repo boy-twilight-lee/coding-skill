@@ -30,9 +30,9 @@ const emit = defineEmits<{
   saved: [candidateId: string]
 }>()
 
-// 标识候选人详情是否正在加载。
+// Indicates whether the candidate details are loading.
 const loading = ref(false)
-// 提交候选人并通知父组件。
+// Submits the candidate and notifies the parent component.
 const submitCandidate = async () => {
   await saveCandidate(props.candidateId)
   emit('saved', props.candidateId)
@@ -44,7 +44,7 @@ const submitCandidate = async () => {
 Do not add a generic declaration comment above that same compiler macro:
 
 ```ts
-// 接收组件属性。
+// Receives the component props.
 const props = defineProps<{
   candidateId: string
 }>()
@@ -59,12 +59,12 @@ Its name and type argument already identify the declaration role. Document non-o
 The comment belongs immediately above the Vue API call and documents its callback:
 
 ```ts
-// 在筛选条件变化后重新加载候选人列表。
+// Reloads the candidate list after the filters change.
 watch(filters, async () => {
   await loadCandidates()
 })
 
-// 在页面挂载后初始化候选人数据。
+// Initializes candidate data after the page mounts.
 onMounted(async () => {
   await loadCandidates()
 })
@@ -78,12 +78,12 @@ Do not move the same callback comments inside the watcher and lifecycle bodies:
 
 ```ts
 watch(filters, async () => {
-  // 在筛选条件变化后重新加载候选人列表。
+  // Reloads the candidate list after the filters change.
   await loadCandidates()
 })
 
 onMounted(async () => {
-  // 在页面挂载后初始化候选人数据。
+  // Initializes candidate data after the page mounts.
   await loadCandidates()
 })
 ```
@@ -95,11 +95,11 @@ onMounted(async () => {
 Keep a callback beside its only registration site and trust a verified Vue contract instead of repeating it:
 
 ```ts
-// 打开图形验证码并在通过后请求发送短信验证码。
+// Opens the CAPTCHA and requests an SMS code after successful validation.
 const handleRequestCode = () => {
   if (requestCodeDisabled.value) return
   openCaptcha({
-    // 图形验证码通过后继续完成短信发送流程。
+    // Continues the SMS delivery flow after the CAPTCHA succeeds.
     onOk: async (validate: string) => {
       status.value = 'sending'
       await sendPhoneVerificationCode({ phone: phone.value, validate })
@@ -109,7 +109,7 @@ const handleRequestCode = () => {
   })
 }
 
-// 在手机号变化时就地清理关联的验证码及准入状态。
+// Clears the associated verification code and access state in place when the phone number changes.
 watch(phone, () => {
   code.value = ''
   status.value = 'idle'
@@ -122,25 +122,25 @@ watch(phone, () => {
 Do not extract those same one-use callbacks only to shorten their owners or to attach another declaration comment:
 
 ```ts
-// 图形验证码通过后继续完成短信发送流程。
+// Continues the SMS delivery flow after the CAPTCHA succeeds.
 const handleCaptchaVerified = async (validate: string) => {
   status.value = 'sending'
   await sendPhoneVerificationCode({ phone: phone.value, validate })
   status.value = 'sent'
   startCountdown()
 }
-// 打开图形验证码并请求发送短信验证码。
+// Opens the CAPTCHA and requests an SMS verification code.
 const handleRequestCode = () => {
   if (requestCodeDisabled.value) return
   openCaptcha({ onOk: handleCaptchaVerified })
 }
-// 清理关联的验证码及准入状态。
+// Clears the associated verification code and access state.
 const resetVerification = () => {
   code.value = ''
   status.value = 'idle'
   onVerifiedChange(null)
 }
-// 在手机号变化时作废原短信验证状态。
+// Invalidates the previous SMS verification state when the phone number changes.
 watch(phone, resetVerification)
 ```
 

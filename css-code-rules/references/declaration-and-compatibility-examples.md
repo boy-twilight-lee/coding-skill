@@ -34,7 +34,7 @@ A concise Chinese comment is acceptable when a non-obvious external constraint c
 
 ```less
 .legacy-dialog {
-  /* 兼容旧版 WebView 的滚动回弹缺陷 */
+  /* Works around the scroll-bounce defect in legacy WebViews. */
   -webkit-overflow-scrolling: touch;
 }
 ```
@@ -44,9 +44,9 @@ A concise Chinese comment is acceptable when a non-obvious external constraint c
 Do not add a section label or a comment that restates the same declaration:
 
 ```less
-/* 卡片标题样式 */
+/* Card title styles */
 .talent-card {
-  /* 设置主要文字颜色 */
+  /* Sets the primary text color. */
   color: var(--text-color-primary);
 }
 ```

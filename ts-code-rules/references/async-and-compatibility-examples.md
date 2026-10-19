@@ -4,7 +4,7 @@
 
 1. Prefer `await` to `.then()` for ordinary sequential flow. Use `try/catch` only at the layer that can recover, translate, enrich, or report the error; otherwise let the rejection propagate. Do not discard a Promise with unary `void`. Await it when completion matters; for an intentional fire-and-forget boundary, ensure the operation handles or explicitly reports its own rejection.
 
-2. Every `error` value caught by `catch` is guaranteed to have a `message` property. Read `error.message` directly; do not narrow it with `error instanceof Error`, `typeof`, or fallback branches such as `error instanceof Error ? error.message : '错误'`.
+2. Every `error` value caught by `catch` is guaranteed to have a `message` property. Read `error.message` directly; do not narrow it with `error instanceof Error`, `typeof`, or fallback branches such as `error instanceof Error ? error.message : 'Error'`.
 
 3. Use APIs supported by the repository's actual TypeScript target, runtime versions, Browserslist, and polyfill strategy. Before introducing an API outside that verified baseline, confirm support in every target environment or use a project-approved fallback or polyfill. Do not assume transpilation supplies runtime APIs.
 
@@ -15,14 +15,14 @@
 **Positive example:**
 
 ```ts
-// 加载候选人详情并同步页面状态。
+// Loads candidate details and synchronizes the page state.
 const loadCandidate = async () => {
   try {
-    // 保存接口返回的候选人详情。
+    // Stores the candidate details returned by the API.
     const candidate = await getCandidate(candidateId)
     detail.value = candidate
   } catch (error) {
-    // 记录加载失败并交由页面错误边界处理。
+    // Reports the load failure and delegates handling to the page error boundary.
     reportCandidateLoadError(error)
     throw error
   }
@@ -54,9 +54,9 @@ await saveCandidate(payload)
 For an intentional fire-and-forget contract, make the boundary explicit and handle rejection inside the called operation:
 
 ```ts
-// 上报候选人页面曝光，不阻塞当前交互流程。
+// Reports candidate-page exposure without blocking the current interaction flow.
 const reportCandidateExposure = () => {
-  // 捕获曝光上报失败并交给遥测错误通道。
+  // Captures exposure-reporting failures and sends them to the telemetry error channel.
   reportExposureRequest().catch((error) => {
     reportTelemetryError(error)
   })
@@ -91,7 +91,7 @@ Do not assume transpilation adds runtime APIs. Syntax transformation and API pol
 When `Array.prototype.at` is not supported by the actual targets, use the approved compatible form:
 
 ```ts
-// 读取候选人列表中的最后一项。
+// Reads the last item in the candidate list.
 const lastCandidate = candidates[candidates.length - 1]
 ```
 
@@ -100,7 +100,7 @@ const lastCandidate = candidates[candidates.length - 1]
 Do not use the unsupported API for that same last-item lookup:
 
 ```ts
-// 读取候选人列表中的最后一项。
+// Reads the last item in the candidate list.
 const lastCandidate = candidates.at(-1)
 ```
 

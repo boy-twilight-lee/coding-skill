@@ -75,13 +75,13 @@ candidate-list/
 Move state, derived values, actions, and side effects that form one reusable behavior into a focused composable:
 
 ```ts
-// 管理候选人筛选条件及其重置行为。
+// Manages candidate filters and their reset behavior.
 export const useCandidateFilters = () => {
-  // 保存当前候选人筛选条件。
+  // Stores the current candidate filters.
   const filters = ref(createDefaultFilters())
-  // 标识当前是否存在已应用的筛选条件。
+  // Indicates whether any filters are currently applied.
   const hasActiveFilters = computed(() => hasFilters(filters.value))
-  // 恢复候选人筛选条件的默认值。
+  // Restores the default candidate filters.
   const resetFilters = () => {
     filters.value = createDefaultFilters()
   }
@@ -92,7 +92,7 @@ export const useCandidateFilters = () => {
 Keep one-off presentation state in its component. For a one-off dialog state, keep the ref in the owning component:
 
 ```ts
-// 标识候选人弹窗是否显示。
+// Indicates whether the candidate dialog is visible.
 const candidateDialogVisible = ref(false)
 ```
 
@@ -103,9 +103,9 @@ Use a `use**Context` facade only when the same owned state and actions must cros
 Do not extract that same one-off dialog ref into a composable without reusable behavior or an independent responsibility:
 
 ```ts
-// 创建候选人弹窗的显示状态。
+// Creates the visibility state for the candidate dialog.
 export const useCandidateDialogVisible = () => {
-  // 标识候选人弹窗是否显示。
+  // Indicates whether the candidate dialog is visible.
   const visible = ref(false)
   return { visible }
 }

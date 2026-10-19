@@ -103,7 +103,7 @@ Prefer a naturally concise full name when it identifies the owner without collis
 ```vue
 <div class="candidate-evaluation">
   <div class="candidate-evaluation-header">
-    <span class="candidate-evaluation-title">候选人评估</span>
+    <span class="candidate-evaluation-title">Candidate evaluation</span>
   </div>
 </div>
 ```
@@ -133,9 +133,9 @@ Complete abbreviated application:
 ```vue
 <div class="hr-recruit-cand-eval">
   <div class="hr-recruit-cand-eval-header">
-    <span class="hr-recruit-cand-eval-title">候选人评估</span>
+    <span class="hr-recruit-cand-eval-title">Candidate evaluation</span>
     <div class="hr-recruit-cand-eval-actions">
-      <button class="hr-recruit-cand-eval-submit">提交</button>
+      <button class="hr-recruit-cand-eval-submit">Submit</button>
     </div>
   </div>
 </div>
@@ -169,7 +169,7 @@ Do not encode every ancestor, implementation detail, and visual role into one na
 <div class="human-resources-recruitment-candidate-evaluation-management-panel-container">
   <div class="human-resources-recruitment-candidate-evaluation-management-panel-container-header-wrapper">
     <span class="human-resources-recruitment-candidate-evaluation-management-panel-container-header-wrapper-title-text">
-      候选人评估
+      Candidate evaluation
     </span>
   </div>
 </div>
@@ -209,7 +209,7 @@ Situation: the DOM contains a card, its header, and a title owned by that header
 ```vue
 <div class="talent-card">
   <div class="talent-card-header">
-    <span class="talent-card-title">候选人</span>
+    <span class="talent-card-title">Candidate</span>
   </div>
 </div>
 ```

@@ -29,7 +29,7 @@ Change the defective branch and its directly affected imports, comments, tests, 
 If the defect is an inclusive retry boundary, keep the correction local:
 
 ```ts
-// 判断候选人同步任务是否仍允许重试。
+// Determines whether the candidate synchronization task may still be retried.
 export const canRetryCandidateSync = (retryCount: number) => {
   return retryCount <= MAX_CANDIDATE_SYNC_RETRY_COUNT
 }
@@ -40,7 +40,7 @@ export const canRetryCandidateSync = (retryCount: number) => {
 Do not combine the same boundary fix with an unrelated rename and return-shape change:
 
 ```ts
-// 判断候选人同步任务是否仍允许重试，并返回包装结果。
+// Determines whether the candidate synchronization task may still be retried and returns a wrapped result.
 export const evaluateCandidateSyncRetry = (retryCount: number) => {
   return { allowed: retryCount <= MAX_CANDIDATE_SYNC_RETRY_COUNT }
 }
@@ -55,7 +55,7 @@ Unrelated renaming, logging rewrites, or conversion of neighboring functions to 
 Keep a clear one-time transformation at its call site:
 
 ```ts
-// 保存提交接口需要的候选人姓名。
+// Stores the candidate name required by the submission API.
 const candidateName = form.name.trim()
 await saveCandidate({ ...form, name: candidateName })
 ```
@@ -65,7 +65,7 @@ await saveCandidate({ ...form, name: candidateName })
 Do not create a wrapper that only renames or forwards one operation:
 
 ```ts
-// 返回去除空格后的候选人姓名。
+// Returns the trimmed candidate name.
 const getCandidateName = (name: string) => {
   return name.trim()
 }
@@ -88,7 +88,7 @@ After cleanup, keep only the imports and behavior required by the new path:
 ```ts
 import { saveCandidate } from '@/apis'
 
-// 保存当前候选人的提交参数。
+// Stores the submission payload for the current candidate.
 const candidatePayload = buildCandidatePayload(form)
 await saveCandidate(candidatePayload)
 ```
@@ -100,11 +100,11 @@ Before cleanup, the same changed path still contains the removed debugger depend
 ```ts
 import { debugCandidate, saveCandidate } from '@/apis'
 
-// 转发候选人保存请求。
+// Forwards the candidate save request.
 const submitCandidateRequest = (payload: CandidatePayload) => {
   return saveCandidate(payload)
 }
-// 保存当前候选人的提交参数。
+// Stores the submission payload for the current candidate.
 const candidatePayload = buildCandidatePayload(form)
 console.log(debugCandidate(candidatePayload))
 await submitCandidateRequest(candidatePayload)
@@ -117,11 +117,11 @@ Do not remove unrelated legacy code merely because it appears unused unless the 
 **Positive example:**
 
 ```ts
-// 保存当前编辑的候选人标识。
+// Stores the identifier of the candidate currently being edited.
 const candidateId = route.params.id
-// 标识候选人详情是否正在加载。
+// Indicates whether the candidate details are loading.
 let loading = false
-// 读取提交结果中的候选人信息。
+// Reads the candidate information from the submission result.
 const { candidate, updatedAt } = result
 ```
 
@@ -131,17 +131,17 @@ Class fields follow the same declaration rule, and methods follow the function r
 
 ```ts
 export class CandidateDraftService {
-  // 保存当前草稿所属的候选人标识。
+  // Stores the identifier of the candidate that owns the current draft.
   private readonly candidateId: string
-  // 标识当前草稿是否正在提交。
+  // Indicates whether the current draft is being submitted.
   private submitting = false
 
-  // 创建指定候选人的草稿服务。
+  // Creates a draft service for the specified candidate.
   public constructor(candidateId: string) {
     this.candidateId = candidateId
   }
 
-  // 提交当前候选人的草稿内容。
+  // Submits the current candidate's draft content.
   public async submit(payload: CandidateDraftPayload) {
     this.submitting = true
     try {
@@ -158,7 +158,7 @@ export class CandidateDraftService {
 Avoid a comment that merely repeats the same declaration's identifier:
 
 ```ts
-// 定义 candidateId。
+// Defines candidateId.
 const candidateId = route.params.id
 ```
 
@@ -167,19 +167,19 @@ const candidateId = route.params.id
 **Positive example:**
 
 ```ts
-// 提交候选人数据并返回保存后的详情。
+// Submits candidate data and returns the saved details.
 const submitCandidate = async (): Promise<Candidate> => {
   return await saveCandidate(buildCandidatePayload(form))
 }
 
-// 保留拥有有效联系方式的候选人。
+// Keeps candidates that have valid contact details.
 const hasValidContact = (candidate: Candidate) => {
   return Boolean(candidate.mobile || candidate.email)
 }
-// 提供当前可以联系的候选人列表。
+// Provides the list of candidates who can currently be contacted.
 const contactableCandidates = candidates.filter(hasValidContact)
 
-// 处理候选人卡片的选择事件。
+// Handles selection of a candidate card.
 const handleCandidateSelect = (candidateId: string) => {
   selectedCandidateId.value = candidateId
 }
@@ -188,7 +188,7 @@ const handleCandidateSelect = (candidateId: string) => {
 A short inline callback may remain when an immediately adjacent comment clearly describes it:
 
 ```ts
-// 按候选人标识建立详情索引。
+// Indexes candidate details by candidate identifier.
 const candidateMap = new Map(candidates.map((candidate) => [candidate.id, candidate]))
 ```
 
@@ -199,7 +199,7 @@ Extract an inline callback only when it has an independent responsibility, genui
 Do not leave the same responsibility unexplained or replace it with a comment that repeats the function name:
 
 ```ts
-// 定义 submitCandidate。
+// Defines submitCandidate.
 const submitCandidate = async (): Promise<Candidate> => {
   return await saveCandidate(buildCandidatePayload(form))
 }
@@ -210,12 +210,12 @@ const submitCandidate = async (): Promise<Candidate> => {
 **Positive example:**
 
 ```ts
-// 保存候选人并向调用方保留服务端校验错误。
+// Saves the candidate while preserving server validation errors for the caller.
 const submitCandidate = async () => {
   try {
     return await saveCandidate(buildCandidatePayload(form))
   } catch (error) {
-    // 将字段错误标准化后交给表单层展示。
+    // Normalizes field errors for display by the form layer.
     normalizeFieldErrors(error)
     throw error
   }
@@ -229,17 +229,17 @@ Do not narrate each assignment, call, or return. Declaration comments remain man
 Do not narrate every step in that same submission flow:
 
 ```ts
-// 保存候选人并向调用方保留服务端校验错误。
+// Saves the candidate while preserving server validation errors for the caller.
 const submitCandidate = async () => {
   try {
-    // 构建候选人参数。
+    // Builds the candidate payload.
     const payload = buildCandidatePayload(form)
-    // 调用候选人保存接口。
+    // Calls the candidate save API.
     return await saveCandidate(payload)
   } catch (error) {
-    // 调用字段错误标准化函数。
+    // Calls the field-error normalization function.
     normalizeFieldErrors(error)
-    // 抛出错误。
+    // Throws the error.
     throw error
   }
 }
@@ -253,12 +253,12 @@ const submitCandidate = async () => {
 import { computed, ref } from 'vue'
 import { loadCandidates } from '@/apis'
 
-// 保存当前候选人筛选条件。
+// Stores the current candidate filters.
 const filters = ref(createDefaultFilters())
-// 标识是否存在已应用的筛选条件。
+// Indicates whether any filters are currently applied.
 const hasActiveFilters = computed(() => hasFilters(filters.value))
 
-// 使用当前筛选条件刷新候选人列表。
+// Refreshes the candidate list with the current filters.
 const refreshCandidates = async () => {
   await loadCandidates(filters.value)
 }
@@ -271,11 +271,11 @@ Do not place a blank line between a required comment and its declaration, inside
 Do not separate the same comments from their declarations or split tightly coupled statements:
 
 ```ts
-// 保存当前候选人筛选条件。
+// Stores the current candidate filters.
 
 const filters = ref(createDefaultFilters())
 
-// 使用当前筛选条件刷新候选人列表。
+// Refreshes the candidate list with the current filters.
 const refreshCandidates = async () => {
 
   await loadCandidates(filters.value)
@@ -290,12 +290,12 @@ const refreshCandidates = async () => {
 Prefer the direct predicate and the verified callback contract:
 
 ```ts
-// 判断当前查询字段是否要求短信验证码验证。
+// Determines whether the current search field requires SMS verification.
 const hasSmsPhoneConfig = (field: SearchField) => {
   return field.format === ValidatorType.PHONE && field.smsOpen === true
 }
 
-// 在手机号变化时清除原短信准入签名。
+// Clears the previous SMS access signature when the phone number changes.
 watch(phone, () => {
   resetVerification()
 })
@@ -306,20 +306,20 @@ watch(phone, () => {
 Do not retain an extra function, variable, or condition in that same workflow just because it provides a place for a required declaration comment:
 
 ```ts
-// 判断当前查询字段是否要求短信验证码验证。
+// Determines whether the current search field requires SMS verification.
 const hasSmsPhoneConfig = (field: SearchField) => {
   return field.format === ValidatorType.PHONE && field.smsOpen === true
 }
-// ❌ 仅转发另一个判断，没有独立职责。
+// ❌ Only forwards another predicate and has no independent responsibility.
 const isSmsPhoneField = (field: SearchField) => {
   return hasSmsPhoneConfig(field)
 }
 
-// 在手机号变化时清除原短信准入签名。
+// Clears the previous SMS access signature when the phone number changes.
 watch(phone, (currentPhone, previousPhone) => {
-  // ❌ 一次性中间变量没有增加业务含义。
+  // ❌ This one-use intermediate variable adds no business meaning.
   const hasChanged = currentPhone !== previousPhone
-  // ❌ watch 已保证基础值变化时才调用，重复判断没有保护作用。
+  // ❌ The watcher already runs only when the source value changes, so this repeated check adds no protection.
   if (!hasChanged) return
   resetVerification()
 })
@@ -334,23 +334,23 @@ An intermediate value is still useful when it names a real business concept, is 
 Keep the callbacks where the workflow registers them, and remove only the guard guaranteed by the private call path:
 
 ```ts
-// 校验用户输入的短信验证码并保存查询准入签名。
+// Verifies the user-entered SMS code and stores the search access signature.
 const verifyCurrentCode = async () => {
   if (status.value === 'verifying' || phone.value !== sentPhone.value) return
   await verifyPhoneVerificationCode({ phone: phone.value, code: code.value })
 }
-// 接收验证码输入并在达到完整位数后立即校验。
+// Accepts verification-code input and verifies it as soon as it reaches full length.
 const handleCodeInput = async (value: string | number) => {
   code.value = String(value).slice(0, PHONE_VERIFICATION_CODE_LENGTH)
   if (code.value.length === PHONE_VERIFICATION_CODE_LENGTH) {
     await verifyCurrentCode()
   }
 }
-// 打开图形验证码并在通过后请求发送短信验证码。
+// Opens the CAPTCHA and requests an SMS code after successful validation.
 const handleRequestCode = () => {
   if (requestCodeDisabled.value) return
   openCaptcha({
-    // 图形验证码通过后继续完成短信发送流程。
+    // Continues the SMS delivery flow after the CAPTCHA succeeds.
     onOk: async (validate: string) => {
       status.value = 'sending'
       await sendPhoneVerificationCode({ phone: phone.value, validate })
@@ -359,7 +359,7 @@ const handleRequestCode = () => {
     }
   })
 }
-// 在手机号变化时就地清理关联的验证码及准入状态。
+// Clears the associated verification code and access state in place when the phone number changes.
 watch(phone, () => {
   code.value = ''
   status.value = 'idle'
@@ -372,7 +372,7 @@ watch(phone, () => {
 A named callback is not automatically clearer. In the same workflow, the following callbacks each have one registration site and no independent responsibility, while the verification function repeats a precondition already guaranteed by its only caller:
 
 ```ts
-// ❌ 校验函数重复检查唯一调用方已经保证的验证码长度。
+// ❌ The verification function repeats a code-length check already guaranteed by its only caller.
 const verifyCurrentCode = async () => {
   if (
     status.value === 'verifying' ||
@@ -383,32 +383,32 @@ const verifyCurrentCode = async () => {
   }
   await verifyPhoneVerificationCode({ phone: phone.value, code: code.value })
 }
-// 接收验证码输入并在达到完整位数后立即校验。
+// Accepts verification-code input and verifies it as soon as it reaches full length.
 const handleCodeInput = async (value: string | number) => {
   code.value = String(value).slice(0, PHONE_VERIFICATION_CODE_LENGTH)
   if (code.value.length === PHONE_VERIFICATION_CODE_LENGTH) {
     await verifyCurrentCode()
   }
 }
-// ❌ 该回调只服务于 handleRequestCode，却被拆到远处。
+// ❌ This callback serves only handleRequestCode but has been extracted far away.
 const handleCaptchaVerified = async (validate: string) => {
   status.value = 'sending'
   await sendPhoneVerificationCode({ phone: phone.value, validate })
   status.value = 'sent'
   startCountdown()
 }
-// 打开图形验证码并请求发送短信验证码。
+// Opens the CAPTCHA and requests an SMS verification code.
 const handleRequestCode = () => {
   if (requestCodeDisabled.value) return
   openCaptcha({ onOk: handleCaptchaVerified })
 }
-// ❌ 该重置函数只作为这一个 watcher 的回调。
+// ❌ This reset function is used only as the callback for this watcher.
 const resetVerification = () => {
   code.value = ''
   status.value = 'idle'
   onVerifiedChange(null)
 }
-// 在手机号变化时作废原短信验证状态。
+// Invalidates the previous SMS verification state when the phone number changes.
 watch(phone, resetVerification)
 ```
 

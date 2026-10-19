@@ -59,7 +59,7 @@ Keep ordinary component styles scoped:
 ```vue
 <template>
   <div class="talent-select">
-    <span class="talent-select-title">选择候选人</span>
+    <span class="talent-select-title">Select a candidate</span>
   </div>
 </template>
 

@@ -20,11 +20,11 @@ defineOptions({ inheritAttrs: false })
 const props = defineProps<{ candidateId: string }>()
 const emit = defineEmits<{ saved: [candidateId: string] }>()
 
-// 保存页面加载状态。
+// Stores the page loading state.
 const loading = ref(false)
-// 控制候选人编辑器是否显示。
+// Controls whether the candidate editor is visible.
 const visible = ref(false)
-// 加载当前候选人详情并维护加载状态。
+// Loads the current candidate details and maintains the loading state.
 const loadCandidate = async () => {
   loading.value = true
   try {
@@ -33,16 +33,16 @@ const loadCandidate = async () => {
     loading.value = false
   }
 }
-// 提交当前候选人并通知父组件。
+// Submits the current candidate and notifies the parent component.
 const handleSave = async () => {
   await saveCandidate(props.candidateId)
   emit('saved', props.candidateId)
 }
-// 打开候选人编辑器。
+// Opens the candidate editor.
 const openEditor = () => {
   visible.value = true
 }
-// 在组件挂载后加载候选人详情。
+// Loads candidate details after the component mounts.
 onMounted(loadCandidate)
 
 defineExpose({ openEditor })
@@ -59,7 +59,7 @@ import { ref } from 'vue'
 import { loadCandidateName } from '@/apis'
 
 const props = defineProps<{ candidateId: string }>()
-// 保存候选人的展示名称，详情加载完成后更新。
+// Stores the candidate display name and updates it after the details load.
 const candidateName = ref('')
 
 defineExpose({ candidateName })
@@ -78,22 +78,22 @@ Do not place the same compiler macros after unrelated runtime declarations, insi
 <script setup lang="ts">
 import { onMounted, ref } from 'vue'
 
-// 保存页面加载状态。
+// Stores the page loading state.
 const loading = ref(false)
-// ❌ 组件契约宏被普通运行时声明隔开。
+// ❌ A regular runtime declaration separates the component contract macros.
 const props = defineProps<{ candidateId: string }>()
 
-// ❌ 编译宏不能放在函数或其他嵌套作用域中。
+// ❌ Compiler macros cannot appear inside a function or another nested scope.
 const createEmitter = () => {
   return defineEmits<{ saved: [candidateId: string] }>()
 }
 
-// 打开候选人编辑器。
+// Opens the candidate editor.
 const openEditor = () => {
   visible.value = true
 }
 defineExpose({ openEditor })
-// ❌ 没有顶层 await 时，defineExpose 后面不能再出现声明或可执行语句。
+// ❌ Without top-level await, no declaration or executable statement may follow defineExpose.
 onMounted(loadCandidate)
 </script>
 ```
@@ -123,13 +123,13 @@ With that configuration active, use the covered APIs directly:
 <script setup lang="ts">
 const props = defineProps<{ candidateId: string }>()
 
-// 读取当前候选人页面的路由信息。
+// Reads route information for the current candidate page.
 const route = useRoute()
-// 提供候选人详情页的路由跳转能力。
+// Provides navigation for the candidate details page.
 const router = useRouter()
-// 保存候选人搜索关键字。
+// Stores the candidate search keyword.
 const keyword = ref('')
-// 提供规范化后的候选人搜索关键字。
+// Provides the normalized candidate search keyword.
 const normalizedKeyword = computed(() => keyword.value.trim())
 </script>
 ```
@@ -146,13 +146,13 @@ import { useRoute, useRouter } from 'vue-router'
 
 const props = defineProps<{ candidateId: string }>()
 
-// 读取当前候选人页面的路由信息。
+// Reads route information for the current candidate page.
 const route = useRoute()
-// 提供候选人详情页的路由跳转能力。
+// Provides navigation for the candidate details page.
 const router = useRouter()
-// 保存候选人搜索关键字。
+// Stores the candidate search keyword.
 const keyword = ref('')
-// 提供规范化后的候选人搜索关键字。
+// Provides the normalized candidate search keyword.
 const normalizedKeyword = computed(() => keyword.value.trim())
 </script>
 ```
@@ -178,11 +178,11 @@ import { useRoute } from 'vue-router'
 
 const props = defineProps<{ candidateId: string }>()
 
-// 读取当前候选人页面的路由信息。
+// Reads route information for the current candidate page.
 const route = useRoute()
-// 保存候选人搜索关键字。
+// Stores the candidate search keyword.
 const keyword = ref('')
-// 提供规范化后的候选人搜索关键字。
+// Provides the normalized candidate search keyword.
 const normalizedKeyword = computed(() => keyword.value.trim())
 </script>
 ```
@@ -197,11 +197,11 @@ Do not omit imports for the same uncovered `computed` and `useRoute` APIs:
 <script setup lang="ts">
 const props = defineProps<{ candidateId: string }>()
 
-// 读取当前候选人页面的路由信息。
+// Reads route information for the current candidate page.
 const route = useRoute()
-// 保存候选人搜索关键字。
+// Stores the candidate search keyword.
 const keyword = ref('')
-// 提供规范化后的候选人搜索关键字。
+// Provides the normalized candidate search keyword.
 const normalizedKeyword = computed(() => keyword.value.trim())
 </script>
 ```

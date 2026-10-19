@@ -34,23 +34,23 @@ interface WorkbenchContext {
   initPage: () => Promise<void>
 }
 
-// 创建工作台页面的安全默认状态。
+// Creates a safe default state for the workbench page.
 const createDefaultPage = (): Page => {
   return { loading: false, pageNumber: 1 }
 }
-// 标识工作台所属组件子树中的上下文。
+// Identifies the context for the workbench component subtree.
 const WORKBENCH_CONTEXT_KEY: InjectionKey<WorkbenchContext> = Symbol('workbench-context')
 
-// 暴露工作台上下文的提供与注入能力。
+// Exposes the workbench context provider and injector.
 export const useWorkbenchContext = () => {
   return {
-    // 创建并提供共享的工作台状态。
+    // Creates and provides the shared workbench state.
     provide() {
-      // 保存当前工作台页面状态。
+      // Stores the current workbench page state.
       const page = ref<Page>(createDefaultPage())
-      // 标识当前页面是否正在加载。
+      // Indicates whether the current page is loading.
       const loading = computed(() => page.value.loading)
-      // 初始化所属组件的页面状态。
+      // Initializes the page state for the owning component.
       const initPage = async () => {
         page.value.loading = true
         try {
@@ -59,17 +59,17 @@ export const useWorkbenchContext = () => {
           page.value.loading = false
         }
       }
-      // 定义所属组件与后代组件共享的公开上下文。
+      // Defines the public context shared by the owner and its descendants.
       const context: WorkbenchContext = { page, loading, initPage }
       vueProvide(WORKBENCH_CONTEXT_KEY, context)
       return context
     },
-    // 读取共享状态，并在所属子树外提供完整安全的默认值。
+    // Reads shared state and provides complete safe defaults outside the owning subtree.
     inject() {
       return vueInject(WORKBENCH_CONTEXT_KEY, {
         page: ref<Page>(createDefaultPage()),
         loading: ref(false),
-        // 在所属组件子树外提供安全的空初始化方法。
+        // Provides a safe no-op initializer outside the owning component subtree.
         initPage: async () => {}
       })
     }
@@ -106,14 +106,14 @@ export const useWorkbenchContext = () => {
 Owning component:
 
 ```ts
-// 创建工作台所属组件及后代共享的状态。
+// Creates the state shared by the workbench owner and its descendants.
 const { page, loading, initPage } = useWorkbenchContext().provide()
 ```
 
 Descendant component:
 
 ```ts
-// 读取所属工作台提供的共享状态。
+// Reads the shared state provided by the owning workbench.
 const { page, loading, initPage } = useWorkbenchContext().inject()
 ```
 
@@ -124,7 +124,7 @@ Call `provide()` once in the owning component. Descendants call only `inject()`.
 Do not call `provide()` again in that same descendant:
 
 ```ts
-// ❌ 后代重新创建了工作台上下文，导致子树状态分叉。
+// ❌ The descendant recreates the workbench context and forks the subtree state.
 const { page, loading, initPage } = useWorkbenchContext().provide()
 ```
 
@@ -171,7 +171,7 @@ If the provided context exposes `page`, `loading`, and `initPage`, the fallback 
 return vueInject(WORKBENCH_CONTEXT_KEY, {
   page: ref<Page>(createDefaultPage()),
   loading: ref(false),
-  // 在所属组件子树外提供安全的空初始化方法。
+  // Provides a safe no-op initializer outside the owning component subtree.
   initPage: async () => {}
 })
 ```

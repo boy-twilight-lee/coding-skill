@@ -107,7 +107,7 @@ import { computed } from 'vue'
 const props = defineProps<{
   status: string
 }>()
-// 展示当前订单经过业务映射后的状态文案。
+// Provides the business-mapped status text for the current order.
 const orderStatusText = computed(() => getOrderStatusText(props.status))
 </script>
 ```
@@ -224,7 +224,7 @@ Use native interactive elements when their behavior applies; do not attach butto
 
 ```vue
 <button class="user-card-action" type="button" @click="openUserDetail">
-  查看详情
+  View details
 </button>
 ```
 
@@ -241,7 +241,7 @@ Use semantic elements deliberately for real page structure, data relationships, 
 Do not replace that same detail button with a clickable `div` or use a heading solely for default styling:
 
 ```vue
-<div class="user-card-action" @click="openUserDetail">查看详情</div>
+<div class="user-card-action" @click="openUserDetail">View details</div>
 <h1 class="user-card-name">{{ user.name }}</h1>
 ```
 
@@ -278,7 +278,7 @@ import { computed } from 'vue'
 import { CandidateCardProps } from './type'
 
 const props = defineProps<CandidateCardProps>()
-// 提供候选人卡片当前密度对应的类名。
+// Provides the class name for the current candidate-card density.
 const densityClass = computed(() => `candidate-card-${props.density}`)
 </script>
 ```
