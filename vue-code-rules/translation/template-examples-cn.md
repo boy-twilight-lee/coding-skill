@@ -9,7 +9,6 @@
 5. 组件根和层级匹配业务职责；命名插槽只作明确扩展点。
 6. 删除无独立布局、定位、动画、交互或分组职责的包装 DOM。
 7. 普通布局用 div/span；交互、语义和无障碍确有含义时使用原生语义元素。
-8. 多个类来源统一放一个 `:class` 数组；单一静态类或单一动态对象可用最简单形式。
 
 ## 场景 1：保持 SFC 区块顺序
 
@@ -208,119 +207,6 @@ const props = defineProps<{
 ```vue
 <div class="user-card-action" @click="openUserDetail">查看详情</div>
 <h1 class="user-card-name">{{ user.name }}</h1>
-```
-
-## 场景 7：用一个数组绑定组合多个类来源
-
-同一元素的多个类来源统一放入一个可读的 `:class` 数组，不拆成静态与动态属性，也不拼接长字符串。
-
-**正例：**
-
-```vue
-<template>
-  <div
-    :class="[
-      'candidate-card',
-      densityClass,
-      {
-        'candidate-card-active': props.active,
-        'candidate-card-disabled': props.disabled
-      }
-    ]"
-  >
-    <span class="candidate-card-name">{{ props.name }}</span>
-  </div>
-</template>
-
-<script setup lang="ts">
-import { computed } from 'vue'
-import { CandidateCardProps } from './type'
-
-const props = defineProps<CandidateCardProps>()
-// 提供候选人卡片当前密度对应的类名。
-const densityClass = computed(() => `candidate-card-${props.density}`)
-</script>
-```
-
-```ts
-export interface CandidateCardProps {
-  active: boolean
-  density: 'compact' | 'normal'
-  disabled: boolean
-  name: string
-}
-```
-
-```vue
-<div :class="['candidate-card', { 'candidate-card-active': active }]" />
-```
-
-```vue
-<div class="candidate-card" />
-
-<div :class="{ 'candidate-card-active': active }" />
-```
-
-```vue
-<div
-  :class="[
-    'candidate-card',
-    'candidate-card-compact',
-    {
-      'candidate-card-active': active,
-      'candidate-card-disabled': disabled
-    }
-  ]"
-/>
-```
-
-```vue
-<div
-  :class="[
-    'candidate-card',
-    `candidate-card-${density}`,
-    {
-      'candidate-card-active': active,
-      'candidate-card-disabled': disabled
-    }
-  ]"
-/>
-```
-
-```vue
-<div
-  :class="[
-    'candidate-card',
-    densityClass,
-    {
-      'candidate-card-active': active,
-      'candidate-card-disabled': disabled,
-      'candidate-card-loading': loading
-    }
-  ]"
-/>
-```
-
-**反例：**
-
-```vue
-<div
-  class="candidate-card candidate-card-compact"
-  :class="{
-    'candidate-card-active': active,
-    'candidate-card-disabled': disabled
-  }"
-/>
-```
-
-```vue
-<div
-  :class="`candidate-card candidate-card-${density} ${active ? 'candidate-card-active' : ''} ${disabled ? 'candidate-card-disabled' : ''}`"
-/>
-```
-
-```vue
-<div :class="['candidate-card', densityClass, { 'candidate-card-active': active, 'candidate-card-disabled': disabled, 'candidate-card-loading': loading }]" />
 ```
 
 ## 复核清单

@@ -16,8 +16,10 @@ In examples, `<zh: ...>` marks required Chinese comment content. Replace the mar
 ## Reference Routing
 
 - Read [Scope and File Organization Examples](references/scope-and-file-organization-examples.md) when deciding stylesheet language, Vue scope, extraction layout, ownership, or override placement.
-- Read [Naming and Nesting Examples](references/naming-and-nesting-examples.md) when deciding business roots, BEM names, ownership nesting, direct-child boundaries, deep selectors, pseudo-classes, or business states.
-- Read [Design, Layout, and Reuse Examples](references/design-layout-and-reuse-examples.md) when deciding token use, layout choice, target-specific presentation, units, library customization, redundancy removal, or reusable abstractions.
+- Read [Naming Examples](references/naming-examples.md) when deciding business roots, BEM names, abbreviations, or teleported-root names.
+- Read [Nesting and Deep Selector Examples](references/nesting-and-deep-examples.md) when deciding ownership nesting, direct-child boundaries, deep selectors, pseudo-classes, or business states.
+- Read [Design and Layout Examples](references/design-and-layout-examples.md) when deciding token use, layout choice, target-specific presentation, units, or library customization.
+- Read [Reuse and Redundancy Examples](references/reuse-and-redundancy-examples.md) when removing ineffective declarations or extracting reusable variables, mixins, utilities, or loops.
 - Read [Declaration and Compatibility Examples](references/declaration-and-compatibility-examples.md) when deciding comments, blank lines, declaration order, consolidation, browser support, fallbacks, or final formatting checks.
 
 ## Working Process

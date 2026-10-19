@@ -222,6 +222,8 @@ import CandidateTable from './component/candidate-table'
 import CandidateFilter from './component/candidate-filter.vue'
 ```
 
+跨模块导入路径选择以 `ts-code-rules` 为准；消费者不得绕过组件目录公开入口直接导入 `/index.vue`。
+
 **反例：**
 
 ```text

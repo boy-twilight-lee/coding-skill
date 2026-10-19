@@ -264,7 +264,7 @@ import CandidateTable from './component/candidate-table'
 import CandidateFilter from './component/candidate-filter.vue'
 ```
 
-Use the established public barrel for cross-module imports when one exists. Do not bypass a component directory's export entry with a consumer import ending in `/index.vue`.
+Apply `ts-code-rules` for cross-module import-path selection. Do not bypass a component directory's export entry with a consumer import ending in `/index.vue`.
 
 When `component/user-card-label.vue` later needs several private files, convert it to `component/user-card-label/index.vue`, add `component/user-card-label/index.ts`, and place those files beside it. If it instead becomes a first-level shared component, move it to `src/components/user-card-label/` with both entries even if its implementation is still simple. Update consumers and check automatic component discovery so the registered name and imports still resolve. Do not convert unrelated components during that change.
 
@@ -321,7 +321,7 @@ candidate-list/
 - First-level pages, views, and shared components always use directories, even when simple.
 - Only simple children inside private `component/` directories use named `.vue` files without an extra directory.
 - Every directory-managed component has `index.vue` and an `index.ts` forwarding its default component export.
-- Consumers use component directory exports or established public barrels; separate styles and other supporting files remain optional.
+- Consumers do not bypass component directory exports; cross-module import-path selection follows `ts-code-rules`, while separate styles and other supporting files remain optional.
 - Names and directory entries follow the required casing.
 - Private children and hooks remain beside their owner.
 - Every `.vue` file stays within 1000 lines through responsibility-based splits.

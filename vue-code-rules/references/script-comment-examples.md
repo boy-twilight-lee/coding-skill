@@ -8,9 +8,9 @@ For JavaScript Vue scripts, apply the same baseline directly: runtime declaratio
 
 ## Mandatory Rules
 
-1. Comment every runtime variable or constant immediately above its declaration with its business purpose or state meaning. Imports, function parameters, and type-only declarations do not need separate declaration comments. Never place a declaration comment above a Vue compiler macro, including a variable or destructuring declaration that receives the result of `defineProps`, `withDefaults`, `defineEmits`, `defineExpose`, `defineOptions`, `defineSlots`, or another compiler macro.
+1. Apply the source-language declaration-comment baseline to ordinary runtime declarations. Never place a generic declaration comment above a Vue compiler macro, including a variable or destructuring declaration that receives the result of `defineProps`, `withDefaults`, `defineEmits`, `defineExpose`, `defineOptions`, `defineSlots`, or another compiler macro.
 
-2. Comment every function, method, composable, event handler, watcher, lifecycle hook, and callback with its responsibility, side effect, or return meaning. For an inline callback, one immediately adjacent comment above the containing declaration, API call, watcher, lifecycle call, or object property is sufficient when it unambiguously describes the callback.
+2. For a watcher, lifecycle hook, or inline callback, place one comment immediately above the containing API call or object property when it unambiguously describes the callback. Do not duplicate that comment inside the callback solely to satisfy the source-language callback rule.
 
 ## Scenario 1: Apply the Compiler-Macro Exception
 

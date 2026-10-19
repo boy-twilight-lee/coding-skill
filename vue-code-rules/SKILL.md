@@ -15,7 +15,8 @@ In examples, `<zh: ...>` marks required Chinese comment content. Replace the mar
 
 ## Reference Routing
 
-- Read [Template Examples](references/template-examples.md) when deciding SFC block order, list rendering, template expressions, component tags, slots, DOM depth, semantic elements, or class bindings.
+- Read [Template Examples](references/template-examples.md) when deciding SFC block order, list rendering, template expressions, component tags, slots, DOM depth, or semantic elements.
+- Read [Class Binding Examples](references/class-binding-examples.md) when an element combines static, reusable, or conditional class sources.
 - Read [Blank Line Examples](references/blank-line-examples.md) when deciding SFC block spacing, template whitespace, or JavaScript-script whitespace. TypeScript-script whitespace belongs to `ts-code-rules`; style-block whitespace belongs to `css-code-rules`.
 - Read [Script Structure Examples](references/script-structure-examples.md) when ordering Vue imports, compiler macros, runtime declarations, or deciding whether Vue and Vue Router APIs need explicit imports.
 - Read [Script Comment Examples](references/script-comment-examples.md) for Vue-specific compiler-macro, watcher, and lifecycle comment placement, and for the generic script baseline in JavaScript SFCs. For TypeScript SFCs, `ts-code-rules` owns the generic declaration, callback, internal-comment, and redundancy rules.

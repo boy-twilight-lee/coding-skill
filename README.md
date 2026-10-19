@@ -59,6 +59,20 @@ For every task that writes, modifies, refactors, reviews, debugs, or completes C
 
 安装或更新后，请在新的 Codex 任务中使用；如果暂时没有识别新 Skill，重启 Codex 后再试。
 
+## ✅ 校验
+
+校验四个 Skill、翻译映射、本地链接和运行内容语言边界：
+
+```text
+python scripts/validate_skills.py
+```
+
+同时比较仓库源文件与已安装 Skill：
+
+```text
+python scripts/validate_skills.py --check-installed
+```
+
 ## 🌏 中文阅读版
 
 Codex 执行时以各 Skill 的 `SKILL.md` 和按需加载的 references 为准。`translation/` 只翻译对应的 reference，并使用同名 `*-cn.md` 文件保持一一对应：
@@ -71,6 +85,7 @@ Codex 执行时以各 Skill 的 `SKILL.md` 和按需加载的 references 为准�
   - [async-and-compatibility-examples-cn.md](./ts-code-rules/translation/async-and-compatibility-examples-cn.md)
 - Vue
   - [template-examples-cn.md](./vue-code-rules/translation/template-examples-cn.md)
+  - [class-binding-examples-cn.md](./vue-code-rules/translation/class-binding-examples-cn.md)
   - [blank-line-examples-cn.md](./vue-code-rules/translation/blank-line-examples-cn.md)
   - [script-structure-examples-cn.md](./vue-code-rules/translation/script-structure-examples-cn.md)
   - [script-comment-examples-cn.md](./vue-code-rules/translation/script-comment-examples-cn.md)
@@ -79,8 +94,10 @@ Codex 执行时以各 Skill 的 `SKILL.md` 和按需加载的 references 为准�
   - [application-architecture-examples-cn.md](./vue-code-rules/translation/application-architecture-examples-cn.md)
 - CSS
   - [scope-and-file-organization-examples-cn.md](./css-code-rules/translation/scope-and-file-organization-examples-cn.md)
-  - [naming-and-nesting-examples-cn.md](./css-code-rules/translation/naming-and-nesting-examples-cn.md)
-  - [design-layout-and-reuse-examples-cn.md](./css-code-rules/translation/design-layout-and-reuse-examples-cn.md)
+  - [naming-examples-cn.md](./css-code-rules/translation/naming-examples-cn.md)
+  - [nesting-and-deep-examples-cn.md](./css-code-rules/translation/nesting-and-deep-examples-cn.md)
+  - [design-and-layout-examples-cn.md](./css-code-rules/translation/design-and-layout-examples-cn.md)
+  - [reuse-and-redundancy-examples-cn.md](./css-code-rules/translation/reuse-and-redundancy-examples-cn.md)
   - [declaration-and-compatibility-examples-cn.md](./css-code-rules/translation/declaration-and-compatibility-examples-cn.md)
 
 ## 📄 License

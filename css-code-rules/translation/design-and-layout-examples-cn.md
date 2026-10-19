@@ -1,13 +1,12 @@
-# 设计、布局与复用示例
+# 设计与布局示例
 
-> 本文件仅翻译 `css-code-rules/references/design-layout-and-reuse-examples.md`，规则结构和代码行为与英文 reference 对应，示例注释按中文规则本地化。
+> 本文件仅翻译 `css-code-rules/references/design-and-layout-examples.md`，规则结构和代码行为与英文 reference 对应，示例注释按中文规则本地化。
 
 1. 复用令牌、工具和语义值；只有真实重复时使用变量、mixin 或循环。
 2. 一维布局优先 Flexbox 与 `gap`；Grid 只用于 Flex 无法正确表达的真实二维对齐。
 3. 尊重仓库既有目标端所有权。Vue 项目的桌面端与移动端已由独立目录表达时，架构归 `vue-code-rules` 管理；样式只留在受影响目标端，不能用组件内媒体查询绕过边界。真正共享的响应式实现遵循仓库既有策略。
 4. 遵循项目单位策略；常规尺寸用 `px`，交给 PostCSS 转换，真实视口关系才用视口单位。
 5. 组件库定制优先公开 CSS 变量，不无谓提高特异性或使用 `!important`。
-6. 全局只定义一次 `box-sizing`；删除重复尺寸和无效声明，只有可观察行为需要时保留常见声明。
 
 ## 场景 1：复用现有设计令牌
 
@@ -171,165 +170,6 @@ src/pages-pc/talent-list/index.less
 ```less
 .page .content .talent-dialog.el-dialog {
   border-radius: 12px !important;
-}
-```
-
-## 场景 6：删除冗余固定尺寸声明
-
-固定尺寸已表达最小值时不再重复 min/flex-basis；删除在实际格式化上下文中无效的声明。
-
-**正例：**
-
-```less
-.talent-row {
-  .talent-row-avatar {
-    height: 40px;
-    width: 40px;
-    flex-shrink: 0;
-  }
-}
-```
-
-**反例：**
-
-```less
-.talent-row {
-  .talent-row-avatar {
-    height: 40px;
-    width: 40px;
-    min-height: 40px;
-    min-width: 40px;
-    display: block;
-    flex: 0 0 40px;
-    flex-shrink: 0;
-  }
-}
-```
-
-## 场景 7：区分重置噪音和可观察行为
-
-不重复全局重置，但会影响收缩、截断或交互的声明即使常见也要保留。
-
-**正例：**
-
-```less
-.talent-card {
-  font-size: 14px;
-  line-height: 1;
-}
-```
-
-```less
-.talent-row {
-  .talent-row-content {
-    min-width: 0;
-    flex: 1;
-  }
-}
-```
-
-**反例：**
-
-```less
-.talent-card {
-  margin: 0;
-  padding: 0;
-  border: none;
-  box-sizing: border-box;
-  font-size: 14px;
-  line-height: 1;
-}
-```
-
-## 场景 8：提取重复模式
-
-确认多处真实重复后再提取聚焦的 mixin、变量或工具，不能混入无关颜色、间距或组件尺寸。
-
-**正例：**
-
-```less
-.inline-center-fixed() {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  flex-shrink: 0;
-}
-
-.text-ellipsis() {
-  overflow: hidden;
-  text-overflow: ellipsis;
-  white-space: nowrap;
-}
-
-@motion-standard: transform 160ms ease;
-
-.talent-card {
-  .talent-card-action {
-    .inline-center-fixed();
-    transition: @motion-standard;
-  }
-
-  .talent-card-badge {
-    .inline-center-fixed();
-    transition: @motion-standard;
-  }
-
-  .talent-card-title {
-    .text-ellipsis();
-  }
-
-  .talent-card-summary {
-    .text-ellipsis();
-  }
-}
-```
-
-**反例：**
-
-```less
-.talent-action-style() {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  width: 96px;
-  padding: 8px;
-  color: var(--color-primary);
-}
-
-.talent-card-action {
-  .talent-action-style();
-}
-```
-
-## 场景 9：循环只用于稳定机械序列
-
-循环只生成命名和增量都稳定可预测的序列，不用于不规则业务状态或一次性短声明。
-
-**正例：**
-
-```less
-.talent-card {
-  .generate-delay(@index) when (@index <= 6) {
-    &.talent-card-delay-@{index} {
-      transition-delay: (@index * 40ms);
-    }
-    .generate-delay(@index + 1);
-  }
-  .generate-delay(1);
-}
-```
-
-**反例：**
-
-```less
-.talent-card {
-  .generate-state(@index) when (@index <= 3) {
-    &.talent-card-state-@{index} {
-      color: if(@index = 1, green, if(@index = 2, orange, red));
-    }
-    .generate-state(@index + 1);
-  }
-  .generate-state(1);
 }
 ```
 
