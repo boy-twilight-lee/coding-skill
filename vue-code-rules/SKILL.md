@@ -73,21 +73,30 @@ Read [Script Comment Examples](references/script-comment-examples.md) when docum
 
 Read [Component Structure Examples](references/component-structure-examples.md) when deciding component splits, composable extraction, naming, directory layout, or private ownership.
 
-1. Split a component when it mixes independent responsibilities, contains a cohesive unit with real reuse, or becomes difficult to maintain as one file. Extract child components for independent UI responsibilities and composables for cohesive stateful behavior. Keep tightly coupled template, state, and actions together; do not split trivial code, continuous workflows, or arbitrary line ranges merely to reduce file size.
+Use this map for a directory-managed page or component. Omit optional directories and files until they have a real owner-specific purpose.
 
-2. Extract reusable state, side effects, and business behavior into composables. When state, actions, or derived data travel through several component levels and are repeatedly updated, provide a dedicated `use**Context` composable with provide/inject instead of continuing prop/emit pass-through.
+```text
+<owner>/
+|-- index.vue
+|-- index.ts              Public component export
+|-- index.less            Optional extracted local style
+|-- component/
+|   |-- simple-child.vue  Cohesive private child
+|   `-- complex-child/
+|       |-- index.vue
+|       |-- index.ts
+|       |-- component/    Child-private components
+|       `-- hooks/        Child-private composables
+|-- hooks/                Owner-private composables
+|-- constants/            Owner-private constants
+`-- type/                 Owner-private types
+```
 
-3. Name Vue component files and custom tags in kebab-case. Name composable files in kebab-case, except hooks inside a `hooks/` directory, which use camelCase.
-
-4. Always use a kebab-case directory for each first-level page or component under `src/pages`, `src/views`, or `src/components`, and their existing target-specific equivalents such as `pages-pc` or `components-pc`, even when its implementation is simple. Each such unit must contain `index.vue` and an `index.ts` that exports the component. The single-file exception below applies only inside an owner's private `component/` directory; it does not permit files such as `src/components/user-avatar.vue` or `src/views/candidate-list.vue`.
-
-5. Inside the private `component/` directories owned by pages, views, or components, use a single kebab-case file, such as `empty-hint.vue`, for a simple child whose template, script, and styles remain cohesive in one SFC. Do not add a child-named directory or separate export/style files merely for uniformity. Props, emits, a short script, or local styles alone do not justify splitting a private child. Use a child-named directory when that child needs meaningful supporting files, such as extracted logic, styles, private children, or hooks; then include both `index.vue` and `index.ts`.
-
-6. Every directory-managed Vue component, including a page/view entry or a private child, must provide an `index.ts` that re-exports its `index.vue` default component. Export public types or other intended API there only when needed. Consumers reference the component directory through that export entry instead of importing its internal `index.vue`; retain higher-level public barrels where the project uses them. Keep `index.ts` as an export entry, not a container for extracted setup or business logic.
-
-7. Keep ordinary setup logic and local styles inside the SFC by default. Extract focused logic, types, or constants only when they have a meaningful responsibility, reuse, or maintenance benefit; use `index.less` only when separate styles are justified and the project supports Less. A required component directory and `index.ts` do not require a separate style file or an `index.vue` + `index.ts` + `index.less` trio.
-
-8. Put component-private child components in the owning component directory's `component/` and private composables in its `hooks/`. Apply the private-child rule independently at each nesting level. Keep each `.vue` file at or below 1000 total lines; split by responsibility rather than mechanically. When a private single-file child grows into a directory or is promoted to a first-level shared component, add its required `index.ts` and update affected imports and automatic component registration. Do not migrate unrelated components merely to normalize their layout.
+1. Split by independent UI responsibility, cohesive reusable behavior, or genuine maintenance difficulty. Keep tightly coupled template, state, and actions together; use a dedicated `use**Context` composable when shared state is repeatedly passed and updated across several component levels.
+2. Use kebab-case for component files, directories, and custom tags. Use kebab-case for composable files except hooks inside `hooks/`, which use camelCase.
+3. Every first-level page or component under the established page/component trees uses the directory form with `index.vue` and `index.ts`. Only a simple child inside an owner's private `component/` may use the single-file form; use a child directory when supporting files become meaningful.
+4. A directory-managed component's `index.ts` re-exports `index.vue` and any intentional public types. Keep ordinary setup and styles in the SFC; add `index.less`, hooks, constants, types, or private children only when they provide real ownership or maintenance value.
+5. Keep private units under their owner and each `.vue` file at or below 1000 lines. Promote a private child only after real cross-page reuse, update its public entry and consumers, and do not migrate unrelated components merely to normalize structure.
 
 ## Complex Component Context Rules
 
@@ -105,12 +114,20 @@ Read [Complex Component Context Examples](references/complex-component-context-e
 
 Read [Application Architecture Examples](references/application-architecture-examples.md) when placing pages, components, layouts, private modules, target-specific trees, dependencies, or utilities.
 
-1. Keep route-level orchestration in the project's established `src/pages` or `src/views` tree and, where present, its target-specific equivalents such as `src/pages-pc`. Do not introduce a competing page tree merely to rename the existing one. Keep reusable presentation and interaction units in `src/components` and, where present, `src/components-pc`. First-level pages and components use directories with `index.vue` and `index.ts`. Keep page frames in `src/layout`.
+Use the established equivalents of these directories; optional target-specific trees exist only when the repository already separates those targets.
 
-2. Keep a page's private `component/` and `hooks/` directories beside its page. Promote code to a `src`-level directory only after it has a clear cross-page consumer.
+```text
+src/
+|-- pages/ (or views/)    Route-level page units
+|-- pages-pc/             Optional target-specific pages
+|-- components/           Cross-page reusable UI
+|-- components-pc/        Optional target-specific reusable UI
+|-- layout/               Page frames
+|-- hooks/                Cross-page reusable composables
+|-- styles/               Application-wide styles
+`-- utils/                Cross-page stateless utilities
+```
 
-3. When a project has separate mobile and PC page/component trees, preserve that separation. Do not merge them through runtime device branches unless the request explicitly requires shared behavior.
-
-4. Before hand-writing a substantial capability, inspect the project's installed dependencies and wrappers. Reuse an installed dependency when it already satisfies the requirement without disproportionate cost. Add a new package only when the task authorizes dependency changes and the existing stack has a demonstrated gap; verify maintenance, provenance, target compatibility, bundle impact, and license from available package metadata or authoritative sources. If commercial-use safety cannot be verified, do not claim that it is safe or add it silently—report the unresolved constraint.
-
-5. Promote a page- or component-owned stateless helper to `src/utils` only when it has actual consumers on different pages. Sharing among components of one page is not cross-page reuse: keep that helper with the page or its nearest common owner. Potential reuse or an independently testable responsibility alone does not justify promotion. Organize promoted utilities by business domain or technical capability in focused modules: extend the matching module when one exists, otherwise create a clearly named module. Export public utilities through `src/utils/index.ts`; do not place implementations directly in the barrel or collect unrelated functions in vague catch-all files. Application-wide infrastructure such as the shared request client remains in its designated source layer; this promotion rule governs owner-private helpers.
+1. Preserve the established page tree and any mobile/PC separation. Do not create a competing tree or merge target-specific implementations through runtime device branches unless the request requires it.
+2. Keep page-private components, hooks, and helpers beside the page. Promote them to a `src`-level directory only after actual cross-page reuse; organize promoted utilities by focused business domain or technical capability and export them through the directory entry.
+3. Before hand-writing a substantial capability, inspect installed dependencies and wrappers. Add a package only with authorization and a demonstrated gap, after checking maintenance, provenance, target compatibility, bundle impact, and license; report unresolved commercial-use safety.

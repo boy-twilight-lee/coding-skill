@@ -1,6 +1,6 @@
 ---
 name: ts-code-rules
-description: "Enforce the user's TypeScript rules for code quality, comments, types, imports, async flow, source layers, formatting, and runtime compatibility. Use for any TypeScript or TSX change or review, including TypeScript Vue script blocks and TypeScript-backed architecture."
+description: "Enforce the user's TypeScript rules for code quality, comments, types, imports, async flow, formatting, and runtime compatibility. Use for any TypeScript or TSX change or review, including TypeScript Vue script blocks."
 ---
 
 # TypeScript Code Rules
@@ -41,21 +41,12 @@ Read [Code Quality Examples](references/code-quality-examples.md) when deciding 
 
 8. Do not leave meaningless blank lines in TypeScript or TSX. A blank line is allowed only when one line materially separates distinct logical regions; never use consecutive blank lines, file-leading or file-trailing blank lines, blank lines immediately inside an opening or closing code block, blank lines between a required comment and its declaration, or blank lines between tightly coupled imports, declarations, statements, object members, JSX nodes, or type members. Keep at most one intentional blank line between genuinely separate logical groups and remove every blank line that does not improve structural readability.
 
-## Imports and Source Layers
+## Imports and Type Organization
 
-Read [Imports and Source Layers Examples](references/imports-and-source-layers-examples.md) when deciding barrel exports, import order, type placement, source ownership, private constants, or whether to extract a constant.
-
-1. Ensure every directory directly under `src` exposes public content through `index.ts`, except `src/assets` and `src/pages`. Prefer those barrel exports over deep imports and never climb two or more parent directories; use the project's configured alias.
-
-2. Order imports as third-party runtime dependencies, type-only dependencies, other internal runtime imports, then component imports. Prefer standard `import` declarations for types when the compiler and bundler safely erase type-only usage. Use `import type` when required by `verbatimModuleSyntax`, lint rules, package runtime exports, or another verified build constraint; do not use inline `type` modifiers. Within the type group, place component-local or module-local types before shared types. In Vue code, first apply the Vite auto-import inspection required by `vue-code-rules`: do not explicitly import a covered `vue` or `vue-router` runtime API, and apply this ordering rule only to APIs that still require imports.
-
-3. Keep `.d.ts` declarations under `src/type`. Put complex or reusable component-private types in the owning sibling type module; allow concise inline prop literals where they improve readability. Do not declare non-trivial interfaces or type aliases inside a Vue `<script setup lang="ts">` block.
-
-4. Put endpoint declarations in `src/apis`; keep application-wide request-client configuration and response normalization in `src/utils`. Promote page- or component-owned stateless helpers to `src/utils` only after actual cross-page reuse exists; sharing within one page or hypothetical future reuse does not qualify. Keep app-wide immutable values in `src/constants`, Pinia state in `src/store`, and route definitions and guards in `src/router`.
-
-5. Keep a page or component's private `constants/` and `type/` directories beside the owner. Promote code to `src/constants` or `src/type` only when it has a clear cross-page consumer. Do not scatter status values, options, enums, or magic numbers through templates and implementation code.
-
-6. Do not extract constants mechanically. Keep a value or configuration inline when it is used only once, is clear at the point of use, and is unlikely to change independently. Do not extract one-off component-library configuration merely to replace an inline literal. Create a named constant only when it provides real reuse, centralizes a shared source of truth, gives important business meaning to an otherwise unclear value, or must be maintained independently.
+1. Order imports as third-party runtime dependencies, type dependencies, internal runtime modules, then UI or component modules when applicable. Within the type group, place module-local types before shared types.
+2. Prefer standard imports when the compiler and bundler safely erase type-only usage. Use a separate `import type` only when required by the verified compiler, lint, bundler, or package runtime contract; never use inline `type` modifiers.
+3. Import another module through its configured alias and public entry. Do not climb two or more parent directories or reach into another module's private files.
+4. Keep concise private types near their owner. Move reusable or public contracts to the repository's established type module, and keep ambient `.d.ts` declarations in its configured declaration location.
 
 ## Async and Compatibility
 
@@ -63,6 +54,8 @@ Read [Async and Compatibility Examples](references/async-and-compatibility-examp
 
 1. Prefer `await` to `.then()` for ordinary sequential flow. Use `try/catch` only at the layer that can recover, translate, enrich, or report the error; otherwise let the rejection propagate. Do not discard a Promise with unary `void`. Await it when completion matters; for an intentional fire-and-forget boundary, ensure the operation handles or explicitly reports its own rejection.
 
-2. Use APIs supported by the repository's actual TypeScript target, runtime versions, Browserslist, and polyfill strategy. Before introducing an API outside that verified baseline, confirm support in every target environment or use a project-approved fallback or polyfill. Do not assume transpilation supplies runtime APIs.
+2. Every `error` value caught by `catch` is guaranteed to have a `message` property. Read `error.message` directly; do not narrow it with `error instanceof Error`, `typeof`, or fallback branches such as `error instanceof Error ? error.message : '错误'`.
 
-3. Use the repository's configured Prettier formatter only on files changed for the task. Compare its output with the pre-format state and restore formatting-only changes outside the task's affected regions, preserving pre-existing user edits. Keep formatting adjustments necessary for the changed syntax. If a whole-file formatter check still fails solely on untouched formatting, report that limitation instead of broadening the edit silently. Re-check the final diff against these rules and the established local convention.
+3. Use APIs supported by the repository's actual TypeScript target, runtime versions, Browserslist, and polyfill strategy. Before introducing an API outside that verified baseline, confirm support in every target environment or use a project-approved fallback or polyfill. Do not assume transpilation supplies runtime APIs.
+
+4. Use the repository's configured Prettier formatter only on files changed for the task. Compare its output with the pre-format state and restore formatting-only changes outside the task's affected regions, preserving pre-existing user edits. Keep formatting adjustments necessary for the changed syntax. If a whole-file formatter check still fails solely on untouched formatting, report that limitation instead of broadening the edit silently. Re-check the final diff against these rules and the established local convention.
