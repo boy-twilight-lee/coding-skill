@@ -372,9 +372,9 @@ import { normalizeCandidate } from '@/features/candidate/private/normalize-candi
 使用仓库既有目录的等价位置：
 
 ```text
-src/pages/candidate-list/component/candidate-dialog/type.ts   弹窗私有类型
-src/features/candidate/type/index.ts                          可复用或公开功能契约
-src/type/env.d.ts                                             配置的环境声明位置
+src/pages/candidate-list/component/candidate-dialog/type.ts   Private dialog type
+src/features/candidate/type/index.ts                          Reusable or public feature contract
+src/type/env.d.ts                                             Configured ambient declaration location
 ```
 
 不要把弹窗私有类型过早放进全局兜底类型模块，不要把公开契约藏在私有组件内，也不要把环境声明放进任意实现文件。只有真实消费者跨越当前所有权边界后才提升类型。

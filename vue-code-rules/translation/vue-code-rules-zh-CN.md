@@ -465,78 +465,43 @@ const normalizedKeyword = computed(() => keyword.value.trim())
 
 ## 脚本注释规则
 
-TypeScript SFC 的通用声明、函数、回调、内部注释和冗余代码规则以 `ts-code-rules` 为准；本节只增加 Vue 编译器宏、watcher、生命周期和回调注册位置的特殊要求。JavaScript SFC 直接应用下面的同等基础规则。
+对于 `<script lang="ts">` 和 `<script setup lang="ts">`，通用声明、函数、回调、内部注释、冗余包装器、中间值和守卫规则以 `ts-code-rules` 为准；本节只补充 Vue 特有的放置方式和编译器宏例外。
 
-1. 每个运行时变量和常量有紧邻中文业务注释；导入、参数、纯类型和编译器宏例外，宏上方不得写声明注释。
-2. 每个函数、方法、composable、回调、处理器、watcher 和生命周期钩子有相邻职责注释；单一注册点的连续回调可保持内联。
-3. 内部只注释关键业务、非显然转换、重要分支、副作用和错误处理。
-4. 不为名称或注释保留透传包装器、无意义中间值或重复守卫。
+JavaScript Vue 脚本直接应用同一基线：运行时声明和函数需要简洁的中文业务注释，内部注释只说明重要且非显然的逻辑，不能为了添加注释而保留冗余结构。
 
-### 活跃 Vue 特有规则：`references/script-comment-examples.md`
+1. 每个运行时变量和常量都在声明紧邻上方用中文说明业务用途或状态含义；导入、函数参数和纯类型声明不需要单独注释。Vue 编译器宏及接收 `defineProps`、`withDefaults`、`defineEmits`、`defineExpose`、`defineOptions`、`defineSlots` 等宏结果的变量或解构声明上方不得添加声明注释。
+2. 每个函数、方法、composable、事件处理器、watcher、生命周期钩子和回调都要说明职责、副作用或返回含义。内联回调只要其所在声明、API 调用、watcher、生命周期调用或对象属性上方的紧邻注释能够明确描述它，就不需要重复注释。
+3. 只服务一个注册点且仅延续当前 Vue 或 API 流程的回调应留在注册位置。只有真实复用、独立业务职责、聚焦测试或明确可读性收益时才提取；回调长度本身不是创建一次性 `handle*` 或 reset 函数的理由。
+4. 函数内部只注释关键业务、非显然转换、重要分支、副作用和错误处理，不逐句解释普通赋值或调用，也不能为了制造名称或注释目标而引入透传函数、一次性中间值或调用方已经保证的守卫。
 
-下面继续保留完整人工示例，便于阅读和比较；它们不会重复进入自动 skill 上下文。
+### 对应强制规则与完整示例：`references/script-comment-examples.md`
 
-#### 场景 1：按业务含义注释变量
+#### 场景 1：应用编译器宏例外
 
-变量注释说明业务用途或状态，不复述标识符。
+编译器宏不添加声明注释，普通运行时状态仍需注释：
 
 ```ts
-// 保存当前编辑的候选人标识。
-const candidateId = ref('')
+const props = defineProps<{
+  candidateId: string
+}>()
+const emit = defineEmits<{
+  saved: [candidateId: string]
+}>()
+
 // 标识候选人详情是否正在加载。
 const loading = ref(false)
-// 提供当前候选人的完整展示名称。
-const candidateDisplayName = computed(() => formatCandidateName(candidate.value))
-```
-
-```ts
-// 定义 candidateId。
-const candidateId = ref('')
-```
-
-```ts
-// 读取候选人详情页所需的路由参数。
-const { candidateId, source } = route.query
-```
-
-#### 场景 2：注释函数和处理器
-
-函数和事件处理器注释说明职责、副作用或返回含义。
-
-```ts
-// 提交候选人表单并在成功后返回列表页。
+// 提交候选人并通知父组件。
 const submitCandidate = async () => {
-  await saveCandidate(form.value)
-  await router.push({ name: 'candidate-list' })
-}
-
-// 处理候选人卡片的选择事件。
-const handleCandidateSelect = (candidateId: string) => {
-  selectedCandidateId.value = candidateId
+  await saveCandidate(props.candidateId)
+  emit('saved', props.candidateId)
 }
 ```
 
-#### 场景 3：提取确需独立说明的回调
+不要在编译器宏上方添加 `// 接收组件属性。` 之类的通用注释。宏名称和类型参数已经表达声明角色；非显然业务含义应写入 prop 或事件契约。
 
-回调只有具备独立职责、复用、测试或明确可读性收益时才提取。
+#### 场景 2：放置 watcher 与生命周期注释
 
-```ts
-// 保留拥有有效联系方式的候选人。
-const hasValidContact = (candidate: Candidate) => {
-  return Boolean(candidate.mobile || candidate.email)
-}
-// 提供可以联系的候选人列表。
-const contactableCandidates = computed(() => candidates.value.filter(hasValidContact))
-```
-
-```ts
-// 按候选人标识建立详情索引。
-const candidateMap = new Map(candidates.value.map((candidate) => [candidate.id, candidate]))
-```
-
-#### 场景 4：注释 watcher 与生命周期钩子
-
-watcher 和生命周期调用用紧邻注释说明观察目的或副作用。
+注释紧邻 Vue API 调用，并描述其中的回调：
 
 ```ts
 // 在筛选条件变化后重新加载候选人列表。
@@ -550,136 +515,13 @@ onMounted(async () => {
 })
 ```
 
-#### 场景 5：只注释重要内部逻辑
+不要只为满足回调注释规则而在回调内部再写一条注释。只有回调具备独立职责、复用、聚焦测试价值或明确可读性收益时才提取为命名函数。
 
-内部注释只放在关键业务、非显然转换、重要分支和错误路径。
+#### 场景 3：保持一次性 Vue 流程连续
 
-```ts
-// 提交候选人表单并处理服务端校验失败。
-const submitCandidate = async () => {
-  try {
-    await saveCandidate(form.value)
-  } catch (error) {
-    // 将服务端字段错误同步回表单控件。
-    applyServerErrors(error)
-    throw error
-  }
-}
-```
-
-#### 场景 6：不要注释 Vue 编译器宏
-
-编译器宏及接收宏结果的声明上方不得添加声明注释。
+回调只服务一个注册位置时保持就地编写，并信任已经核实的 Vue 契约：
 
 ```ts
-// ❌ 接收组件属性。
-const props = defineProps<{ phone: string }>()
-// ❌ 声明组件事件。
-const emit = defineEmits<{ change: [phone: string] }>()
-// ❌ 设置组件默认选项。
-defineOptions({ inheritAttrs: false })
-```
-
-```ts
-const props = defineProps<{ phone: string }>()
-const emit = defineEmits<{ change: [phone: string] }>()
-defineOptions({ inheritAttrs: false })
-```
-
-#### 场景 7：删除冗余包装器、中间变量和守卫
-
-不要为命名或注释而保留透传包装器、一次性中间值或调用契约已保证的守卫。
-
-```ts
-// 判断当前查询字段是否要求短信验证码验证。
-const hasSmsPhoneConfig = (field: SearchField) => {
-  return field.format === ValidatorType.PHONE && field.smsOpen === true
-}
-// ❌ 仅转发另一个判断，没有新增语义或行为。
-const isSmsPhoneField = (field: SearchField) => {
-  return hasSmsPhoneConfig(field)
-}
-
-// 在手机号变化时清除原短信准入签名。
-watch(phone, (currentPhone, previousPhone) => {
-  // ❌ 一次性中间变量没有增加业务含义。
-  const hasChanged = currentPhone !== previousPhone
-  // ❌ watch 已保证基础值变化时才调用，重复判断没有保护作用。
-  if (!hasChanged) return
-  resetVerification()
-})
-```
-
-```ts
-// 判断当前查询字段是否要求短信验证码验证。
-const hasSmsPhoneConfig = (field: SearchField) => {
-  return field.format === ValidatorType.PHONE && field.smsOpen === true
-}
-
-// 在手机号变化时清除原短信准入签名。
-watch(phone, () => {
-  resetVerification()
-})
-```
-
-#### 场景 8：保持一次性回调流程连续
-
-只服务一个注册点且延续同一流程的回调放在注册位置；仅在独立职责、复用、测试或明显可读性收益时提取。
-
-```ts
-// ❌ 校验函数重复检查唯一调用方已经保证的验证码长度。
-const verifyCurrentCode = async () => {
-  if (
-    status.value === 'verifying' ||
-    code.value.length !== PHONE_VERIFICATION_CODE_LENGTH ||
-    phone.value !== sentPhone.value
-  ) {
-    return
-  }
-  await verifyPhoneVerificationCode({ phone: phone.value, code: code.value })
-}
-// 接收验证码输入并在达到完整位数后立即校验。
-const handleCodeInput = async (value: string | number) => {
-  code.value = String(value).slice(0, PHONE_VERIFICATION_CODE_LENGTH)
-  if (code.value.length === PHONE_VERIFICATION_CODE_LENGTH) {
-    await verifyCurrentCode()
-  }
-}
-// ❌ 该回调只服务于 handleRequestCode，却被拆到远处。
-const handleCaptchaVerified = async (validate: string) => {
-  status.value = 'sending'
-  await sendPhoneVerificationCode({ phone: phone.value, validate })
-  status.value = 'sent'
-  startCountdown()
-}
-// 打开图形验证码并请求发送短信验证码。
-const handleRequestCode = () => {
-  if (requestCodeDisabled.value) return
-  openCaptcha({ onOk: handleCaptchaVerified })
-}
-// ❌ 该重置函数只作为这一个 watcher 的回调。
-const resetVerification = () => {
-  code.value = ''
-  status.value = 'idle'
-  onVerifiedChange(null)
-}
-// 在手机号变化时作废原短信验证状态。
-watch(phone, resetVerification)
-```
-
-```ts
-// 校验用户输入的短信验证码并保存查询准入签名。
-const verifyCurrentCode = async () => {
-  if (status.value === 'verifying' || phone.value !== sentPhone.value) return
-  await verifyPhoneVerificationCode({ phone: phone.value, code: code.value })
-}
-// 接收验证码输入并在达到完整位数后立即校验。
-const handleCodeInput = async (value: string | number) => {
-  code.value = String(value).slice(0, PHONE_VERIFICATION_CODE_LENGTH)
-  if (code.value.length === PHONE_VERIFICATION_CODE_LENGTH) {
-    await verifyCurrentCode()
-  }
-}
 // 打开图形验证码并在通过后请求发送短信验证码。
 const handleRequestCode = () => {
   if (requestCodeDisabled.value) return
@@ -693,6 +535,7 @@ const handleRequestCode = () => {
     }
   })
 }
+
 // 在手机号变化时就地清理关联的验证码及准入状态。
 watch(phone, () => {
   code.value = ''
@@ -701,9 +544,16 @@ watch(phone, () => {
 })
 ```
 
+不要仅为了缩短拥有者或增加声明注释而提取这两个内联回调。只有其他调用方、Vue 或被调用 API 确实可能提供对应状态时才保留守卫。
+
 #### 复核清单
 
-按本节规则逐项复核：所有权、命名、结构、兼容性、修改范围和示例所展示的正反模式都必须满足。
+- TypeScript SFC 使用 `ts-code-rules` 作为通用脚本质量规则，本节只提供 Vue 特有放置方式和例外。
+- JavaScript SFC 同样应用运行时声明、函数、内部注释和冗余结构基线。
+- 编译器宏上方没有声明注释。
+- watcher、生命周期和内联回调注释紧邻其所属调用或属性。
+- 一次性回调保留在注册位置，除非提取具有明确职责或可读性收益。
+- 注释说明业务用途或副作用，不能用于保留冗余代码。
 
 ## 组件结构规则
 
@@ -712,18 +562,18 @@ watch(phone, () => {
 ```text
 <owner>/
 |-- index.vue
-|-- index.ts              组件公开导出
-|-- index.less            可选的独立局部样式
+|-- index.ts              Public component export
+|-- index.less            Optional extracted local style
 |-- component/
-|   |-- simple-child.vue  内聚的私有子组件
+|   |-- simple-child.vue  Cohesive private child
 |   `-- complex-child/
 |       |-- index.vue
 |       |-- index.ts
-|       |-- component/    子组件私有组件
-|       `-- hooks/        子组件私有 composable
-|-- hooks/                拥有者私有 composable
-|-- constants/            拥有者私有常量
-`-- type/                 拥有者私有类型
+|       |-- component/    Child-private components
+|       `-- hooks/        Child-private composables
+|-- hooks/                Owner-private composables
+|-- constants/            Owner-private constants
+`-- type/                 Owner-private types
 ```
 
 1. 按独立 UI 职责、内聚复用行为或真实维护困难拆分；紧密关联的模板、状态和操作保持在一起。状态在多层组件间重复传递和更新时使用专用 `use**Context`。
@@ -1012,14 +862,14 @@ Context 只服务拥有者的复杂子树，不能由多个后代重复 provide�
 
 ```text
 src/
-|-- pages/（或 views/）   路由页面单元
-|-- pages-pc/             可选的目标专属页面
-|-- components/           跨页面复用 UI
-|-- components-pc/        可选的目标专属复用 UI
-|-- layout/               页面框架
-|-- hooks/                跨页面复用 composable
-|-- styles/               应用级全局样式
-`-- utils/                跨页面无状态工具
+|-- pages/ (or views/)    Route-level page units
+|-- pages-pc/             Optional target-specific pages
+|-- components/           Cross-page reusable UI
+|-- components-pc/        Optional target-specific reusable UI
+|-- layout/               Page frames
+|-- hooks/                Cross-page reusable composables
+|-- styles/               Application-wide styles
+`-- utils/                Cross-page stateless utilities
 ```
 
 1. 保留既有页面树和移动端/PC 端分离，不创建竞争目录，也不通过运行时设备分支合并目标专属实现，除非请求明确要求。
