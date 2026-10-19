@@ -1,0 +1,5 @@
+interface:
+  display_name: "Command Execution Rules"
+  short_description: "Run commands safely and use Python for complex automation."
+  icon_small: "./assets/python-logo.png"
+  icon_large: "./assets/python-logo.png"

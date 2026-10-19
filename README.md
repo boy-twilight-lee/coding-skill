@@ -1,6 +1,8 @@
 # coding-skill
 
 <p align="center">
+  <img src="./command-execution-rules/assets/python-logo.svg" width="56" height="56" alt="Command Execution" />
+  &nbsp;&nbsp;&nbsp;
   <img src="./ts-code-rules/assets/typescript-logo.svg" width="56" height="56" alt="TypeScript" />
   &nbsp;&nbsp;&nbsp;
   <img src="./vue-code-rules/assets/vuejs-logo.svg" width="56" height="56" alt="Vue" />
@@ -9,7 +11,7 @@
 </p>
 
 <p align="center">
-  <strong>面向 Codex 的 TypeScript、Vue 3 与 CSS 可组合编码规则。</strong>
+  <strong>面向 Codex 的命令执行、TypeScript、Vue 3 与 CSS 可组合工程规则。</strong>
 </p>
 
 <p align="center">
@@ -18,21 +20,33 @@
 
 ## ✨ 这组 Skill 能做什么
 
-`coding-skill` 将常用的前端工程约束整理成 Codex 可以按任务加载的技能。它不只是统一格式，而是帮助 Codex 在编写、修改、重构、调试和审查代码时作出更稳定的工程决策：
+`coding-skill` 将常用的命令执行与前端工程约束整理成 Codex 可以按任务加载的技能。它不只是统一格式，而是帮助 Codex 在运行工具以及编写、修改、重构、调试和审查代码时作出更稳定的工程决策：
 
 - 🎯 **减少模糊判断**：明确导入、类型、注释、组件边界、样式所有权和兼容性要求。
 - 🧩 **按代码边界组合**：TypeScript、Vue 与样式规则各自负责自己的领域，避免一份大规则重复和漂移。
 - 🔍 **提供正反场景**：不仅说明推荐写法，也展示常见错误、风险和适用例外。
 - 🛡️ **尊重修改范围**：避免顺手重构、全量格式化或为了统一风格改动无关代码。
 - ⚙️ **结合项目配置**：在自动导入、类型擦除、浏览器支持、预处理器等问题上，以仓库真实配置为判断依据。
+- 🐍 **安全执行命令**：简单固定命令直接运行，复杂编排再使用 Python `subprocess`，并保留退出状态和诊断信息。
 
 ## 🧰 包含的 Skill
 
 | 图标 | Skill | 主要作用 | 典型关注点 |
 | --- | --- | --- | --- |
+| 🐍 | `command-execution-rules` | 约束 Shell/系统命令执行以及可复用自动化脚本 | 直接执行与 Python 编排的选择、参数安全、工作目录、编码、超时、退出状态、错误报告 |
 | 🟦 | `ts-code-rules` | 约束 TypeScript、TSX 和 Vue 中的 TypeScript 实现与审查 | 修改范围、注释、导入分组、类型归属、异步流程、错误处理、运行时兼容性 |
 | 🟩 | `vue-code-rules` | 约束 Vue 3 SFC、组件、页面、布局和 composable 的实现与架构 | 模板、编译器宏、watcher、生命周期、组件拆分、Context、目录归属、应用架构 |
 | 🎨 | `css-code-rules` | 约束 CSS、Less、Sass、SCSS 和 Vue style 区块 | scope、业务命名、嵌套、`:deep()`、布局、设计令牌、声明顺序、浏览器兼容性 |
+
+### 🐍 命令执行：简单调用保持直接，复杂流程安全编排
+
+`command-execution-rules` 负责 Shell/系统命令和命令执行辅助程序。它会指导 Codex：
+
+- 对 `git status`、`rg --files`、项目测试等单个固定命令直接执行，避免无意义的 `python -c` 包装；
+- 在多命令编排、动态参数、输出解析、文件处理或可复用自动化中优先使用 Python 标准库；
+- 将动态值作为参数传递，不把路径、模式、分支名或用户输入拼接进 Shell 或 Python 源码；
+- 区分普通交互式命令和机器消费的命令执行器，只对后者要求统一结构化结果；
+- 正确处理工作目录、退出码、标准输出、标准错误、编码、启动失败与超时。
 
 ### 🟦 TypeScript：让代码边界和运行时行为更可靠
 
@@ -68,10 +82,11 @@
 
 ## 🔗 如何组合
 
-三个 Skill 可以独立使用，也可以在同一个任务中叠加：
+四个 Skill 可以独立使用，也可以在同一个任务中叠加：
 
 | 代码场景 | 应用的 Skill |
 | --- | --- |
+| 执行 Shell/系统命令或修改命令执行辅助程序 | `command-execution-rules` |
 | 独立 `.ts` / `.tsx` 文件 | `ts-code-rules` |
 | Vue 模板或组件结构 | `vue-code-rules` |
 | Vue `<script setup lang="ts">` | `vue-code-rules` + `ts-code-rules` |
@@ -98,6 +113,7 @@ $codexRoot = if ($env:CODEX_HOME) { $env:CODEX_HOME } else { Join-Path $env:USER
 $codexSkills = Join-Path $codexRoot 'skills'
 New-Item -ItemType Directory -Force -Path $codexSkills | Out-Null
 
+Copy-Item -Recurse -Force .\coding-skill\command-execution-rules $codexSkills
 Copy-Item -Recurse -Force .\coding-skill\ts-code-rules $codexSkills
 Copy-Item -Recurse -Force .\coding-skill\vue-code-rules $codexSkills
 Copy-Item -Recurse -Force .\coding-skill\css-code-rules $codexSkills
@@ -109,6 +125,7 @@ Copy-Item -Recurse -Force .\coding-skill\css-code-rules $codexSkills
 codex_root="${CODEX_HOME:-$HOME/.codex}"
 mkdir -p "$codex_root/skills"
 
+cp -R ./coding-skill/command-execution-rules "$codex_root/skills/"
 cp -R ./coding-skill/ts-code-rules "$codex_root/skills/"
 cp -R ./coding-skill/vue-code-rules "$codex_root/skills/"
 cp -R ./coding-skill/css-code-rules "$codex_root/skills/"
@@ -118,7 +135,7 @@ cp -R ./coding-skill/css-code-rules "$codex_root/skills/"
 
 ### 方式二：只安装需要的 Skill
 
-三个 Skill 没有强制绑定关系。只写 TypeScript 时可以仅安装 `ts-code-rules`；Vue 项目通常建议同时安装三项，以便覆盖 SFC 的模板、脚本和样式。
+四个 Skill 没有强制绑定关系。只需要命令执行规范时可以仅安装 `command-execution-rules`；只写 TypeScript 时可以仅安装 `ts-code-rules`；Vue 项目通常建议同时安装三个前端 Skill，以便覆盖 SFC 的模板、脚本和样式。
 
 安装或更新后，在新的 Codex 任务中使用。如果 Codex 暂时没有识别新 Skill，重启 Codex 后再试。
 
@@ -147,6 +164,10 @@ cp -R ./coding-skill/css-code-rules "$codex_root/skills/"
 如果希望项目内的相关任务始终使用这些 Skill，可以在项目级 `AGENTS.md` 中加入路由说明：
 
 ```markdown
+# Command Execution Skill Routing
+
+For every task that executes shell or system commands, or writes, modifies, refactors, reviews, debugs, or completes command-execution helpers or automation scripts, always use the command-execution-rules skill.
+
 # Vue Skill Routing
 
 For every task that writes, modifies, refactors, reviews, debugs, or completes Vue project code, always use the vue-code-rules skill.
@@ -167,6 +188,7 @@ Codex 执行时以各 Skill 的 `SKILL.md` 和按需加载的 references 为准�
 - 🟦 [TypeScript Code Rules 中文版](./ts-code-rules/translation/ts-code-rules-zh-CN.md)
 - 🟩 [Vue Code Rules 中文版](./vue-code-rules/translation/vue-code-rules-zh-CN.md)
 - 🎨 [CSS Code Rules 中文版](./css-code-rules/translation/css-code-rules-zh-CN.md)
+- 🐍 [Command Execution Rules 中文版](./command-execution-rules/translation/command-execution-rules-zh-CN.md)
 
 ## 📄 License
 
