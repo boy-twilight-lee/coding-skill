@@ -32,9 +32,10 @@
 ```text
 请检查当前 coding-skill 仓库，并完成以下配置：
 
-1. 将 command-execution-rules、ts-code-rules、vue-code-rules、css-code-rules 四个完整目录安装或更新到 Codex 的 skills 目录。优先使用 CODEX_HOME；未配置时使用当前用户目录下的 .codex。必须复制每个 Skill 的 SKILL.md、agents、references、assets、translation 等已有内容，不能只复制 SKILL.md。
-2. 写入前确认源目录和目标目录，保留其他已安装 Skill，不要删除或覆盖这四个目标之外的内容。
-3. 更新 Codex 根目录的 AGENTS.md；文件不存在时创建，存在时保留其他规则。删除以下四个 Skill 的旧版或重复 routing，然后加入：
+1. 将 command-execution-rules、ts-code-rules、vue-code-rules、css-code-rules 四个 Skill 安装或更新到 Codex 的 skills 目录。优先使用 CODEX_HOME；未配置时使用当前用户目录下的 .codex。必须复制每个 Skill 的 SKILL.md、agents、references、assets 等运行所需内容，不能只复制 SKILL.md。
+2. `translation` 目录仅供人工阅读和评审，不属于 Skill 运行内容。安装或更新时必须忽略所有 `translation` 目录，不要将其中的 `*-cn.md` 文件复制到 Codex 的 skills 目录，也不要用翻译文件覆盖 references。
+3. 写入前确认源目录和目标目录，保留其他已安装 Skill，不要删除或覆盖这四个目标之外的内容。
+4. 更新 Codex 根目录的 AGENTS.md；文件不存在时创建，存在时保留其他规则。删除以下四个 Skill 的旧版或重复 routing，然后加入：
 
 # Command Execution Skill Routing
 
@@ -52,8 +53,8 @@ For every task that writes, modifies, refactors, reviews, debugs, or completes T
 
 For every task that writes, modifies, refactors, reviews, debugs, or completes CSS, Less, Sass, SCSS, or a Vue <style> block, always use the css-code-rules skill and treat its style architecture, naming, scope, layout, and compatibility rules as mandatory unless higher-priority instructions conflict.
 
-4. 使用 skill-creator 的 quick_validate.py 校验四个安装后的 Skill；如果该校验器不可用，就检查目录名、frontmatter name、引用文件和 agents/openai.yaml 是否完整一致。
-5. 比较仓库源文件与安装后的文件，确认内容一致；最后报告安装目录、AGENTS.md 路径、校验结果以及是否需要重启 Codex。不要提交、推送或修改本仓库中的其他文件。
+5. 使用 skill-creator 的 quick_validate.py 校验四个安装后的 Skill；如果该校验器不可用，就检查目录名、frontmatter name、引用文件和 agents/openai.yaml 是否完整一致。
+6. 比较仓库源文件与安装后的文件时排除 `translation` 目录，确认其余安装内容一致；最后报告安装目录、AGENTS.md 路径、校验结果以及是否需要重启 Codex。不要提交、推送或修改本仓库中的其他文件。
 ```
 
 安装或更新后，请在新的 Codex 任务中使用；如果暂时没有识别新 Skill，重启 Codex 后再试。
