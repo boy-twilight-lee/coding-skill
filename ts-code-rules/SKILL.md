@@ -17,8 +17,6 @@ Detailed rules and examples live in references grouped by the decisions they gov
 - Read [Imports and Type Organization Rules](references/imports-and-types.md) when adding, removing, grouping, or relocating imports and types, or when selecting module boundaries and public entries.
 - Read [Async and Compatibility Examples](references/async-and-compatibility-examples.md) when handling promises, errors, fire-and-forget contracts, newer APIs, target support, or final formatting checks.
 
-For TypeScript inside a Vue SFC, also apply `vue-code-rules`; when the same change touches a Vue style block, apply `css-code-rules` as well. Apply each relevant skill once; do not recursively reread a skill that is already loaded for the task.
-
 ## Working Process
 
 1. Before changing or reviewing TypeScript, read the repository instructions and inspect the affected module, its public callers, nearby types, and the relevant `tsconfig`, package scripts, lint, formatter, and test configuration. Confirm the actual runtime and browser targets before making compatibility decisions.

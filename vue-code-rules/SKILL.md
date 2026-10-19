@@ -14,14 +14,12 @@ Detailed rules and examples live in references grouped by the decisions they gov
 ## Reference Routing
 
 - Read [Template Examples](references/template-examples.md) when deciding SFC block order, list rendering, template expressions, component tags, slots, DOM depth, semantic elements, or class bindings.
-- Read [Blank Line Examples](references/blank-line-examples.md) when deciding whether whitespace separates real SFC or logical regions.
+- Read [Blank Line Examples](references/blank-line-examples.md) when deciding SFC block spacing, template whitespace, or JavaScript-script whitespace. TypeScript-script whitespace belongs to `ts-code-rules`; style-block whitespace belongs to `css-code-rules`.
 - Read [Script Structure Examples](references/script-structure-examples.md) when ordering Vue imports, compiler macros, runtime declarations, or deciding whether Vue and Vue Router APIs need explicit imports.
-- Read [Script Comment Examples](references/script-comment-examples.md) when documenting declarations, callbacks, watchers, lifecycle hooks, business branches, side effects, or avoiding redundant wrappers.
+- Read [Script Comment Examples](references/script-comment-examples.md) for Vue-specific compiler-macro, watcher, and lifecycle comment placement, and for the generic script baseline in JavaScript SFCs. For TypeScript SFCs, `ts-code-rules` owns the generic declaration, callback, internal-comment, and redundancy rules.
 - Read [Component Structure Examples](references/component-structure-examples.md) when deciding component splits, composable extraction, naming, directory layout, public entries, or private ownership.
 - Read [Complex Component Context Examples](references/complex-component-context-examples.md) before implementing or reviewing any `use**Context` composable, provider, injector, fallback, or consumer.
 - Read [Application Architecture Examples](references/application-architecture-examples.md) when placing pages, components, layouts, private modules, target-specific trees, dependencies, or utilities.
-
-For TypeScript or style changes within a Vue file, also apply `ts-code-rules` or `css-code-rules` respectively. Apply each relevant skill once; do not recursively reread a skill that is already loaded for the task.
 
 ## Working Process
 

@@ -1,14 +1,22 @@
-# Blank Line Examples
+# Vue Blank Line Examples
+
+## Ownership
+
+This reference owns whitespace between SFC blocks, inside templates, and inside JavaScript Vue scripts. For TypeScript script blocks, `ts-code-rules` is the canonical source for statement and declaration spacing. For style blocks, `css-code-rules` is the canonical source for selector and declaration spacing.
 
 ## Mandatory Rules
 
-1. Do not leave meaningless blank lines anywhere in a Vue file, including its template, script, and style blocks. A blank line is allowed only when one line materially separates distinct logical regions; never use consecutive blank lines, leading or trailing blank lines inside an SFC block, blank lines immediately inside an opening or closing code block, blank lines between a required comment and its declaration, or blank lines between tightly coupled statements or markup nodes.
+1. Keep at most one blank line between top-level SFC blocks or genuinely separate logical regions. Never use consecutive blank lines or leave a blank line at the beginning or end of an SFC block.
 
-2. Keep at most one intentional blank line between top-level SFC blocks or genuinely separate logical groups. Remove any blank line that does not make the component structure easier to understand.
+2. In templates, keep tightly coupled nodes together. Use one blank line only when it materially separates independent UI regions; do not separate repeated items, adjacent label/value pairs, or one component's slot declarations.
+
+3. In JavaScript Vue scripts, do not place blank lines immediately inside a code block, between a required comment and its declaration, or between tightly coupled statements. TypeScript scripts apply the equivalent rule from `ts-code-rules` instead of duplicating it here.
+
+4. Style blocks apply `css-code-rules` directly. Do not infer style whitespace from template or script examples.
 
 ## Scenario 1: Separate SFC Blocks
 
-Use at most one blank line between top-level blocks:
+Use at most one blank line between blocks and none at their inner edges:
 
 ```vue
 <template>
@@ -28,29 +36,26 @@ const props = defineProps<{
 </style>
 ```
 
-Do not leave a blank line immediately inside a block or use consecutive blank lines:
+Do not add empty blocks merely to complete the sequence; block presence and order are governed by the template rules.
+
+## Scenario 2: Group Template Nodes
+
+Keep one component's tightly coupled content contiguous:
 
 ```vue
-<template>
-
-  <div class="user-card" />
-
-</template>
-
-
-<script setup lang="ts">
-</script>
+<div class="user-card">
+  <span class="user-card-name">{{ user.name }}</span>
+  <span class="user-card-role">{{ user.roleName }}</span>
+</div>
 ```
 
-## Scenario 2: Group Script Logic
+A single blank line may separate genuinely independent template regions. It must not be used as decoration or as a substitute for a meaningful component boundary.
 
-One blank line may separate distinct responsibilities:
+## Scenario 3: Group JavaScript Script Logic
 
-The explicit Vue imports in this example assume the active Vite auto-import configuration does not cover these APIs. Omit covered runtime imports after verifying the configuration; keep uncovered APIs imported normally.
+One blank line may separate different responsibilities, while comments remain attached to their declarations:
 
-```ts
-import { computed, ref } from 'vue'
-
+```js
 // 保存当前选中的用户标识。
 const selectedUserId = ref('')
 // 展示当前是否已经选择用户。
@@ -62,44 +67,11 @@ const clearSelectedUser = () => {
 }
 ```
 
-Do not separate a required comment from its declaration, split tightly coupled declarations, or place blank lines immediately inside a function.
-
-## Scenario 3: Group Template Nodes
-
-Keep tightly coupled nodes together:
-
-```vue
-<div class="user-card">
-  <span class="user-card-name">{{ user.name }}</span>
-  <span class="user-card-role">{{ user.roleName }}</span>
-</div>
-```
-
-A single blank line may separate genuinely independent template regions, but repeated list items, adjacent label/value pairs, and one component's slot declarations should remain contiguous.
-
-## Scenario 4: Keep Style Structure Intentional
-
-Keep declarations with their related nested selector and use one blank line only between distinct nested groups:
-
-```less
-.user-card {
-  display: flex;
-  .user-card-name {
-    color: var(--text-color-primary);
-  }
-
-  &.user-card-disabled {
-    cursor: not-allowed;
-  }
-}
-```
-
-The CSS-specific rules still govern style-block nesting and declaration order.
+For a TypeScript script, use the corresponding `ts-code-rules` blank-line rule rather than treating this JavaScript example as an additional requirement.
 
 ## Review Checklist
 
-- No SFC block begins or ends with a blank line.
-- No consecutive blank lines remain.
-- Required comments touch their declarations.
-- Tightly coupled statements and markup remain together.
-- Every retained blank line communicates a real logical boundary.
+- SFC blocks have at most one blank line between them and no leading or trailing inner blank lines.
+- Template blank lines separate independent UI regions rather than tightly coupled nodes.
+- JavaScript comments touch their declarations and logical groups use at most one blank line.
+- TypeScript-script and style-block whitespace are reviewed by their canonical language skills.

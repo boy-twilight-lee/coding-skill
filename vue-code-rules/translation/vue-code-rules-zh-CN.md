@@ -1,10 +1,28 @@
 # vue-code-rules 中文翻译
 
-> 本文件仅供人工阅读。它没有被 `SKILL.md`、`agents/openai.yaml` 或任何 `references` 路由引用，因此不会自动进入 skill 上下文。每组示例紧跟对应规则，所有原始 fenced code 示例均原样保留。
+> 本文件仅供人工阅读。它没有被 `SKILL.md`、`agents/openai.yaml` 或任何 `references` 路由引用，因此不会自动进入 skill 上下文。当前 `SKILL.md` 是轻量入口，强制规则与示例按决策类型存放在 `references` 中；本文件将它们合并为便于人工查阅的中文版本。所有原始 fenced code 示例均原样保留。
 
-## 适用范围与工作流程
+## 当前技能结构
 
-所有新增、修改或审查的 Vue 代码都应用相关规则。开始前检查目标组件、邻近组件、构建、Lint、格式化和 TypeScript 配置；修改限定在请求范围，完成后逐行复核并运行最小格式化、Lint、Vue 类型检查和相关测试。SFC 中的 TypeScript 与样式还要应用对应 skill。
+- `SKILL.md`：保留适用范围、优先级、reference 路由、跨技能组合和工作流程。
+- `references/`：每份文件先列出对应的强制规则，再提供完整示例和复核清单。
+- `translation/vue-code-rules-zh-CN.md`：仅供人工阅读，不参与 Codex 自动路由。
+
+## 适用范围、优先级与工作流程
+
+所有新增、修改或审查的 Vue 代码都应用相关规则。现有代码只能作为上下文，不能免除规则；不要仅为了统一而迁移未触及代码。更高优先级指令覆盖本技能；只有规则明确委托给仓库配置时，仓库配置或惯例才覆盖对应规则。无法满足强制规则时采用最小必要偏离，并准确报告冲突。
+
+开始前检查仓库指令、目标组件、邻近组件、构建、Lint、格式化和 TypeScript 配置，并根据当前决策读取匹配的 reference。修改限定在请求范围，完成后逐行复核并运行最小格式化、Lint、Vue 类型检查和相关测试。SFC 中的 TypeScript 与样式还要分别应用 `ts-code-rules` 与 `css-code-rules`；每个相关 skill 只应用一次，不递归重复读取已经加载的 skill。
+
+## 引用路由
+
+- 模板区块顺序、列表、模板表达式、组件标签、插槽、DOM、语义元素或类绑定：`references/template-examples.md`。
+- SFC 区块、template 或 JavaScript 脚本空行：`references/blank-line-examples.md`；TypeScript 脚本与 style 空行分别由 TS/CSS skill 管理。
+- Vue 导入、编译器宏、运行时声明或自动导入判断：`references/script-structure-examples.md`。
+- Vue 编译器宏、watcher、生命周期的注释位置，以及 JavaScript SFC 的通用脚本注释：`references/script-comment-examples.md`；TypeScript SFC 的通用脚本质量由 TS skill 管理。
+- 组件拆分、composable、命名、目录、公开入口或私有所有权：`references/component-structure-examples.md`。
+- `use**Context`、provider、injector、回退对象或消费者：`references/complex-component-context-examples.md`。
+- 页面、组件、layout、私有模块、目标专属目录、依赖或工具：`references/application-architecture-examples.md`。
 
 ## 模板规则
 
@@ -17,7 +35,7 @@
 7. 普通布局用 div/span；交互、语义和无障碍确有含义时使用原生语义元素。
 8. 多个类来源统一放一个 `:class` 数组；单一静态类或单一动态对象可用最简单形式。
 
-### 对应完整示例：`references/template-examples.md`
+### 对应强制规则与完整示例：`references/template-examples.md`
 
 #### 场景 1：保持 SFC 区块顺序
 
@@ -224,13 +242,18 @@ export interface CandidateCardProps {
 
 ## 空行规则
 
-Vue 文件任何区块都不留无意义空行。只允许一行用于真实逻辑或 SFC 区域分隔；禁止连续空行、区块首尾空行、代码块边缘空行、注释与声明之间空行和紧密节点之间空行。
+本节负责 SFC 顶层区块、template 和 JavaScript Vue 脚本的空行。TypeScript 脚本的声明与语句间距以 `ts-code-rules` 为准，style 区块的选择器与声明间距以 `css-code-rules` 为准。
 
-### 对应完整示例：`references/blank-line-examples.md`
+1. 顶层 SFC 区块或真正独立的逻辑区域之间最多一个空行；禁止连续空行和区块内部首尾空行。
+2. template 中紧密节点保持连续，只在独立 UI 区域之间保留一个空行。
+3. JavaScript 脚本中不在代码块边缘、注释与声明之间或紧密语句之间插入空行。
+4. style 区块直接应用 CSS skill，不从 template 或 script 示例推断样式空行规则。
+
+### 对应强制规则与完整示例：`references/blank-line-examples.md`
 
 #### 场景 1：分隔 SFC 区块
 
-顶层 SFC 区块之间最多一个空行，区块内部开头和结尾不留空行。
+顶层 SFC 区块之间最多一个空行，区块内部开头和结尾不留空行；不要为了补齐顺序添加空区块。
 
 ```vue
 <template>
@@ -250,25 +273,22 @@ const props = defineProps<{
 </style>
 ```
 
+#### 场景 2：组织模板节点
+
+模板空行只区分真实 UI 区域，不能把紧密节点或同一列表项拆散。
+
 ```vue
-<template>
-
-  <div class="user-card" />
-
-</template>
-
-
-<script setup lang="ts">
-</script>
+<div class="user-card">
+  <span class="user-card-name">{{ user.name }}</span>
+  <span class="user-card-role">{{ user.roleName }}</span>
+</div>
 ```
 
-#### 场景 2：组织脚本逻辑
+#### 场景 3：组织 JavaScript 脚本逻辑
 
-脚本空行只分隔不同逻辑组，注释与声明、紧密语句之间不插空行。
+JavaScript 脚本中，空行只分隔不同职责，注释必须紧贴声明：
 
-```ts
-import { computed, ref } from 'vue'
-
+```js
 // 保存当前选中的用户标识。
 const selectedUserId = ref('')
 // 展示当前是否已经选择用户。
@@ -280,44 +300,18 @@ const clearSelectedUser = () => {
 }
 ```
 
-#### 场景 3：组织模板节点
-
-模板空行只区分真实 UI 区域，不能把紧密节点或同一列表项拆散。
-
-```vue
-<div class="user-card">
-  <span class="user-card-name">{{ user.name }}</span>
-  <span class="user-card-role">{{ user.roleName }}</span>
-</div>
-```
-
-#### 场景 4：让样式结构保持明确
-
-样式空行只表达选择器组边界，并同时遵循 CSS skill。
-
-```less
-.user-card {
-  display: flex;
-  .user-card-name {
-    color: var(--text-color-primary);
-  }
-
-  &.user-card-disabled {
-    cursor: not-allowed;
-  }
-}
-```
+TypeScript 脚本改用 TS skill 的对应规则，不把此 JavaScript 示例叠加为另一套要求。
 
 #### 复核清单
 
-按本节规则逐项复核：所有权、命名、结构、兼容性、修改范围和示例所展示的正反模式都必须满足。
+确认 SFC 区块内外没有装饰性空行，template 只在独立 UI 区域间分组，JavaScript 注释紧贴声明，并由 TS/CSS skill 分别检查 TypeScript 与样式空行。
 
 ## 脚本结构规则
 
 1. 编译器宏只能位于 `<script setup>` 顶层。除 `defineExpose` 外的宏紧跟导入形成第一声明组；无顶层 await 时 expose 最后，有顶层 await 时在首次挂起前暴露已初始化绑定。
 2. 显式导入 Vue/Vue Router API 前检查实际 Vite 自动导入配置；已覆盖项直接使用，未覆盖或无法验证时显式导入。
 
-### 对应完整示例：`references/script-structure-examples.md`
+### 对应强制规则与完整示例：`references/script-structure-examples.md`
 
 #### 场景 1：排序契约宏并处理异步暴露
 
@@ -471,12 +465,16 @@ const normalizedKeyword = computed(() => keyword.value.trim())
 
 ## 脚本注释规则
 
+TypeScript SFC 的通用声明、函数、回调、内部注释和冗余代码规则以 `ts-code-rules` 为准；本节只增加 Vue 编译器宏、watcher、生命周期和回调注册位置的特殊要求。JavaScript SFC 直接应用下面的同等基础规则。
+
 1. 每个运行时变量和常量有紧邻中文业务注释；导入、参数、纯类型和编译器宏例外，宏上方不得写声明注释。
 2. 每个函数、方法、composable、回调、处理器、watcher 和生命周期钩子有相邻职责注释；单一注册点的连续回调可保持内联。
 3. 内部只注释关键业务、非显然转换、重要分支、副作用和错误处理。
 4. 不为名称或注释保留透传包装器、无意义中间值或重复守卫。
 
-### 对应完整示例：`references/script-comment-examples.md`
+### 活跃 Vue 特有规则：`references/script-comment-examples.md`
+
+下面继续保留完整人工示例，便于阅读和比较；它们不会重复进入自动 skill 上下文。
 
 #### 场景 1：按业务含义注释变量
 
@@ -734,7 +732,7 @@ watch(phone, () => {
 4. 目录组件的 `index.ts` 只导出 `index.vue` 和有意公开的类型。普通 setup 与样式留在 SFC；只有具备真实所有权或维护收益时才增加 `index.less`、hooks、常量、类型或私有子组件。
 5. 私有单元跟随拥有者，每个 `.vue` 不超过 1000 行。只有真实跨页面复用后才提升私有子组件，并同步公开入口和消费者；不要为了统一结构迁移无关组件。
 
-### 对应完整示例：`references/component-structure-examples.md`
+### 对应强制规则与完整示例：`references/component-structure-examples.md`
 
 #### 场景 1：按职责拆分
 
@@ -881,7 +879,7 @@ import CandidateFilter from './component/candidate-filter.vue'
 3. `inject()` 的回退对象字段与提供对象完全一致，使用安全空 ref 和正确类型空操作，不用部分断言掩盖差异。
 4. 拥有者调用一次 provide，后代 inject；不能多后代重复 provide，也不能当全局状态。
 
-### 对应完整示例：`references/complex-component-context-examples.md`
+### 对应强制规则与完整示例：`references/complex-component-context-examples.md`
 
 #### 场景 1：实现完整 Context 门面
 
@@ -1008,7 +1006,7 @@ src/
 2. 页面私有组件、hooks 和辅助函数跟随页面；只有真实跨页面复用后才提升到 `src` 一级目录。提升后的工具按明确业务领域或技术能力组织，并从目录入口导出。
 3. 手写大型能力前检查已有依赖和包装层。只有获得授权且现有栈确有缺口时才新增包，并核实维护情况、来源、目标兼容性、包体积和许可证；商业使用安全无法确认时必须报告。
 
-### 对应完整示例：`references/application-architecture-examples.md`
+### 对应强制规则与完整示例：`references/application-architecture-examples.md`
 
 #### 场景 1：放置路由编排与可复用 UI
 

@@ -1,10 +1,25 @@
 # css-code-rules 中文翻译
 
-> 本文件仅供人工阅读。它没有被 `SKILL.md`、`agents/openai.yaml` 或任何 `references` 路由引用，因此不会自动进入 skill 上下文。每组示例紧跟对应规则，所有原始 fenced code 示例均原样保留。
+> 本文件仅供人工阅读。它没有被 `SKILL.md`、`agents/openai.yaml` 或任何 `references` 路由引用，因此不会自动进入 skill 上下文。当前 `SKILL.md` 是轻量入口，强制规则与示例按决策类型存放在 `references` 中；本文件将它们合并为便于人工查阅的中文版本。所有原始 fenced code 示例均原样保留。
 
-## 适用范围与工作流程
+## 当前技能结构
 
-所有新增、修改或审查的 CSS/Less/Sass/SCSS/Vue 样式都应用相关规则。开始前检查标记结构、拥有组件、邻近样式、重置、令牌、预处理器、PostCSS、浏览器目标和检查配置。修改限定在请求所有权范围，完成后逐行复核并运行最小格式化、Stylelint、构建或视觉检查。
+- `SKILL.md`：保留适用范围、优先级、reference 路由、跨技能组合和工作流程。
+- `references/`：每份文件先列出对应的强制规则，再提供完整示例和复核清单。
+- `translation/css-code-rules-zh-CN.md`：仅供人工阅读，不参与 Codex 自动路由。
+
+## 适用范围、优先级与工作流程
+
+所有新增、修改或审查的 CSS、Less、Sass、SCSS 或 Vue 样式都应用相关规则。现有样式只能作为上下文，不能免除规则；不要仅为了统一而迁移未触及样式。更高优先级指令覆盖本技能；只有规则明确委托给仓库配置时，仓库配置或惯例才覆盖对应规则。无法满足强制规则时采用最小必要偏离，并准确报告冲突。
+
+开始前检查仓库指令、标记结构、拥有组件、邻近样式、全局重置与令牌、预处理器、PostCSS、浏览器目标和检查配置，并根据当前决策读取匹配的 reference。修改限定在请求所有权范围，完成后逐行复核并运行最小格式化、Stylelint、构建、相关测试或视觉检查。Vue style 区块还要应用 `vue-code-rules`，同一 SFC 修改涉及 TypeScript 时还要应用 `ts-code-rules`；每个相关 skill 只应用一次，不递归重复读取已经加载的 skill。
+
+## 引用路由
+
+- 样式语言、Vue scope、抽离布局、所有权或覆盖放置：`references/scope-and-file-organization-examples.md`。
+- 业务根、BEM 名称、所有权嵌套、直接子边界、deep、伪类或业务状态：`references/naming-and-nesting-examples.md`。
+- 令牌、布局、目标专属呈现、单位、组件库定制、冗余删除或复用抽象：`references/design-layout-and-reuse-examples.md`。
+- 注释、空行、声明顺序、合并、浏览器支持、回退或最终格式化：`references/declaration-and-compatibility-examples.md`。
 
 ## Scope 与文件组织
 
@@ -14,7 +29,7 @@
 4. 一个组件的样式保持在一个样式表，只有 scope 本身要求隔离时才分文件。
 5. 全局重置、令牌、库全局覆盖和工具放既有 `src/styles`；组件专属库覆盖留在业务根下。
 
-### 对应完整示例：`references/scope-and-file-organization-examples.md`
+### 对应强制规则与完整示例：`references/scope-and-file-organization-examples.md`
 
 #### 场景 1：保留现有样式语言
 
@@ -133,7 +148,7 @@ src/components/talent-form/index.less
 5. scoped 深层规则使用带目标的 `&:deep(...)`，共享库根时合并并继续嵌套后代、伪类和伪元素。
 6. 伪类跟随拥有者，业务状态用完整类链到拥有者；无嵌套支持的 CSS 展开选择器但保留所有权路径。
 
-### 对应完整示例：`references/naming-and-nesting-examples.md`
+### 对应强制规则与完整示例：`references/naming-and-nesting-examples.md`
 
 #### 场景 1：命名组件根、元素和状态
 
@@ -457,12 +472,12 @@ Teleport 内容可有独立顶层根，但必须使用完整业务限定名，�
 
 1. 复用令牌、工具和语义值；只有真实重复时使用变量、mixin 或循环。
 2. 一维布局优先 Flexbox 与 `gap`；Grid 只用于 Flex 无法正确表达的真实二维对齐。
-3. 已有 PC/移动树时保持分离，不在组件内新增设备分支。
+3. 尊重仓库既有目标端所有权。Vue 项目的桌面端与移动端已由独立目录表达时，架构归 `vue-code-rules` 管理；样式只留在受影响目标端，不能用组件内媒体查询绕过边界。真正共享的响应式实现遵循仓库既有策略。
 4. 遵循项目单位策略；常规尺寸用 `px`，交给 PostCSS 转换，真实视口关系才用视口单位。
 5. 组件库定制优先公开 CSS 变量，不无谓提高特异性或使用 `!important`。
 6. 全局只定义一次 `box-sizing`；删除重复尺寸和无效声明，只有可观察行为需要时保留常见声明。
 
-### 对应完整示例：`references/design-layout-and-reuse-examples.md`
+### 对应强制规则与完整示例：`references/design-layout-and-reuse-examples.md`
 
 #### 场景 1：复用现有设计令牌
 
@@ -524,14 +539,9 @@ Teleport 内容可有独立顶层根，但必须使用完整业务限定名，�
 }
 ```
 
-#### 场景 3：保持桌面端和移动端实现分离
+#### 场景 3：尊重目标端所有权
 
-仓库已有 PC/移动目录树时保持分离，不在单组件里增加设备媒体分支。
-
-```text
-src/pages/talent-list/index.vue
-src/pages-pc/talent-list/index.vue
-```
+先由应用架构确定目标端所有权。Vue 已分离桌面端和移动端实现时，修改受影响目标端拥有的样式，不要在其中重新实现另一目标端：
 
 ```less
 @media (max-width: 768px) {
@@ -539,6 +549,8 @@ src/pages-pc/talent-list/index.vue
   }
 }
 ```
+
+仓库有意采用共享响应式实现时，媒体查询仍然有效。CSS 负责呈现技术，`vue-code-rules` 负责组件属于共享树还是目标端专属树。
 
 #### 场景 4：遵循已配置的单位策略
 
@@ -696,7 +708,7 @@ src/pages-pc/talent-list/index.vue
 5. 新 CSS 能力必须符合目标浏览器或使用项目批准回退。
 6. 只格式化修改的样式文件，恢复任务范围外格式变化。
 
-### 对应完整示例：`references/declaration-and-compatibility-examples.md`
+### 对应强制规则与完整示例：`references/declaration-and-compatibility-examples.md`
 
 #### 场景 1：判断注释是否必要
 

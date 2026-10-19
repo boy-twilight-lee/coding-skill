@@ -6,7 +6,7 @@
 
 2. Avoid CSS Grid. Use Flexbox plus `gap` for layouts unless Flexbox cannot correctly express a genuinely two-dimensional alignment requirement; Grid is allowed only as a last resort when it is demonstrably necessary. Use `flex: 1` for the region that fills remaining space and `flex-shrink: 0` for fixed-size regions. Add `overflow: hidden` wherever flex shrinking or ellipsis depends on it.
 
-3. Keep desktop and mobile presentation in the repository's separate page/component trees when they exist. Do not add component-local media-query forks for an implementation already split by target tree.
+3. Respect the repository's existing target ownership. In a Vue project whose desktop and mobile implementations already live in separate page or component trees, `vue-code-rules` owns that architecture decision; keep styles with the affected target and do not bypass the boundary with a component-local media-query fork. In a genuinely shared responsive implementation, use the repository's established responsive strategy.
 
 4. Use the repository's configured unit strategy. For these projects, write ordinary spacing, sizes, and typography in `px`; let the configured PostCSS conversion handle mobile `vw` output. Use viewport units only when the value represents an actual viewport relationship.
 
@@ -90,16 +90,9 @@ When a real two-dimensional matrix requires every row to share the same column t
 
 This case is genuinely two-dimensional: both the time rows and weekday columns must remain aligned across independent cells. Do not use Grid when wrapping Flexbox rows, a table component, or a simpler one-dimensional flow already expresses the required relationship.
 
-## Scenario 3: Keep Desktop and Mobile Implementations Separate
+## Scenario 3: Respect Target Ownership
 
-Situation: the repository already has separate mobile and PC page trees.
-
-```text
-src/pages/talent-list/index.vue
-src/pages-pc/talent-list/index.vue
-```
-
-Make the change in the affected tree. Do not add a local responsive fork to either implementation:
+First determine target ownership from the application architecture. When Vue already separates desktop and mobile implementations, edit the stylesheet owned by the affected target and do not recreate the other target inside it:
 
 ```less
 @media (max-width: 768px) {
@@ -108,7 +101,7 @@ Make the change in the affected tree. Do not add a local responsive fork to eith
 }
 ```
 
-A media query remains valid in a shared implementation when the repository does not separate targets and the behavior genuinely belongs to one responsive component. The prohibition applies when target ownership is already represented by separate trees.
+A media query remains valid when the repository intentionally uses one shared responsive implementation. CSS owns the presentation technique; `vue-code-rules` owns whether the component belongs to a shared or target-specific tree.
 
 ## Scenario 4: Follow the Configured Unit Strategy
 

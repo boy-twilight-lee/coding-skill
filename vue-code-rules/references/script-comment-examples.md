@@ -1,80 +1,47 @@
-# Script Comment Examples
+# Vue Script Comment Examples
+
+## Ownership
+
+For `<script lang="ts">` and `<script setup lang="ts">`, `ts-code-rules` is the canonical source for generic declaration comments, function and callback comments, internal comments, redundant wrappers, intermediate values, and guards. This reference adds only Vue-specific placement and compiler-macro exceptions.
+
+For JavaScript Vue scripts, apply the same baseline directly: runtime declarations and functions need concise Chinese business comments, internal comments are limited to important non-obvious logic, and comments must not justify redundant structure.
 
 ## Mandatory Rules
 
-1. In every Vue `<script>` block, add a concise comment immediately above every declared variable or constant, including reactive state, refs, computed values, destructured bindings, and class fields. Explain the business purpose or state meaning instead of repeating the identifier. Write comments in Chinese unless another language is strictly necessary because the project explicitly mandates it, an external protocol or third-party term must be quoted exactly, or Chinese would make the technical meaning less accurate. Imports, function parameters, and type-only declarations do not require separate variable comments. Vue compiler macros are also explicit exceptions: never add a declaration comment immediately above `defineProps`, `withDefaults(defineProps(...))`, `defineEmits`, `defineExpose`, `defineOptions`, `defineSlots`, or another compiler macro, including a variable or destructuring declaration that receives the macro's result.
+1. Comment every runtime variable or constant immediately above its declaration with its business purpose or state meaning. Imports, function parameters, and type-only declarations do not need separate declaration comments. Never place a declaration comment above a Vue compiler macro, including a variable or destructuring declaration that receives the result of `defineProps`, `withDefaults`, `defineEmits`, `defineExpose`, `defineOptions`, `defineSlots`, or another compiler macro.
 
-2. Add a concise comment immediately above every function, method, composable, callback, event handler, watcher callback, and lifecycle hook. Explain its responsibility, side effect, or return meaning. An inline callback is sufficiently documented when an immediately adjacent comment above its containing API call, watcher, lifecycle call, object property, or declaration unambiguously describes the callback; do not insert a separate comment inside the expression merely to satisfy this rule. Extract an inline callback into a named, commented function only when it has an independent responsibility, real reuse, or a concrete testing or readability benefit. Keep a callback inline at its only registration site when it merely continues the containing action, watcher, lifecycle, or API workflow; callback length alone is not a reason to split the flow into a one-use `handle*` or reset function.
+2. Comment every function, method, composable, event handler, watcher, lifecycle hook, and callback with its responsibility, side effect, or return meaning. For an inline callback, one immediately adjacent comment above the containing declaration, API call, watcher, lifecycle call, or object property is sufficient when it unambiguously describes the callback.
 
-3. Inside functions and methods, comment only key business logic, non-obvious transformations, important branches, side effects, and error handling. Do not comment every statement. These declaration-level comment rules are mandatory for both JavaScript and TypeScript Vue scripts; TypeScript scripts must also follow `ts-code-rules`.
+3. Keep a one-use callback at its registration site when it only continues the surrounding Vue or API workflow. Extract it only for reuse, an independent business responsibility, focused testing, or a concrete readability benefit. Callback length alone is not a reason to create a one-use `handle*` or reset function.
 
-4. Do not introduce or preserve redundant code merely to create a name or comment target. Prohibit pass-through functions that only call and return another function, one-use callback wrappers that separate a continuous workflow without an independent responsibility, single-use intermediate variables that add no business meaning, reuse, type narrowing, or readability, and validation or guard conditions already guaranteed by the only caller, Vue, or the called API's verified contract. Inline the underlying expression, callback, or call instead. Keep a wrapper, intermediate value, callback extraction, or guard only when it has an independent responsibility or a concrete correctness benefit; a comment does not justify redundant structure.
+4. Inside functions, comment only key business logic, non-obvious transformations, important branches, side effects, and error handling. Do not narrate ordinary assignments or calls. Do not introduce a pass-through function, single-use intermediate value, or caller-guaranteed guard merely to create a name or comment target.
 
-## Scenario 1: Comment Variables by Business Meaning
+## Scenario 1: Apply the Compiler-Macro Exception
+
+Compiler macros do not receive declaration comments, while ordinary runtime state does:
 
 ```ts
-// 保存当前编辑的候选人标识。
-const candidateId = ref('')
+const props = defineProps<{
+  candidateId: string
+}>()
+const emit = defineEmits<{
+  saved: [candidateId: string]
+}>()
+
 // 标识候选人详情是否正在加载。
 const loading = ref(false)
-// 提供当前候选人的完整展示名称。
-const candidateDisplayName = computed(() => formatCandidateName(candidate.value))
-```
-
-Avoid comments that merely repeat syntax or identifiers:
-
-```ts
-// 定义 candidateId。
-const candidateId = ref('')
-```
-
-Destructured bindings also require one immediately preceding comment describing the group or business meaning:
-
-```ts
-// 读取候选人详情页所需的路由参数。
-const { candidateId, source } = route.query
-```
-
-Imports, parameters, interfaces, and type aliases do not need declaration comments solely because they appear in the script.
-
-## Scenario 2: Comment Functions and Handlers
-
-```ts
-// 提交候选人表单并在成功后返回列表页。
+// 提交候选人并通知父组件。
 const submitCandidate = async () => {
-  await saveCandidate(form.value)
-  await router.push({ name: 'candidate-list' })
-}
-
-// 处理候选人卡片的选择事件。
-const handleCandidateSelect = (candidateId: string) => {
-  selectedCandidateId.value = candidateId
+  await saveCandidate(props.candidateId)
+  emit('saved', props.candidateId)
 }
 ```
 
-The comment should state responsibility, side effect, or return meaning. Do not write generic comments such as “处理点击” when the business outcome is known.
+Do not add generic comments such as `// 接收组件属性。` above compiler macros. Their names and type arguments already identify the declaration role. Document non-obvious business meaning in the prop or event contract instead.
 
-## Scenario 3: Extract a Callback That Needs Explanation
+## Scenario 2: Place Watcher and Lifecycle Comments
 
-Prefer a named callback when the predicate or operation has an independent responsibility, genuine reuse, or focused testing value:
-
-```ts
-// 保留拥有有效联系方式的候选人。
-const hasValidContact = (candidate: Candidate) => {
-  return Boolean(candidate.mobile || candidate.email)
-}
-// 提供可以联系的候选人列表。
-const contactableCandidates = computed(() => candidates.value.filter(hasValidContact))
-```
-
-An inline callback is sufficiently documented when an immediately adjacent comment above its containing declaration, API call, watcher, lifecycle call, or object property unambiguously describes its responsibility. Do not insert a second comment inside the expression solely to document the callback:
-
-```ts
-// 按候选人标识建立详情索引。
-const candidateMap = new Map(candidates.value.map((candidate) => [candidate.id, candidate]))
-```
-
-## Scenario 4: Comment Watchers and Lifecycle Hooks
+The comment belongs immediately above the Vue API call and documents its callback:
 
 ```ts
 // 在筛选条件变化后重新加载候选人列表。
@@ -88,148 +55,13 @@ onMounted(async () => {
 })
 ```
 
-The required comment belongs immediately above the watcher or lifecycle call. Extract its callback only when the logic has an independent responsibility, genuine reuse, focused testing value, or a concrete readability benefit beyond shortening the watcher. Keep one-use watcher behavior inline even when it performs several related state updates.
+Do not insert another comment inside either callback solely to satisfy the callback rule. Extract a named callback only when it has an independent responsibility, reuse, focused testing value, or a concrete readability benefit.
 
-## Scenario 5: Comment Only Important Internal Logic
+## Scenario 3: Keep a One-Use Vue Workflow Together
 
-```ts
-// 提交候选人表单并处理服务端校验失败。
-const submitCandidate = async () => {
-  try {
-    await saveCandidate(form.value)
-  } catch (error) {
-    // 将服务端字段错误同步回表单控件。
-    applyServerErrors(error)
-    throw error
-  }
-}
-```
-
-Do not comment every assignment, return, or obvious API call. Declaration comments remain mandatory even when the function body is simple; internal comments are reserved for non-obvious business decisions, transformations, side effects, and error handling.
-
-## Scenario 6: Do Not Comment Vue Compiler Macros
-
-Do not add declaration comments above Vue compiler macros, even when their results are assigned to variables or destructured:
+Keep a callback beside its only registration site and trust a verified Vue contract instead of repeating it:
 
 ```ts
-// ❌ 接收组件属性。
-const props = defineProps<{ phone: string }>()
-// ❌ 声明组件事件。
-const emit = defineEmits<{ change: [phone: string] }>()
-// ❌ 设置组件默认选项。
-defineOptions({ inheritAttrs: false })
-```
-
-Write the macro declarations directly:
-
-```ts
-const props = defineProps<{ phone: string }>()
-const emit = defineEmits<{ change: [phone: string] }>()
-defineOptions({ inheritAttrs: false })
-```
-
-The macro name and its type arguments already state the declaration role. Document non-obvious business meaning in the relevant prop or event type when necessary, not with a generic comment attached to the macro.
-
-## Scenario 7: Remove Redundant Wrappers, Intermediates, and Guards
-
-Comments must not preserve structure that has no independent responsibility:
-
-```ts
-// 判断当前查询字段是否要求短信验证码验证。
-const hasSmsPhoneConfig = (field: SearchField) => {
-  return field.format === ValidatorType.PHONE && field.smsOpen === true
-}
-// ❌ 仅转发另一个判断，没有新增语义或行为。
-const isSmsPhoneField = (field: SearchField) => {
-  return hasSmsPhoneConfig(field)
-}
-
-// 在手机号变化时清除原短信准入签名。
-watch(phone, (currentPhone, previousPhone) => {
-  // ❌ 一次性中间变量没有增加业务含义。
-  const hasChanged = currentPhone !== previousPhone
-  // ❌ watch 已保证基础值变化时才调用，重复判断没有保护作用。
-  if (!hasChanged) return
-  resetVerification()
-})
-```
-
-Use the real predicate directly and trust a verified framework contract:
-
-```ts
-// 判断当前查询字段是否要求短信验证码验证。
-const hasSmsPhoneConfig = (field: SearchField) => {
-  return field.format === ValidatorType.PHONE && field.smsOpen === true
-}
-
-// 在手机号变化时清除原短信准入签名。
-watch(phone, () => {
-  resetVerification()
-})
-```
-
-Keep an intermediate variable when it communicates a distinct business concept, is reused, enables type narrowing, or materially improves a complex expression. Keep a guard when the framework or API can actually deliver the guarded state; verify the contract before removing it.
-
-## Scenario 8: Keep One-Use Callback Workflows Together
-
-Do not extract a callback merely because its body is long when it has one registration site and only continues the containing operation. The separated handlers below force the reader to jump between declarations, and `verifyCurrentCode` repeats a length condition already guaranteed by its only caller:
-
-```ts
-// ❌ 校验函数重复检查唯一调用方已经保证的验证码长度。
-const verifyCurrentCode = async () => {
-  if (
-    status.value === 'verifying' ||
-    code.value.length !== PHONE_VERIFICATION_CODE_LENGTH ||
-    phone.value !== sentPhone.value
-  ) {
-    return
-  }
-  await verifyPhoneVerificationCode({ phone: phone.value, code: code.value })
-}
-// 接收验证码输入并在达到完整位数后立即校验。
-const handleCodeInput = async (value: string | number) => {
-  code.value = String(value).slice(0, PHONE_VERIFICATION_CODE_LENGTH)
-  if (code.value.length === PHONE_VERIFICATION_CODE_LENGTH) {
-    await verifyCurrentCode()
-  }
-}
-// ❌ 该回调只服务于 handleRequestCode，却被拆到远处。
-const handleCaptchaVerified = async (validate: string) => {
-  status.value = 'sending'
-  await sendPhoneVerificationCode({ phone: phone.value, validate })
-  status.value = 'sent'
-  startCountdown()
-}
-// 打开图形验证码并请求发送短信验证码。
-const handleRequestCode = () => {
-  if (requestCodeDisabled.value) return
-  openCaptcha({ onOk: handleCaptchaVerified })
-}
-// ❌ 该重置函数只作为这一个 watcher 的回调。
-const resetVerification = () => {
-  code.value = ''
-  status.value = 'idle'
-  onVerifiedChange(null)
-}
-// 在手机号变化时作废原短信验证状态。
-watch(phone, resetVerification)
-```
-
-Keep each one-use callback beside its registration site, and validate a precondition only once along the private call path:
-
-```ts
-// 校验用户输入的短信验证码并保存查询准入签名。
-const verifyCurrentCode = async () => {
-  if (status.value === 'verifying' || phone.value !== sentPhone.value) return
-  await verifyPhoneVerificationCode({ phone: phone.value, code: code.value })
-}
-// 接收验证码输入并在达到完整位数后立即校验。
-const handleCodeInput = async (value: string | number) => {
-  code.value = String(value).slice(0, PHONE_VERIFICATION_CODE_LENGTH)
-  if (code.value.length === PHONE_VERIFICATION_CODE_LENGTH) {
-    await verifyCurrentCode()
-  }
-}
 // 打开图形验证码并在通过后请求发送短信验证码。
 const handleRequestCode = () => {
   if (requestCodeDisabled.value) return
@@ -243,6 +75,7 @@ const handleRequestCode = () => {
     }
   })
 }
+
 // 在手机号变化时就地清理关联的验证码及准入状态。
 watch(phone, () => {
   code.value = ''
@@ -251,15 +84,13 @@ watch(phone, () => {
 })
 ```
 
-Extract a callback when another caller reuses it, it represents an independently named business operation, it needs focused tests, or keeping it inline creates deeper and less readable control flow. Do not extract it solely to shorten the parent function or to attach another declaration comment.
+Do not extract either inline callback only to shorten its owner or to attach another declaration comment. Keep a guard only when another caller, Vue, or the called API can actually deliver the guarded state.
 
 ## Review Checklist
 
-- Every declared runtime variable or constant has an adjacent Chinese business comment.
-- Every function, callback, watcher, and lifecycle hook has an adjacent responsibility comment.
-- Comments explain purpose or effect rather than syntax.
-- Vue compiler macros have no declaration comments above them.
-- Callbacks are extracted only for reuse, independent responsibility, focused testing, or a concrete readability benefit.
-- Internal comments appear only at important, non-obvious logic.
-- No comment is used to justify a pass-through wrapper, meaningless intermediate variable, or redundant guard.
-- One-use callbacks that merely continue their owner workflow remain at the registration site, and private call paths do not repeat caller-guaranteed preconditions.
+- TypeScript SFCs use `ts-code-rules` as the generic script-quality source; this reference supplies only Vue-specific placement and exceptions.
+- JavaScript SFCs still apply the runtime declaration, function, internal-comment, and redundancy baseline.
+- Compiler macros have no declaration comments above them.
+- Watcher, lifecycle, and inline callback comments sit immediately above their containing call or property.
+- One-use callbacks stay at their registration site unless extraction has a concrete responsibility or readability benefit.
+- Comments explain business purpose or effects and do not preserve redundant code.

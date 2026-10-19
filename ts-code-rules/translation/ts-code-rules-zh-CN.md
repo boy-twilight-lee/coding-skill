@@ -1,10 +1,24 @@
 # ts-code-rules 中文翻译
 
-> 本文件仅供人工阅读。它没有被 `SKILL.md`、`agents/openai.yaml` 或任何 `references` 路由引用，因此不会自动进入 skill 上下文。每组示例紧跟对应规则，所有原始 fenced code 示例均原样保留。
+> 本文件仅供人工阅读。它没有被 `SKILL.md`、`agents/openai.yaml` 或任何 `references` 路由引用，因此不会自动进入 skill 上下文。当前 `SKILL.md` 是轻量入口，强制规则与示例按决策类型存放在 `references` 中；本文件将它们合并为便于人工查阅的中文版本。所有原始 fenced code 示例均原样保留。
 
-## 适用范围与工作流程
+## 当前技能结构
 
-所有新增、修改或审查的 TypeScript/TSX 都应用相关规则。现有代码不能免除规则，但不要为了统一风格迁移未触及代码。开始前检查调用方、类型、`tsconfig`、脚本、Lint、格式化、测试和真实运行目标；修改后运行最小范围检查并报告无法满足的规则。Vue SFC 还要应用 Vue/CSS 对应 skill。
+- `SKILL.md`：保留适用范围、优先级、reference 路由、跨技能组合和工作流程。
+- `references/`：每份文件列出对应的强制规则，并在适用时提供完整示例和复核清单。
+- `translation/ts-code-rules-zh-CN.md`：仅供人工阅读，不参与 Codex 自动路由。
+
+## 适用范围、优先级与工作流程
+
+所有新增、修改或审查的 TypeScript/TSX 都应用相关规则。现有代码只能作为上下文，不能免除规则；不要仅为了统一风格迁移未触及代码。更高优先级指令覆盖本技能；只有规则明确委托给仓库配置时，仓库配置或惯例才覆盖对应规则。无法满足强制规则时采用最小必要偏离，并准确报告冲突。
+
+开始前检查仓库指令、受影响模块、公开调用方、邻近类型、`tsconfig`、脚本、Lint、格式化、测试和真实运行目标，并根据当前决策读取匹配的 reference。修改后运行最小范围检查并报告无法满足的规则。Vue SFC 还要应用 `vue-code-rules`，同一修改涉及 style 区块时还要应用 `css-code-rules`；每个相关 skill 只应用一次，不递归重复读取已经加载的 skill。
+
+## 引用路由
+
+- 修改范围、抽象、清理、声明与回调注释、内部注释、冗余包装器或空行：`references/code-quality-examples.md`。
+- 导入与类型的新增、删除、分组、位置、模块边界或公开入口：`references/imports-and-types.md`。
+- Promise、错误、fire-and-forget、新 API、目标兼容性或最终格式化：`references/async-and-compatibility-examples.md`。
 
 ## 代码质量
 
@@ -16,7 +30,7 @@
 6. 不为注释而制造包装器、中间变量或重复守卫；一次性连续回调留在注册处。
 7. 空行只分隔真实逻辑区域，禁止连续、首尾、块边缘及注释与声明之间空行。
 
-### 对应完整示例：`references/code-quality-examples.md`
+### 对应强制规则与完整示例：`references/code-quality-examples.md`
 
 #### 场景 1：保持修改范围
 
@@ -303,6 +317,8 @@ watch(phone, () => {
 3. 通过项目配置的别名和公开入口导入其他模块；不要跨越两个以上父目录，也不要访问其他模块的私有文件。
 4. 简洁私有类型跟随拥有者；可复用或公开契约放入仓库既有类型模块，环境 `.d.ts` 声明放入项目配置的声明位置。
 
+### 对应强制规则：`references/imports-and-types.md`
+
 ## 异步与兼容性
 
 1. 普通顺序流程使用 `await`；只在能够恢复、转换、补充或报告错误的层捕获。
@@ -311,7 +327,7 @@ watch(phone, () => {
 4. 新 API 必须符合真实 target、Browserslist、运行时和 polyfill 策略，转译不提供运行时 API。
 5. Prettier 只处理修改文件，恢复范围外格式变化并保留用户修改。
 
-### 对应完整示例：`references/async-and-compatibility-examples.md`
+### 对应强制规则与完整示例：`references/async-and-compatibility-examples.md`
 
 #### 场景 1：等待并处理 API 调用
 

@@ -18,8 +18,6 @@ Detailed rules and examples live in references grouped by the decisions they gov
 - Read [Design, Layout, and Reuse Examples](references/design-layout-and-reuse-examples.md) when deciding token use, layout choice, target-specific presentation, units, library customization, redundancy removal, or reusable abstractions.
 - Read [Declaration and Compatibility Examples](references/declaration-and-compatibility-examples.md) when deciding comments, blank lines, declaration order, consolidation, browser support, fallbacks, or final formatting checks.
 
-For a Vue style block, also apply `vue-code-rules`; if the same SFC change touches TypeScript, apply `ts-code-rules` as well. Apply each relevant skill once; do not recursively reread a skill that is already loaded for the task.
-
 ## Working Process
 
 1. Before changing or reviewing styles, read the repository instructions and inspect the affected markup, owning component, neighboring styles, global resets and tokens, preprocessors, PostCSS setup, target-browser configuration, and formatter or lint scripts. Base layout and compatibility decisions on the rendered ownership structure and actual project configuration.
