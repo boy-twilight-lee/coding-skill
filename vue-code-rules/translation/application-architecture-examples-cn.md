@@ -1,6 +1,6 @@
 # 应用架构示例
 
-> 本文件仅翻译 `vue-code-rules/references/application-architecture-examples.md`，代码示例与英文 reference 保持一致。
+> 本文件仅翻译 `vue-code-rules/references/application-architecture-examples.md`，规则结构和代码行为与英文 reference 对应，示例注释按中文规则本地化。
 
 使用仓库既有的等价目录；目标专属目录只有在仓库已经按目标拆分时才存在。
 

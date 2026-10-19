@@ -20,11 +20,11 @@ defineOptions({ inheritAttrs: false })
 const props = defineProps<{ candidateId: string }>()
 const emit = defineEmits<{ saved: [candidateId: string] }>()
 
-// [Write in Chinese: store the page loading state.]
+// <zh: store the page loading state.>
 const loading = ref(false)
-// [Write in Chinese: control whether the candidate editor is visible.]
+// <zh: control whether the candidate editor is visible.>
 const visible = ref(false)
-// [Write in Chinese: load the current candidate details and maintain the loading state.]
+// <zh: load the current candidate details and maintain the loading state.>
 const loadCandidate = async () => {
   loading.value = true
   try {
@@ -33,16 +33,16 @@ const loadCandidate = async () => {
     loading.value = false
   }
 }
-// [Write in Chinese: submit the current candidate and notify the parent component.]
+// <zh: submit the current candidate and notify the parent component.>
 const handleSave = async () => {
   await saveCandidate(props.candidateId)
   emit('saved', props.candidateId)
 }
-// [Write in Chinese: open the candidate editor.]
+// <zh: open the candidate editor.>
 const openEditor = () => {
   visible.value = true
 }
-// [Write in Chinese: load candidate details after the component mounts.]
+// <zh: load candidate details after the component mounts.>
 onMounted(loadCandidate)
 
 defineExpose({ openEditor })
@@ -59,7 +59,7 @@ import { ref } from 'vue'
 import { loadCandidateName } from '@/apis'
 
 const props = defineProps<{ candidateId: string }>()
-// [Write in Chinese: store the candidate display name and update it after the details load.]
+// <zh: store the candidate display name and update it after the details load.>
 const candidateName = ref('')
 
 defineExpose({ candidateName })
@@ -78,22 +78,22 @@ Do not place the same compiler macros after unrelated runtime declarations, insi
 <script setup lang="ts">
 import { onMounted, ref } from 'vue'
 
-// [Write in Chinese: store the page loading state.]
+// <zh: store the page loading state.>
 const loading = ref(false)
-// ❌ [Write in Chinese: a regular runtime declaration separates the component contract macros.]
+// ❌ <zh: a regular runtime declaration separates the component contract macros.>
 const props = defineProps<{ candidateId: string }>()
 
-// ❌ [Write in Chinese: compiler macros cannot appear inside a function or another nested scope.]
+// ❌ <zh: compiler macros cannot appear inside a function or another nested scope.>
 const createEmitter = () => {
   return defineEmits<{ saved: [candidateId: string] }>()
 }
 
-// [Write in Chinese: open the candidate editor.]
+// <zh: open the candidate editor.>
 const openEditor = () => {
   visible.value = true
 }
 defineExpose({ openEditor })
-// ❌ [Write in Chinese: without top-level await, no declaration or executable statement may follow defineExpose.]
+// ❌ <zh: without top-level await, no declaration or executable statement may follow defineExpose.>
 onMounted(loadCandidate)
 </script>
 ```
@@ -123,13 +123,13 @@ With that configuration active, use the covered APIs directly:
 <script setup lang="ts">
 const props = defineProps<{ candidateId: string }>()
 
-// [Write in Chinese: read route information for the current candidate page.]
+// <zh: read route information for the current candidate page.>
 const route = useRoute()
-// [Write in Chinese: provide navigation for the candidate details page.]
+// <zh: provide navigation for the candidate details page.>
 const router = useRouter()
-// [Write in Chinese: store the candidate search keyword.]
+// <zh: store the candidate search keyword.>
 const keyword = ref('')
-// [Write in Chinese: provide the normalized candidate search keyword.]
+// <zh: provide the normalized candidate search keyword.>
 const normalizedKeyword = computed(() => keyword.value.trim())
 </script>
 ```
@@ -146,13 +146,13 @@ import { useRoute, useRouter } from 'vue-router'
 
 const props = defineProps<{ candidateId: string }>()
 
-// [Write in Chinese: read route information for the current candidate page.]
+// <zh: read route information for the current candidate page.>
 const route = useRoute()
-// [Write in Chinese: provide navigation for the candidate details page.]
+// <zh: provide navigation for the candidate details page.>
 const router = useRouter()
-// [Write in Chinese: store the candidate search keyword.]
+// <zh: store the candidate search keyword.>
 const keyword = ref('')
-// [Write in Chinese: provide the normalized candidate search keyword.]
+// <zh: provide the normalized candidate search keyword.>
 const normalizedKeyword = computed(() => keyword.value.trim())
 </script>
 ```
@@ -178,11 +178,11 @@ import { useRoute } from 'vue-router'
 
 const props = defineProps<{ candidateId: string }>()
 
-// [Write in Chinese: read route information for the current candidate page.]
+// <zh: read route information for the current candidate page.>
 const route = useRoute()
-// [Write in Chinese: store the candidate search keyword.]
+// <zh: store the candidate search keyword.>
 const keyword = ref('')
-// [Write in Chinese: provide the normalized candidate search keyword.]
+// <zh: provide the normalized candidate search keyword.>
 const normalizedKeyword = computed(() => keyword.value.trim())
 </script>
 ```
@@ -197,11 +197,11 @@ Do not omit imports for the same uncovered `computed` and `useRoute` APIs:
 <script setup lang="ts">
 const props = defineProps<{ candidateId: string }>()
 
-// [Write in Chinese: read route information for the current candidate page.]
+// <zh: read route information for the current candidate page.>
 const route = useRoute()
-// [Write in Chinese: store the candidate search keyword.]
+// <zh: store the candidate search keyword.>
 const keyword = ref('')
-// [Write in Chinese: provide the normalized candidate search keyword.]
+// <zh: provide the normalized candidate search keyword.>
 const normalizedKeyword = computed(() => keyword.value.trim())
 </script>
 ```

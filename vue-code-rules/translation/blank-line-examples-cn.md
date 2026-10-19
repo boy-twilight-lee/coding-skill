@@ -1,6 +1,6 @@
 # Vue 空行示例
 
-> 本文件仅翻译 `vue-code-rules/references/blank-line-examples.md`，代码示例与英文 reference 保持一致。
+> 本文件仅翻译 `vue-code-rules/references/blank-line-examples.md`，规则结构和代码行为与英文 reference 对应，示例注释按中文规则本地化。
 
 本节负责 SFC 顶层区块、template 和 JavaScript Vue 脚本的空行。TypeScript 脚本的声明与语句间距以 `ts-code-rules` 为准，style 区块的选择器与声明间距以 `css-code-rules` 为准。
 

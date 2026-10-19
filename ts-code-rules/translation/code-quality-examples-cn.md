@@ -1,6 +1,6 @@
 # 代码质量示例
 
-> 本文件仅翻译 `ts-code-rules/references/code-quality-examples.md`，代码示例与英文 reference 保持一致。
+> 本文件仅翻译 `ts-code-rules/references/code-quality-examples.md`，规则结构和代码行为与英文 reference 对应，示例注释按中文规则本地化。
 
 1. 修改限定在请求及直接相关清理，不顺手重排、改名或重写无关代码。
 2. 一次性简单逻辑保持内联；真实复杂度、复用或职责边界才抽象。
@@ -283,89 +283,6 @@ watch(phone, (currentPhone, previousPhone) => {
   if (!hasChanged) return
   resetVerification()
 })
-```
-
-## 场景 9：保持一次性回调流程连续
-
-只服务一个注册点且延续同一流程的回调放在注册位置；仅在独立职责、复用、测试或明显可读性收益时提取。
-
-**正例：**
-
-```ts
-// 校验用户输入的短信验证码并保存查询准入签名。
-const verifyCurrentCode = async () => {
-  if (status.value === 'verifying' || phone.value !== sentPhone.value) return
-  await verifyPhoneVerificationCode({ phone: phone.value, code: code.value })
-}
-// 接收验证码输入并在达到完整位数后立即校验。
-const handleCodeInput = async (value: string | number) => {
-  code.value = String(value).slice(0, PHONE_VERIFICATION_CODE_LENGTH)
-  if (code.value.length === PHONE_VERIFICATION_CODE_LENGTH) {
-    await verifyCurrentCode()
-  }
-}
-// 打开图形验证码并在通过后请求发送短信验证码。
-const handleRequestCode = () => {
-  if (requestCodeDisabled.value) return
-  openCaptcha({
-    // 图形验证码通过后继续完成短信发送流程。
-    onOk: async (validate: string) => {
-      status.value = 'sending'
-      await sendPhoneVerificationCode({ phone: phone.value, validate })
-      status.value = 'sent'
-      startCountdown()
-    }
-  })
-}
-// 在手机号变化时就地清理关联的验证码及准入状态。
-watch(phone, () => {
-  code.value = ''
-  status.value = 'idle'
-  onVerifiedChange(null)
-})
-```
-
-**反例：**
-
-```ts
-// ❌ 校验函数重复检查唯一调用方已经保证的验证码长度。
-const verifyCurrentCode = async () => {
-  if (
-    status.value === 'verifying' ||
-    code.value.length !== PHONE_VERIFICATION_CODE_LENGTH ||
-    phone.value !== sentPhone.value
-  ) {
-    return
-  }
-  await verifyPhoneVerificationCode({ phone: phone.value, code: code.value })
-}
-// 接收验证码输入并在达到完整位数后立即校验。
-const handleCodeInput = async (value: string | number) => {
-  code.value = String(value).slice(0, PHONE_VERIFICATION_CODE_LENGTH)
-  if (code.value.length === PHONE_VERIFICATION_CODE_LENGTH) {
-    await verifyCurrentCode()
-  }
-}
-// ❌ 该回调只服务于 handleRequestCode，却被拆到远处。
-const handleCaptchaVerified = async (validate: string) => {
-  status.value = 'sending'
-  await sendPhoneVerificationCode({ phone: phone.value, validate })
-  status.value = 'sent'
-  startCountdown()
-}
-// 打开图形验证码并请求发送短信验证码。
-const handleRequestCode = () => {
-  if (requestCodeDisabled.value) return
-  openCaptcha({ onOk: handleCaptchaVerified })
-}
-// ❌ 该重置函数只作为这一个 watcher 的回调。
-const resetVerification = () => {
-  code.value = ''
-  status.value = 'idle'
-  onVerifiedChange(null)
-}
-// 在手机号变化时作废原短信验证状态。
-watch(phone, resetVerification)
 ```
 
 ## 复核清单

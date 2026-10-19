@@ -1,6 +1,6 @@
 # Scope 与文件组织示例
 
-> 本文件仅翻译 `css-code-rules/references/scope-and-file-organization-examples.md`，代码示例与英文 reference 保持一致。
+> 本文件仅翻译 `css-code-rules/references/scope-and-file-organization-examples.md`，规则结构和代码行为与英文 reference 对应，示例注释按中文规则本地化。
 
 1. 保留项目现有样式语言；用户 Vue 项目中新组件默认 Less，除非仓库明确采用其他方案。
 2. 普通 Vue 组件样式使用 scoped；Less 写作 `<style lang="less" scoped>`。只有真正全局或组件根外渲染的内容使用非 scoped。

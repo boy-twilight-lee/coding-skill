@@ -1,6 +1,6 @@
 # 模板示例
 
-> 本文件仅翻译 `vue-code-rules/references/template-examples.md`，代码示例与英文 reference 保持一致。
+> 本文件仅翻译 `vue-code-rules/references/template-examples.md`，规则结构和代码行为与英文 reference 对应，示例注释按中文规则本地化。
 
 1. 现有区块严格按 template、script、style 顺序，不使用的区块省略。
 2. 重复 UI 使用结构化数据、`v-for` 和稳定唯一键。

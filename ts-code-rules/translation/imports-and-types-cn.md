@@ -1,6 +1,6 @@
 # 导入与类型组织规则
 
-> 本文件仅翻译 `ts-code-rules/references/imports-and-types.md`，代码示例与英文 reference 保持一致。
+> 本文件仅翻译 `ts-code-rules/references/imports-and-types.md`，规则结构和代码行为与英文 reference 对应，示例注释按中文规则本地化。
 
 1. 导入顺序为第三方运行时依赖、类型依赖、内部运行时模块，以及适用时的 UI 或组件模块。类型组中先放模块局部类型，再放共享类型。
 2. 编译器和打包器能安全擦除纯类型用法时优先普通导入。只有已验证的编译器、Lint、打包器或包运行时契约要求时才使用独立 `import type`，禁止行内 `type` 修饰符。

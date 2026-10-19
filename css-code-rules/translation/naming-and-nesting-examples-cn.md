@@ -1,6 +1,6 @@
 # 命名与嵌套示例
 
-> 本文件仅翻译 `css-code-rules/references/naming-and-nesting-examples.md`，代码示例与英文 reference 保持一致。
+> 本文件仅翻译 `css-code-rules/references/naming-and-nesting-examples.md`，规则结构和代码行为与英文 reference 对应，示例注释按中文规则本地化。
 
 1. 每个组件有明确业务根类，所有私有选择器位于其下；Teleport 可有独立完整业务根。
 2. 项目类名使用完整单连字符 BEM 风格，不用 `__`/`--`；名称表达业务而不是视觉。

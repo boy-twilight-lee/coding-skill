@@ -1,6 +1,6 @@
 # 复杂组件 Context 示例
 
-> 本文件仅翻译 `vue-code-rules/references/complex-component-context-examples.md`，代码示例与英文 reference 保持一致。
+> 本文件仅翻译 `vue-code-rules/references/complex-component-context-examples.md`，规则结构和代码行为与英文 reference 对应，示例注释按中文规则本地化。
 
 1. 每个 `use**Context` 只返回 `provide()` 和 `inject()`，位于拥有者 `hooks/` 并使用业务限定 key。
 2. 状态、computed、ref、watch、副作用和动作都在 `provide()` 内创建；同一 context 对象既提供又返回。

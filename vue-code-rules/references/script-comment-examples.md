@@ -30,9 +30,9 @@ const emit = defineEmits<{
   saved: [candidateId: string]
 }>()
 
-// [Write in Chinese: indicate whether the candidate details are loading.]
+// <zh: indicate whether the candidate details are loading.>
 const loading = ref(false)
-// [Write in Chinese: submit the candidate and notify the parent component.]
+// <zh: submit the candidate and notify the parent component.>
 const submitCandidate = async () => {
   await saveCandidate(props.candidateId)
   emit('saved', props.candidateId)
@@ -44,7 +44,7 @@ const submitCandidate = async () => {
 Do not add a generic declaration comment above that same compiler macro:
 
 ```ts
-// [Write in Chinese: receive the component props.]
+// <zh: receive the component props.>
 const props = defineProps<{
   candidateId: string
 }>()
@@ -59,12 +59,12 @@ Its name and type argument already identify the declaration role. Document non-o
 The comment belongs immediately above the Vue API call and documents its callback:
 
 ```ts
-// [Write in Chinese: reload the candidate list after the filters change.]
+// <zh: reload the candidate list after the filters change.>
 watch(filters, async () => {
   await loadCandidates()
 })
 
-// [Write in Chinese: initialize candidate data after the page mounts.]
+// <zh: initialize candidate data after the page mounts.>
 onMounted(async () => {
   await loadCandidates()
 })
@@ -78,12 +78,12 @@ Do not move the same callback comments inside the watcher and lifecycle bodies:
 
 ```ts
 watch(filters, async () => {
-  // [Write in Chinese: reload the candidate list after the filters change.]
+  // <zh: reload the candidate list after the filters change.>
   await loadCandidates()
 })
 
 onMounted(async () => {
-  // [Write in Chinese: initialize candidate data after the page mounts.]
+  // <zh: initialize candidate data after the page mounts.>
   await loadCandidates()
 })
 ```
@@ -95,11 +95,11 @@ onMounted(async () => {
 Keep a callback beside its only registration site and trust a verified Vue contract instead of repeating it:
 
 ```ts
-// [Write in Chinese: open the CAPTCHA and request an SMS code after successful validation.]
+// <zh: open the CAPTCHA and request an SMS code after successful validation.>
 const handleRequestCode = () => {
   if (requestCodeDisabled.value) return
   openCaptcha({
-    // [Write in Chinese: continue the SMS delivery flow after the CAPTCHA succeeds.]
+    // <zh: continue the SMS delivery flow after the CAPTCHA succeeds.>
     onOk: async (validate: string) => {
       status.value = 'sending'
       await sendPhoneVerificationCode({ phone: phone.value, validate })
@@ -109,7 +109,7 @@ const handleRequestCode = () => {
   })
 }
 
-// [Write in Chinese: clear the associated verification code and access state in place when the phone number changes.]
+// <zh: clear the associated verification code and access state in place when the phone number changes.>
 watch(phone, () => {
   code.value = ''
   status.value = 'idle'
@@ -122,25 +122,25 @@ watch(phone, () => {
 Do not extract those same one-use callbacks only to shorten their owners or to attach another declaration comment:
 
 ```ts
-// [Write in Chinese: continue the SMS delivery flow after the CAPTCHA succeeds.]
+// <zh: continue the SMS delivery flow after the CAPTCHA succeeds.>
 const handleCaptchaVerified = async (validate: string) => {
   status.value = 'sending'
   await sendPhoneVerificationCode({ phone: phone.value, validate })
   status.value = 'sent'
   startCountdown()
 }
-// [Write in Chinese: open the CAPTCHA and request an SMS verification code.]
+// <zh: open the CAPTCHA and request an SMS verification code.>
 const handleRequestCode = () => {
   if (requestCodeDisabled.value) return
   openCaptcha({ onOk: handleCaptchaVerified })
 }
-// [Write in Chinese: clear the associated verification code and access state.]
+// <zh: clear the associated verification code and access state.>
 const resetVerification = () => {
   code.value = ''
   status.value = 'idle'
   onVerifiedChange(null)
 }
-// [Write in Chinese: invalidate the previous SMS verification state when the phone number changes.]
+// <zh: invalidate the previous SMS verification state when the phone number changes.>
 watch(phone, resetVerification)
 ```
 

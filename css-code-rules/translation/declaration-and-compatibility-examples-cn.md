@@ -1,6 +1,6 @@
 # 声明与兼容性示例
 
-> 本文件仅翻译 `css-code-rules/references/declaration-and-compatibility-examples.md`，代码示例与英文 reference 保持一致。
+> 本文件仅翻译 `css-code-rules/references/declaration-and-compatibility-examples.md`，规则结构和代码行为与英文 reference 对应，示例注释按中文规则本地化。
 
 1. 样式通常不写注释；只有非显然兼容性、外部约束或临时例外可用简洁中文解释原因。
 2. 空行只分隔真实结构，禁止连续、首尾、块边缘以及相关声明与嵌套之间空行。

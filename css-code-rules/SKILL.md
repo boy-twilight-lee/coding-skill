@@ -11,6 +11,8 @@ Higher-priority instructions override this skill. Repository configuration or co
 
 Detailed rules and examples live in references grouped by the decisions they govern. Read every reference matching the current task before acting. References are authoritative requirements, not optional background, and they do not weaken the rules.
 
+In examples, `<zh: ...>` marks required Chinese comment content. Replace the marker with a concise Chinese comment expressing the enclosed meaning; never copy the marker into project code.
+
 ## Reference Routing
 
 - Read [Scope and File Organization Examples](references/scope-and-file-organization-examples.md) when deciding stylesheet language, Vue scope, extraction layout, ownership, or override placement.

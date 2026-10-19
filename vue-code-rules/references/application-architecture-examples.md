@@ -88,7 +88,7 @@ Do not collapse the established entries into a shared component that chooses a t
 import CandidateCardMobile from '@/components/candidate-card'
 import CandidateCardPc from '@/components-pc/candidate-card'
 
-// [Write in Chinese: read the presentation target for the current runtime environment.]
+// <zh: read the presentation target for the current runtime environment.>
 const deviceTarget = getRuntimeDeviceTarget()
 </script>
 ```
@@ -123,7 +123,7 @@ Reuse the installed capability:
 ```ts
 import { format } from 'date-fns'
 
-// [Write in Chinese: format the candidate update time for list display.]
+// <zh: format the candidate update time for list display.>
 export const formatCandidateUpdatedAt = (value: Date) => {
   return format(value, 'yyyy-MM-dd HH:mm')
 }
@@ -136,7 +136,7 @@ Do not add and wrap a second date library solely to implement the same formattin
 ```ts
 import dayjs from 'dayjs'
 
-// [Write in Chinese: format the candidate update time for list display.]
+// <zh: format the candidate update time for list display.>
 export const formatCandidateUpdatedAt = (value: Date) => {
   return dayjs(value).format('YYYY-MM-DD HH:mm')
 }
@@ -158,7 +158,7 @@ src/utils/index.ts
 ```ts
 import { format } from 'date-fns'
 
-// [Write in Chinese: format a date value for display in the candidate list.]
+// <zh: format a date value for display in the candidate list.>
 export const formatCandidateDate = (value: Date) => {
   return format(value, 'yyyy-MM-dd')
 }
@@ -179,7 +179,7 @@ src/utils/common.ts
 ```
 
 ```ts
-// [Write in Chinese: used only by the candidate-list filter and table but prematurely promoted to a global utility.]
+// <zh: used only by the candidate-list filter and table but prematurely promoted to a global utility.>
 export const formatCandidateDate = (value: Date) => {
   return format(value, 'yyyy-MM-dd')
 }

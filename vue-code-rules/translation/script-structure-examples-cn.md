@@ -1,6 +1,6 @@
 # 脚本结构示例
 
-> 本文件仅翻译 `vue-code-rules/references/script-structure-examples.md`，代码示例与英文 reference 保持一致。
+> 本文件仅翻译 `vue-code-rules/references/script-structure-examples.md`，规则结构和代码行为与英文 reference 对应，示例注释按中文规则本地化。
 
 1. 编译器宏只能位于 `<script setup>` 顶层。除 `defineExpose` 外的宏紧跟导入形成第一声明组；无顶层 await 时 expose 最后，有顶层 await 时在首次挂起前暴露已初始化绑定。
 2. 显式导入 Vue/Vue Router API 前检查实际 Vite 自动导入配置；已覆盖项直接使用，未覆盖或无法验证时显式导入。

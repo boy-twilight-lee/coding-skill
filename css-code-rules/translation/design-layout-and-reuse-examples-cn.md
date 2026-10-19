@@ -1,6 +1,6 @@
 # 设计、布局与复用示例
 
-> 本文件仅翻译 `css-code-rules/references/design-layout-and-reuse-examples.md`，代码示例与英文 reference 保持一致。
+> 本文件仅翻译 `css-code-rules/references/design-layout-and-reuse-examples.md`，规则结构和代码行为与英文 reference 对应，示例注释按中文规则本地化。
 
 1. 复用令牌、工具和语义值；只有真实重复时使用变量、mixin 或循环。
 2. 一维布局优先 Flexbox 与 `gap`；Grid 只用于 Flex 无法正确表达的真实二维对齐。

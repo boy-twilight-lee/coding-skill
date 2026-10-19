@@ -1,6 +1,6 @@
 # 异步与兼容性示例
 
-> 本文件仅翻译 `ts-code-rules/references/async-and-compatibility-examples.md`，代码示例与英文 reference 保持一致。
+> 本文件仅翻译 `ts-code-rules/references/async-and-compatibility-examples.md`，规则结构和代码行为与英文 reference 对应，示例注释按中文规则本地化。
 
 1. 普通顺序流程使用 `await`；只在能够恢复、转换、补充或报告错误的层捕获。
 2. 不用一元 `void` 丢弃 Promise；fire-and-forget 必须拥有拒绝处理。

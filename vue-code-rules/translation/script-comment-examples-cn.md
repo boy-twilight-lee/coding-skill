@@ -1,6 +1,6 @@
 # Vue 脚本注释示例
 
-> 本文件仅翻译 `vue-code-rules/references/script-comment-examples.md`，代码示例与英文 reference 保持一致。
+> 本文件仅翻译 `vue-code-rules/references/script-comment-examples.md`，规则结构和代码行为与英文 reference 对应，示例注释按中文规则本地化。
 
 对于 `<script lang="ts">` 和 `<script setup lang="ts">`，通用声明、函数、回调、内部注释、冗余包装器、中间值和守卫规则以 `ts-code-rules` 为准；本节只补充 Vue 特有的放置方式和编译器宏例外。
 

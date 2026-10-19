@@ -29,7 +29,7 @@ Change the defective branch and its directly affected imports, comments, tests, 
 If the defect is an inclusive retry boundary, keep the correction local:
 
 ```ts
-// [Write in Chinese: determine whether the candidate synchronization task may still be retried.]
+// <zh: determine whether the candidate synchronization task may still be retried.>
 export const canRetryCandidateSync = (retryCount: number) => {
   return retryCount <= MAX_CANDIDATE_SYNC_RETRY_COUNT
 }
@@ -40,7 +40,7 @@ export const canRetryCandidateSync = (retryCount: number) => {
 Do not combine the same boundary fix with an unrelated rename and return-shape change:
 
 ```ts
-// [Write in Chinese: determine whether the candidate synchronization task may still be retried and return a wrapped result.]
+// <zh: determine whether the candidate synchronization task may still be retried and return a wrapped result.>
 export const evaluateCandidateSyncRetry = (retryCount: number) => {
   return { allowed: retryCount <= MAX_CANDIDATE_SYNC_RETRY_COUNT }
 }
@@ -55,7 +55,7 @@ Unrelated renaming, logging rewrites, or conversion of neighboring functions to 
 Keep a clear one-time transformation at its call site:
 
 ```ts
-// [Write in Chinese: store the candidate name required by the submission API.]
+// <zh: store the candidate name required by the submission API.>
 const candidateName = form.name.trim()
 await saveCandidate({ ...form, name: candidateName })
 ```
@@ -65,7 +65,7 @@ await saveCandidate({ ...form, name: candidateName })
 Do not create a wrapper that only renames or forwards one operation:
 
 ```ts
-// [Write in Chinese: return the trimmed candidate name.]
+// <zh: return the trimmed candidate name.>
 const getCandidateName = (name: string) => {
   return name.trim()
 }
@@ -88,7 +88,7 @@ After cleanup, keep only the imports and behavior required by the new path:
 ```ts
 import { saveCandidate } from '@/apis'
 
-// [Write in Chinese: store the submission payload for the current candidate.]
+// <zh: store the submission payload for the current candidate.>
 const candidatePayload = buildCandidatePayload(form)
 await saveCandidate(candidatePayload)
 ```
@@ -100,11 +100,11 @@ Before cleanup, the same changed path still contains the removed debugger depend
 ```ts
 import { debugCandidate, saveCandidate } from '@/apis'
 
-// [Write in Chinese: forward the candidate save request.]
+// <zh: forward the candidate save request.>
 const submitCandidateRequest = (payload: CandidatePayload) => {
   return saveCandidate(payload)
 }
-// [Write in Chinese: store the submission payload for the current candidate.]
+// <zh: store the submission payload for the current candidate.>
 const candidatePayload = buildCandidatePayload(form)
 console.log(debugCandidate(candidatePayload))
 await submitCandidateRequest(candidatePayload)
@@ -117,11 +117,11 @@ Do not remove unrelated legacy code merely because it appears unused unless the 
 **Positive example:**
 
 ```ts
-// [Write in Chinese: store the identifier of the candidate currently being edited.]
+// <zh: store the identifier of the candidate currently being edited.>
 const candidateId = route.params.id
-// [Write in Chinese: indicate whether the candidate details are loading.]
+// <zh: indicate whether the candidate details are loading.>
 let loading = false
-// [Write in Chinese: read the candidate information from the submission result.]
+// <zh: read the candidate information from the submission result.>
 const { candidate, updatedAt } = result
 ```
 
@@ -131,17 +131,17 @@ Class fields follow the same declaration rule, and methods follow the function r
 
 ```ts
 export class CandidateDraftService {
-  // [Write in Chinese: store the identifier of the candidate that owns the current draft.]
+  // <zh: store the identifier of the candidate that owns the current draft.>
   private readonly candidateId: string
-  // [Write in Chinese: indicate whether the current draft is being submitted.]
+  // <zh: indicate whether the current draft is being submitted.>
   private submitting = false
 
-  // [Write in Chinese: create a draft service for the specified candidate.]
+  // <zh: create a draft service for the specified candidate.>
   public constructor(candidateId: string) {
     this.candidateId = candidateId
   }
 
-  // [Write in Chinese: submit the current candidate's draft content.]
+  // <zh: submit the current candidate's draft content.>
   public async submit(payload: CandidateDraftPayload) {
     this.submitting = true
     try {
@@ -158,7 +158,7 @@ export class CandidateDraftService {
 Avoid a comment that merely repeats the same declaration's identifier:
 
 ```ts
-// [Write in Chinese: define candidateId.]
+// <zh: define candidateId.>
 const candidateId = route.params.id
 ```
 
@@ -167,19 +167,19 @@ const candidateId = route.params.id
 **Positive example:**
 
 ```ts
-// [Write in Chinese: submit candidate data and return the saved details.]
+// <zh: submit candidate data and return the saved details.>
 const submitCandidate = async (): Promise<Candidate> => {
   return await saveCandidate(buildCandidatePayload(form))
 }
 
-// [Write in Chinese: keep candidates that have valid contact details.]
+// <zh: keep candidates that have valid contact details.>
 const hasValidContact = (candidate: Candidate) => {
   return Boolean(candidate.mobile || candidate.email)
 }
-// [Write in Chinese: provide the list of candidates who can currently be contacted.]
+// <zh: provide the list of candidates who can currently be contacted.>
 const contactableCandidates = candidates.filter(hasValidContact)
 
-// [Write in Chinese: handle selection of a candidate card.]
+// <zh: handle selection of a candidate card.>
 const handleCandidateSelect = (candidateId: string) => {
   selectedCandidateId.value = candidateId
 }
@@ -188,7 +188,7 @@ const handleCandidateSelect = (candidateId: string) => {
 A short inline callback may remain when an immediately adjacent comment clearly describes it:
 
 ```ts
-// [Write in Chinese: index candidate details by candidate identifier.]
+// <zh: index candidate details by candidate identifier.>
 const candidateMap = new Map(candidates.map((candidate) => [candidate.id, candidate]))
 ```
 
@@ -199,7 +199,7 @@ Extract an inline callback only when it has an independent responsibility, genui
 Do not leave the same responsibility unexplained or replace it with a comment that repeats the function name:
 
 ```ts
-// [Write in Chinese: define submitCandidate.]
+// <zh: define submitCandidate.>
 const submitCandidate = async (): Promise<Candidate> => {
   return await saveCandidate(buildCandidatePayload(form))
 }
@@ -210,12 +210,12 @@ const submitCandidate = async (): Promise<Candidate> => {
 **Positive example:**
 
 ```ts
-// [Write in Chinese: save the candidate while preserving server validation errors for the caller.]
+// <zh: save the candidate while preserving server validation errors for the caller.>
 const submitCandidate = async () => {
   try {
     return await saveCandidate(buildCandidatePayload(form))
   } catch (error) {
-    // [Write in Chinese: normalize field errors for display by the form layer.]
+    // <zh: normalize field errors for display by the form layer.>
     normalizeFieldErrors(error)
     throw error
   }
@@ -229,17 +229,17 @@ Do not narrate each assignment, call, or return. Declaration comments remain man
 Do not narrate every step in that same submission flow:
 
 ```ts
-// [Write in Chinese: save the candidate while preserving server validation errors for the caller.]
+// <zh: save the candidate while preserving server validation errors for the caller.>
 const submitCandidate = async () => {
   try {
-    // [Write in Chinese: build the candidate payload.]
+    // <zh: build the candidate payload.>
     const payload = buildCandidatePayload(form)
-    // [Write in Chinese: call the candidate save API.]
+    // <zh: call the candidate save API.>
     return await saveCandidate(payload)
   } catch (error) {
-    // [Write in Chinese: call the field-error normalization function.]
+    // <zh: call the field-error normalization function.>
     normalizeFieldErrors(error)
-    // [Write in Chinese: throw the error.]
+    // <zh: throw the error.>
     throw error
   }
 }
@@ -253,12 +253,12 @@ const submitCandidate = async () => {
 import { computed, ref } from 'vue'
 import { loadCandidates } from '@/apis'
 
-// [Write in Chinese: store the current candidate filters.]
+// <zh: store the current candidate filters.>
 const filters = ref(createDefaultFilters())
-// [Write in Chinese: indicate whether any filters are currently applied.]
+// <zh: indicate whether any filters are currently applied.>
 const hasActiveFilters = computed(() => hasFilters(filters.value))
 
-// [Write in Chinese: refresh the candidate list with the current filters.]
+// <zh: refresh the candidate list with the current filters.>
 const refreshCandidates = async () => {
   await loadCandidates(filters.value)
 }
@@ -271,11 +271,11 @@ Do not place a blank line between a required comment and its declaration, inside
 Do not separate the same comments from their declarations or split tightly coupled statements:
 
 ```ts
-// [Write in Chinese: store the current candidate filters.]
+// <zh: store the current candidate filters.>
 
 const filters = ref(createDefaultFilters())
 
-// [Write in Chinese: refresh the candidate list with the current filters.]
+// <zh: refresh the candidate list with the current filters.>
 const refreshCandidates = async () => {
 
   await loadCandidates(filters.value)
@@ -290,12 +290,12 @@ const refreshCandidates = async () => {
 Prefer the direct predicate and the verified callback contract:
 
 ```ts
-// [Write in Chinese: determine whether the current search field requires SMS verification.]
+// <zh: determine whether the current search field requires SMS verification.>
 const hasSmsPhoneConfig = (field: SearchField) => {
   return field.format === ValidatorType.PHONE && field.smsOpen === true
 }
 
-// [Write in Chinese: clear the previous SMS access signature when the phone number changes.]
+// <zh: clear the previous SMS access signature when the phone number changes.>
 watch(phone, () => {
   resetVerification()
 })
@@ -306,113 +306,26 @@ watch(phone, () => {
 Do not retain an extra function, variable, or condition in that same workflow just because it provides a place for a required declaration comment:
 
 ```ts
-// [Write in Chinese: determine whether the current search field requires SMS verification.]
+// <zh: determine whether the current search field requires SMS verification.>
 const hasSmsPhoneConfig = (field: SearchField) => {
   return field.format === ValidatorType.PHONE && field.smsOpen === true
 }
-// ❌ [Write in Chinese: this wrapper only forwards another predicate and has no independent responsibility.]
+// ❌ <zh: this wrapper only forwards another predicate and has no independent responsibility.>
 const isSmsPhoneField = (field: SearchField) => {
   return hasSmsPhoneConfig(field)
 }
 
-// [Write in Chinese: clear the previous SMS access signature when the phone number changes.]
+// <zh: clear the previous SMS access signature when the phone number changes.>
 watch(phone, (currentPhone, previousPhone) => {
-  // ❌ [Write in Chinese: this one-use intermediate variable adds no business meaning.]
+  // ❌ <zh: this one-use intermediate variable adds no business meaning.>
   const hasChanged = currentPhone !== previousPhone
-  // ❌ [Write in Chinese: the watcher already runs only when the source value changes, so this repeated check adds no protection.]
+  // ❌ <zh: the watcher already runs only when the source value changes, so this repeated check adds no protection.>
   if (!hasChanged) return
   resetVerification()
 })
 ```
 
 An intermediate value is still useful when it names a real business concept, is reused, enables type narrowing, or makes a complex expression materially clearer. A guard remains necessary when the caller, framework, or API can deliver the guarded state; verify that contract before simplifying it.
-
-## Scenario 9: Keep One-Use Callback Workflows Together
-
-**Positive example:**
-
-Keep the callbacks where the workflow registers them, and remove only the guard guaranteed by the private call path:
-
-```ts
-// [Write in Chinese: verify the user-entered SMS code and store the search access signature.]
-const verifyCurrentCode = async () => {
-  if (status.value === 'verifying' || phone.value !== sentPhone.value) return
-  await verifyPhoneVerificationCode({ phone: phone.value, code: code.value })
-}
-// [Write in Chinese: accept verification-code input and verify it as soon as it reaches full length.]
-const handleCodeInput = async (value: string | number) => {
-  code.value = String(value).slice(0, PHONE_VERIFICATION_CODE_LENGTH)
-  if (code.value.length === PHONE_VERIFICATION_CODE_LENGTH) {
-    await verifyCurrentCode()
-  }
-}
-// [Write in Chinese: open the CAPTCHA and request an SMS code after successful validation.]
-const handleRequestCode = () => {
-  if (requestCodeDisabled.value) return
-  openCaptcha({
-    // [Write in Chinese: continue the SMS delivery flow after the CAPTCHA succeeds.]
-    onOk: async (validate: string) => {
-      status.value = 'sending'
-      await sendPhoneVerificationCode({ phone: phone.value, validate })
-      status.value = 'sent'
-      startCountdown()
-    }
-  })
-}
-// [Write in Chinese: clear the associated verification code and access state in place when the phone number changes.]
-watch(phone, () => {
-  code.value = ''
-  status.value = 'idle'
-  onVerifiedChange(null)
-})
-```
-
-**Negative example:**
-
-A named callback is not automatically clearer. In the same workflow, the following callbacks each have one registration site and no independent responsibility, while the verification function repeats a precondition already guaranteed by its only caller:
-
-```ts
-// ❌ [Write in Chinese: the verification function repeats a code-length check already guaranteed by its only caller.]
-const verifyCurrentCode = async () => {
-  if (
-    status.value === 'verifying' ||
-    code.value.length !== PHONE_VERIFICATION_CODE_LENGTH ||
-    phone.value !== sentPhone.value
-  ) {
-    return
-  }
-  await verifyPhoneVerificationCode({ phone: phone.value, code: code.value })
-}
-// [Write in Chinese: accept verification-code input and verify it as soon as it reaches full length.]
-const handleCodeInput = async (value: string | number) => {
-  code.value = String(value).slice(0, PHONE_VERIFICATION_CODE_LENGTH)
-  if (code.value.length === PHONE_VERIFICATION_CODE_LENGTH) {
-    await verifyCurrentCode()
-  }
-}
-// ❌ [Write in Chinese: this callback serves only handleRequestCode but has been extracted far away.]
-const handleCaptchaVerified = async (validate: string) => {
-  status.value = 'sending'
-  await sendPhoneVerificationCode({ phone: phone.value, validate })
-  status.value = 'sent'
-  startCountdown()
-}
-// [Write in Chinese: open the CAPTCHA and request an SMS verification code.]
-const handleRequestCode = () => {
-  if (requestCodeDisabled.value) return
-  openCaptcha({ onOk: handleCaptchaVerified })
-}
-// ❌ [Write in Chinese: this reset function is used only as the callback for this watcher.]
-const resetVerification = () => {
-  code.value = ''
-  status.value = 'idle'
-  onVerifiedChange(null)
-}
-// [Write in Chinese: invalidate the previous SMS verification state when the phone number changes.]
-watch(phone, resetVerification)
-```
-
-Extraction is appropriate when the callback is reused, has an independent business contract, needs focused tests, or materially reduces otherwise confusing nesting. A guard is appropriate when another caller can bypass the precondition. Verify callers before removing either structure.
 
 ## Review Checklist
 

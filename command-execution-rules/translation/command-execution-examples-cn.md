@@ -1,6 +1,6 @@
 # 命令执行示例
 
-> 本文件仅翻译 `command-execution-rules/references/command-execution-examples.md`，代码示例与英文 reference 保持一致。
+> 本文件仅翻译 `command-execution-rules/references/command-execution-examples.md`，规则结构和代码行为与英文 reference 对应，示例注释按中文规则本地化。
 
 ## 场景 1：直接执行固定命令
 

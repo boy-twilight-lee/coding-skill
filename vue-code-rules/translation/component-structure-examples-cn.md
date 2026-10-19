@@ -1,6 +1,6 @@
 # 组件结构示例
 
-> 本文件仅翻译 `vue-code-rules/references/component-structure-examples.md`，代码示例与英文 reference 保持一致。
+> 本文件仅翻译 `vue-code-rules/references/component-structure-examples.md`，规则结构和代码行为与英文 reference 对应，示例注释按中文规则本地化。
 
 目录管理的页面或组件优先使用以下结构；可选目录和文件只有具备真实的拥有者职责时才创建。
 
