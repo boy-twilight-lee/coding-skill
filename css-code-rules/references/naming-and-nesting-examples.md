@@ -26,6 +26,8 @@ The mandatory nesting forms below apply to Less/Sass or plain CSS with verified 
 
 Situation: a candidate card has a header, title, action, selected state, and disabled state.
 
+**Positive example:**
+
 Use a meaningful business root and complete single-hyphen BEM names:
 
 ```less
@@ -52,6 +54,18 @@ Use a meaningful business root and complete single-hyphen BEM names:
   }
 }
 ```
+
+For the table header named in the negative example below, use a business-qualified class without a visual suffix:
+
+```less
+.candidate-table {
+  .candidate-table-header {
+    color: var(--text-color-danger);
+  }
+}
+```
+
+**Negative example:**
 
 Avoid generic roots, double-underscore/double-hyphen BEM, visual-only names, and arbitrary suffix chains:
 
@@ -81,6 +95,8 @@ Apply this order:
 2. Remove visual or implementation-only suffixes that do not describe business meaning.
 3. Keep the shortest complete name that remains unambiguous in the feature.
 4. Only when the remaining name is still unavoidably long, abbreviate repeated business segments consistently.
+
+**Positive example:**
 
 Prefer a naturally concise full name when it identifies the owner without collision:
 
@@ -145,6 +161,8 @@ Complete abbreviated application:
 
 The abbreviation is acceptable because every shortened segment has a stable meaning and remains readable in isolation. The same term must not alternate between full and shortened forms within the subtree.
 
+**Negative example:**
+
 Do not encode every ancestor, implementation detail, and visual role into one name:
 
 ```vue
@@ -196,6 +214,8 @@ Situation: the DOM contains a card, its header, and a title owned by that header
 </div>
 ```
 
+**Positive example:**
+
 The header establishes layout ownership for the title, so retain it in Less:
 
 ```less
@@ -209,6 +229,8 @@ The header establishes layout ownership for the title, so retain it in Less:
   }
 }
 ```
+
+**Negative example:**
 
 Do not float a child at the stylesheet root:
 
@@ -232,6 +254,8 @@ The rule follows ownership rather than an arbitrary maximum nesting depth. An in
 
 Situation: a menu applies separators only to its own items, while nested submenus contain the same `.menu-item` class.
 
+**Positive example:**
+
 The direct-child boundary prevents the parent menu from styling nested submenu items:
 
 ```less
@@ -252,6 +276,8 @@ For an ordinary descendant with no collision risk, use normal nesting:
 }
 ```
 
+**Negative example:**
+
 Never start a nested selector with a bare combinator:
 
 ```less
@@ -266,6 +292,8 @@ Do not add `& >` only because the current markup happens to be one level deep. U
 ## Scenario 5: Consolidate Deep Library Selectors
 
 Situation: several Arco Table descendants share an `.arco-table` ancestor.
+
+**Positive example:**
 
 Put `:deep` on the nearest useful shared library root, then nest all descendants, pseudo-classes, and pseudo-elements beneath their owners:
 
@@ -292,6 +320,22 @@ Put `:deep` on the nearest useful shared library root, then nest all descendants
   }
 }
 ```
+
+Sibling deep blocks are valid when no suitable shared library-owned ancestor exists below the component root:
+
+```less
+.profile-form {
+  &:deep(.el-input__wrapper) {
+    box-shadow: none;
+  }
+
+  &:deep(.el-select__wrapper) {
+    min-height: 36px;
+  }
+}
+```
+
+**Negative example:**
 
 Do not use an empty deep wrapper:
 
@@ -327,25 +371,13 @@ Do not flatten or combine deep selectors outside the business root:
 }
 ```
 
-Sibling deep blocks are valid when no suitable shared library-owned ancestor exists below the component root:
-
-```less
-.profile-form {
-  &:deep(.el-input__wrapper) {
-    box-shadow: none;
-  }
-
-  &:deep(.el-select__wrapper) {
-    min-height: 36px;
-  }
-}
-```
-
 The decision is based on the library DOM tree, not on whether the selectors appear next to each other in the stylesheet.
 
 ## Scenario 6: Keep Pseudo-classes and Business States with Their Owner
 
 Situation: a card has hover behavior and an active state that changes a child title.
+
+**Positive example:**
 
 ```less
 .talent-card {
@@ -363,9 +395,25 @@ Situation: a card has hover behavior and an active state that changes a child ti
 
 Keep native pseudo-classes on the selector they modify. Represent application state with a complete business class, then place all state-dependent child changes inside that state block. Do not duplicate the state across separate root-level child selectors.
 
+**Negative example:**
+
+Do not flatten those same owner and state relationships into unrelated root selectors:
+
+```less
+.talent-card:hover {
+  border-color: var(--color-primary);
+}
+
+.talent-card-active .talent-card-title {
+  color: var(--color-primary);
+}
+```
+
 ## Scenario 7: Name a Teleported Root
 
 Situation: a filter panel renders a popper outside the component root.
+
+**Positive example:**
 
 Two top-level roots are valid because they belong to separate rendered trees:
 
@@ -381,7 +429,20 @@ Two top-level roots are valid because they belong to separate rendered trees:
 
 The teleported root must remain fully qualified. A generic `.popper`, `.option`, or `.dropdown-item` selector would leak into unrelated content.
 
+**Negative example:**
+
+Do not rename that same teleported tree with generic global selectors:
+
+```less
+.popper {
+  .option {
+  }
+}
+```
+
 ## Scenario 8: Preserve Ownership in Plain CSS without Nesting Support
+
+**Positive example:**
 
 When neither the build pipeline nor the target browsers provide the required nesting support, keep plain CSS and expand the selectors. Pseudo-classes and business states retain their owning root:
 
@@ -409,6 +470,19 @@ In a Vue scoped CSS block, keep the library-owned path inside `:deep(...)` so de
 ```
 
 The repeated library ancestor is intentional in this compatibility form. Keep these related rules together. Bare child selectors, omitted business roots, and changes to descendant versus direct-child matching are not permitted by this exception.
+
+**Negative example:**
+
+Do not drop the same business root or move library descendants outside the deep argument:
+
+```css
+.talent-card-title {
+  color: var(--text-color-primary);
+}
+.result-table :deep(.arco-table) .arco-table-th:first-child {
+  border-radius: 8px 0 0 8px;
+}
+```
 
 ## Review Checklist
 

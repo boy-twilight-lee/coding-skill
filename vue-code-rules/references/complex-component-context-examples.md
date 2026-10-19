@@ -16,6 +16,8 @@ Use this pattern only inside one owning complex component subtree.
 
 The explicit Vue imports in this example assume the active Vite auto-import configuration does not cover them. After verifying the configuration, omit covered runtime imports; keep uncovered runtime APIs and required types imported according to the TypeScript import rules and the configuration's actual type coverage.
 
+**Positive example:**
+
 ```ts
 import { computed, inject as vueInject, provide as vueProvide, ref } from 'vue'
 import { InjectionKey, Ref } from 'vue'
@@ -77,7 +79,29 @@ export const useWorkbenchContext = () => {
 
 The facade returns exactly `provide()` and `inject()`. All owned reactive instances and actions are created inside `provide()`. The exact `context` object passed to Vue is also returned to the owner.
 
+**Negative example:**
+
+Do not expose unrelated methods or return a different object from the one provided:
+
+```ts
+export const useWorkbenchContext = () => {
+  return {
+    provide() {
+      const context = createWorkbenchContext()
+      vueProvide(WORKBENCH_CONTEXT_KEY, context)
+      return { ...context }
+    },
+    inject() {
+      return vueInject(WORKBENCH_CONTEXT_KEY)
+    },
+    reset() {}
+  }
+}
+```
+
 ## Scenario 2: Use the Facade in Owner and Descendant
+
+**Positive example:**
 
 Owning component:
 
@@ -95,9 +119,37 @@ const { page, loading, initPage } = useWorkbenchContext().inject()
 
 Call `provide()` once in the owning component. Descendants call only `inject()`. A descendant must not create a second provider because that silently forks state for its subtree.
 
+**Negative example:**
+
+Do not call `provide()` again in that same descendant:
+
+```ts
+// ❌ 后代重新创建了工作台上下文，导致子树状态分叉。
+const { page, loading, initPage } = useWorkbenchContext().provide()
+```
+
 ## Scenario 3: Keep Provider State out of Module Scope
 
-Incorrect singleton pattern:
+**Positive example:**
+
+Create the same page ref inside `provide()` so every owner instance receives isolated state:
+
+```ts
+provide() {
+  const page = ref<Page>(createDefaultPage())
+  const loading = computed(() => page.value.loading)
+  const initPage = async () => {
+    await loadWorkbenchPage(page.value.pageNumber)
+  }
+  const context: WorkbenchContext = { page, loading, initPage }
+  vueProvide(WORKBENCH_CONTEXT_KEY, context)
+  return context
+}
+```
+
+**Negative example:**
+
+Do not use the original singleton pattern:
 
 ```ts
 const page = ref<Page>(createDefaultPage())
@@ -113,7 +165,18 @@ Module-level reactive state is shared across every owner instance and can leak b
 
 If the provided context exposes `page`, `loading`, and `initPage`, the fallback must expose those same three fields with compatible types. Do not omit a field, add an inject-only field, return `undefined`, or conceal mismatch through partial casting.
 
-Incorrect:
+**Positive example:**
+
+```ts
+return vueInject(WORKBENCH_CONTEXT_KEY, {
+  page: ref<Page>(createDefaultPage()),
+  loading: ref(false),
+  // 在所属组件子树外提供安全的空初始化方法。
+  initPage: async () => {}
+})
+```
+
+**Negative example:**
 
 ```ts
 return vueInject(WORKBENCH_CONTEXT_KEY, {} as WorkbenchContext)
@@ -123,7 +186,25 @@ Safe empty refs and no-op functions let isolated descendant tests and defensive 
 
 ## Scenario 5: Respect the Ownership Boundary
 
-Use context for one page or complex component subtree. Use Pinia or the repository's established global state solution for application-wide state shared across routes. Do not turn a `use**Context` facade into a hidden global store.
+**Positive example:**
+
+Use context only inside the owning workbench subtree:
+
+```text
+workbench/index.vue                       calls provide()
+workbench/component/result-table.vue      calls inject()
+```
+
+**Negative example:**
+
+Do not import the same context as hidden application-global state across unrelated routes:
+
+```text
+pages/candidate-list/index.vue            calls useWorkbenchContext().inject()
+pages/report-center/index.vue              calls useWorkbenchContext().inject()
+```
+
+Use Pinia or the repository's established global state solution for application-wide state shared across routes.
 
 ## Review Checklist
 

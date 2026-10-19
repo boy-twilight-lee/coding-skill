@@ -16,6 +16,8 @@ This reference owns whitespace between SFC blocks, inside templates, and inside 
 
 ## Scenario 1: Separate SFC Blocks
 
+**Positive example:**
+
 Use at most one blank line between blocks and none at their inner edges:
 
 ```vue
@@ -38,7 +40,28 @@ const props = defineProps<{
 
 Do not add empty blocks merely to complete the sequence; block presence and order are governed by the template rules.
 
+**Negative example:**
+
+Do not add multiple blank lines between those same SFC blocks or blank lines at their inner edges:
+
+```vue
+<template>
+
+  <div class="user-card">{{ props.name }}</div>
+
+</template>
+
+
+<script setup lang="ts">
+
+const props = defineProps<{ name: string }>()
+
+</script>
+```
+
 ## Scenario 2: Group Template Nodes
+
+**Positive example:**
 
 Keep one component's tightly coupled content contiguous:
 
@@ -51,7 +74,21 @@ Keep one component's tightly coupled content contiguous:
 
 A single blank line may separate genuinely independent template regions. It must not be used as decoration or as a substitute for a meaningful component boundary.
 
+**Negative example:**
+
+Do not split the same label/value group with decorative blank lines:
+
+```vue
+<div class="user-card">
+  <span class="user-card-name">{{ user.name }}</span>
+
+  <span class="user-card-role">{{ user.roleName }}</span>
+</div>
+```
+
 ## Scenario 3: Group JavaScript Script Logic
+
+**Positive example:**
 
 One blank line may separate different responsibilities, while comments remain attached to their declarations:
 
@@ -68,6 +105,23 @@ const clearSelectedUser = () => {
 ```
 
 For a TypeScript script, use the corresponding `ts-code-rules` blank-line rule rather than treating this JavaScript example as an additional requirement.
+
+**Negative example:**
+
+Do not detach those same comments or add blank lines at function edges:
+
+```js
+// 保存当前选中的用户标识。
+
+const selectedUserId = ref('')
+
+// 清除当前用户选择。
+const clearSelectedUser = () => {
+
+  selectedUserId.value = ''
+
+}
+```
 
 ## Review Checklist
 

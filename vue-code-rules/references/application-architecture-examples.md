@@ -22,6 +22,8 @@ src/
 
 ## Scenario 1: Place Route Orchestration and Reusable UI
 
+**Positive example:**
+
 ```text
 src/pages/candidate-list/index.vue
 src/pages/candidate-list/index.ts
@@ -44,7 +46,20 @@ src/views/workbench/component/workbench-toolbar.vue
 
 Do not create a second page tree merely to switch between `pages` and `views`.
 
+**Negative example:**
+
+Do not place those same page-private and reusable units under competing or incorrect owners:
+
+```text
+src/views/candidate-list/index.vue
+src/pages/candidate-list/index.vue
+src/components/candidate-filter/index.vue
+src/pages/user-avatar.vue
+```
+
 ## Scenario 2: Preserve Mobile and PC Trees
+
+**Positive example:**
 
 ```text
 src/pages/candidate-list/index.vue
@@ -58,6 +73,8 @@ src/components-pc/candidate-card/index.ts
 ```
 
 Make target-specific presentation changes in the matching tree. Do not merge them into one component with runtime device detection unless shared behavior is explicitly required and the ownership tradeoff has been accepted.
+
+**Negative example:**
 
 Do not collapse the established entries into a shared component that chooses a target at runtime:
 
@@ -99,6 +116,8 @@ Concrete case: `package.json` already includes a maintained, commercially accept
 }
 ```
 
+**Positive example:**
+
 Reuse the installed capability:
 
 ```ts
@@ -109,6 +128,8 @@ export const formatCandidateUpdatedAt = (value: Date) => {
   return format(value, 'yyyy-MM-dd HH:mm')
 }
 ```
+
+**Negative example:**
 
 Do not add and wrap a second date library solely to implement the same formatting behavior:
 
@@ -124,6 +145,8 @@ export const formatCandidateUpdatedAt = (value: Date) => {
 If the installed dependency cannot meet a demonstrated requirement, document that gap first. Add a replacement only when dependency changes are in scope and its maintenance, license, provenance, bundle impact, and target compatibility can be verified.
 
 ## Scenario 4: Promote a Stateless Utility Only for Cross-Page Sharing
+
+**Positive example:**
 
 When two different pages actually consume the same stateless date behavior, move it into a focused implementation module:
 
@@ -147,7 +170,22 @@ Re-export it from the barrel without placing implementation there:
 export * from './date'
 ```
 
-Extend an existing matching module before creating another. If only a candidate page's filter and table share the helper, keep it in a focused module beside that page and import it locally; two components on the same page do not establish cross-page reuse. Promote it when another page becomes an actual consumer. Real complexity or focused testing needs can justify a private module, but not a `src/utils` promotion. Do not collect unrelated helpers in catch-all modules. Application-wide infrastructure such as the request client retains its designated layer; it is not a promotion of page-private code.
+**Negative example:**
+
+Do not promote that same candidate-only helper into a catch-all global utility before another page consumes it:
+
+```text
+src/utils/common.ts
+```
+
+```ts
+// 仅供候选人列表筛选器和表格使用，却被提前提升为全局工具。
+export const formatCandidateDate = (value: Date) => {
+  return format(value, 'yyyy-MM-dd')
+}
+```
+
+Extend an existing matching module before creating another. If only a candidate page's filter and table share the helper, keep it in a focused module beside that page and import it locally; two components on the same page do not establish cross-page reuse. Promote it when another page becomes an actual consumer. Real complexity or focused testing needs can justify a private module, but not a `src/utils` promotion. Application-wide infrastructure such as the request client retains its designated layer; it is not a promotion of page-private code.
 
 ## Review Checklist
 

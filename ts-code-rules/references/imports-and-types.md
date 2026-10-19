@@ -11,6 +11,8 @@
 
 Situation: a component uses one third-party runtime API, local and shared types, an internal API module, and a UI component.
 
+**Positive example:**
+
 When the verified compiler, bundler, lint, and package contracts safely erase type-only usage without requiring `import type`, use standard imports while retaining the required groups:
 
 ```ts
@@ -31,7 +33,18 @@ import { loadCandidates } from '@/apis'
 import CandidateCard from '@/components/candidate-card'
 ```
 
-Do not infer the choice from a neighboring file or mix the groups and inline type modifiers:
+For the exact import set used in the negative example below, the configured type-only form remains grouped like this:
+
+```ts
+import { ref } from 'vue'
+import type { CandidatePayload } from '@/apis'
+import { loadCandidates } from '@/apis'
+import CandidateCard from '@/components/candidate-card'
+```
+
+**Negative example:**
+
+Do not infer the choice from a neighboring file or mix the same imports and inline type modifiers:
 
 ```ts
 import CandidateCard from '@/components/candidate-card'
@@ -45,12 +58,16 @@ Inspect the active `tsconfig`, lint rules, bundler behavior, and package runtime
 
 Situation: a page consumes a shared component and a capability owned by another feature.
 
+**Positive example:**
+
 Import through configured aliases and the owners' public entries:
 
 ```ts
 import { normalizeCandidate } from '@/features/candidate'
 import CandidateCard from '@/components/candidate-card'
 ```
+
+**Negative example:**
 
 Do not climb across several parent directories, bypass a component entry, or reach into another feature's private implementation:
 
@@ -65,6 +82,8 @@ Relative imports remain appropriate inside one owning module when they do not cr
 
 Situation: one dialog has a private form shape, the candidate feature publishes a reusable request contract, and the application needs an ambient environment declaration.
 
+**Positive example:**
+
 Use the repository's established equivalents of these locations:
 
 ```text
@@ -73,7 +92,17 @@ src/features/candidate/type/index.ts                          Reusable or public
 src/type/env.d.ts                                             Configured ambient declaration location
 ```
 
-Do not move the dialog-only shape into a global catch-all type module, hide the public feature contract inside a private component, or place ambient declarations in an arbitrary implementation file. Promote a type only after a real consumer crosses its current ownership boundary, and export public contracts through the owning module's entry.
+**Negative example:**
+
+Do not place those same three contracts under unrelated owners:
+
+```text
+src/type/dialog-form.ts                                      Dialog-only type promoted globally
+src/pages/candidate-list/component/type.ts                   Public feature contract hidden privately
+src/pages/candidate-list/index.ts                            Ambient declaration mixed into implementation
+```
+
+Promote a type only after a real consumer crosses its current ownership boundary, and export public contracts through the owning module's entry.
 
 ## Review Checklist
 

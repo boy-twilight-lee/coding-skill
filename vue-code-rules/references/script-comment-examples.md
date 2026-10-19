@@ -18,6 +18,8 @@ For JavaScript Vue scripts, apply the same baseline directly: runtime declaratio
 
 ## Scenario 1: Apply the Compiler-Macro Exception
 
+**Positive example:**
+
 Compiler macros do not receive declaration comments, while ordinary runtime state does:
 
 ```ts
@@ -37,9 +39,22 @@ const submitCandidate = async () => {
 }
 ```
 
-Do not add generic comments such as `// 接收组件属性。` above compiler macros. Their names and type arguments already identify the declaration role. Document non-obvious business meaning in the prop or event contract instead.
+**Negative example:**
+
+Do not add a generic declaration comment above that same compiler macro:
+
+```ts
+// 接收组件属性。
+const props = defineProps<{
+  candidateId: string
+}>()
+```
+
+Its name and type argument already identify the declaration role. Document non-obvious business meaning in the prop contract instead.
 
 ## Scenario 2: Place Watcher and Lifecycle Comments
+
+**Positive example:**
 
 The comment belongs immediately above the Vue API call and documents its callback:
 
@@ -57,7 +72,25 @@ onMounted(async () => {
 
 Do not insert another comment inside either callback solely to satisfy the callback rule. Extract a named callback only when it has an independent responsibility, reuse, focused testing value, or a concrete readability benefit.
 
+**Negative example:**
+
+Do not move the same callback comments inside the watcher and lifecycle bodies:
+
+```ts
+watch(filters, async () => {
+  // 在筛选条件变化后重新加载候选人列表。
+  await loadCandidates()
+})
+
+onMounted(async () => {
+  // 在页面挂载后初始化候选人数据。
+  await loadCandidates()
+})
+```
+
 ## Scenario 3: Keep a One-Use Vue Workflow Together
+
+**Positive example:**
 
 Keep a callback beside its only registration site and trust a verified Vue contract instead of repeating it:
 
@@ -84,7 +117,34 @@ watch(phone, () => {
 })
 ```
 
-Do not extract either inline callback only to shorten its owner or to attach another declaration comment. Keep a guard only when another caller, Vue, or the called API can actually deliver the guarded state.
+**Negative example:**
+
+Do not extract those same one-use callbacks only to shorten their owners or to attach another declaration comment:
+
+```ts
+// 图形验证码通过后继续完成短信发送流程。
+const handleCaptchaVerified = async (validate: string) => {
+  status.value = 'sending'
+  await sendPhoneVerificationCode({ phone: phone.value, validate })
+  status.value = 'sent'
+  startCountdown()
+}
+// 打开图形验证码并请求发送短信验证码。
+const handleRequestCode = () => {
+  if (requestCodeDisabled.value) return
+  openCaptcha({ onOk: handleCaptchaVerified })
+}
+// 清理关联的验证码及准入状态。
+const resetVerification = () => {
+  code.value = ''
+  status.value = 'idle'
+  onVerifiedChange(null)
+}
+// 在手机号变化时作废原短信验证状态。
+watch(phone, resetVerification)
+```
+
+Keep a guard only when another caller, Vue, or the called API can actually deliver the guarded state.
 
 ## Review Checklist
 

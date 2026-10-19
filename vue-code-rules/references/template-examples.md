@@ -20,7 +20,7 @@
 
 ## Scenario 1: Keep SFC Blocks in Order
 
-Correct:
+**Positive example:**
 
 ```vue
 <template>
@@ -40,9 +40,33 @@ const props = defineProps<{
 </style>
 ```
 
-Never place `<script>` before `<template>` or `<style>` before `<script>`. Omit a block when unused, but preserve the relative order of blocks that remain.
+**Negative example:**
+
+Do not reorder those same blocks:
+
+```vue
+<script setup lang="ts">
+const props = defineProps<{
+  name: string
+}>()
+</script>
+
+<template>
+  <div class="user-card">{{ props.name }}</div>
+</template>
+
+<style lang="less" scoped>
+.user-card {
+  color: var(--text-color-primary);
+}
+</style>
+```
+
+Omit a block when unused, but preserve the relative order of blocks that remain.
 
 ## Scenario 2: Render a Mutable List
+
+**Positive example:**
 
 Use structured data and a stable business identifier:
 
@@ -54,6 +78,8 @@ Use structured data and a stable business identifier:
 />
 ```
 
+**Negative example:**
+
 Do not copy repeated markup or use the array index when insertion, deletion, sorting, or replacement can change item identity:
 
 ```vue
@@ -63,6 +89,8 @@ Do not copy repeated markup or use the array index when insertion, deletion, sor
 An index key is acceptable only for a truly static, identity-free sequence whose order and length cannot change.
 
 ## Scenario 3: Move Business Logic out of the Template
+
+**Positive example:**
 
 Keep the template declarative:
 
@@ -84,9 +112,27 @@ const orderStatusText = computed(() => getOrderStatusText(props.status))
 </script>
 ```
 
+**Negative example:**
+
+Do not perform that same business mapping directly in the template:
+
+```vue
+<template>
+  <span class="order-card-status">{{ getOrderStatusText(props.status) }}</span>
+</template>
+
+<script setup lang="ts">
+const props = defineProps<{
+  status: string
+}>()
+</script>
+```
+
 Avoid nested conditions, transformations, or chained collection operations directly in interpolation or directives. A short property read or simple boolean condition may remain inline when it is immediately understandable.
 
 ## Scenario 4: Use Custom Component Tags and Slots
+
+**Positive example:**
 
 Use kebab-case and self-close a component with no children:
 
@@ -125,13 +171,29 @@ Use explicit opening and closing tags when the parent supplies slot content:
 
 Named slots are appropriate when the child intentionally exposes an extension point while retaining ownership of its root hierarchy. Do not add a wrapper only to satisfy a structural convention, and do not add a slot merely to avoid designing a stable prop or child-component API.
 
+**Negative example:**
+
+Do not render those same components with PascalCase tags, an unnecessary closing pair, or unnamed child content for the named extension point:
+
+```vue
+<UserAvatar :src="user.avatar"></UserAvatar>
+
+<UserCard :name="user.name">
+  <UserActions :user-id="user.id" />
+</UserCard>
+```
+
 ## Scenario 5: Remove Meaningless DOM
+
+**Positive example:**
 
 Prefer direct styling:
 
 ```vue
 <span class="user-card-name">{{ user.name }}</span>
 ```
+
+**Negative example:**
 
 Avoid wrappers with no independent responsibility:
 
@@ -146,6 +208,8 @@ Avoid wrappers with no independent responsibility:
 A wrapper is justified when it owns layout, positioning, animation, interaction, or a meaningful group. Its class name should express that responsibility.
 
 ## Scenario 6: Choose General-Purpose, Interactive, or Semantic Elements
+
+**Positive example:**
 
 For non-interactive business layout, use predictable general-purpose elements. A decorative icon placeholder may use `i` when it is hidden from assistive technology:
 
@@ -172,11 +236,22 @@ Use semantic elements deliberately for real page structure, data relationships, 
 </main>
 ```
 
-Do not use heading or emphasis tags solely to obtain browser-default visual styling; use a business class and CSS instead. Conversely, do not replace a real button, link, label, heading, list, or table with a generic element when that would discard useful semantics or keyboard behavior.
+**Negative example:**
+
+Do not replace that same detail button with a clickable `div` or use a heading solely for default styling:
+
+```vue
+<div class="user-card-action" @click="openUserDetail">查看详情</div>
+<h1 class="user-card-name">{{ user.name }}</h1>
+```
+
+Use a business class and CSS for visual styling. Conversely, do not replace a real button, link, label, heading, list, or table with a generic element when that would discard useful semantics or keyboard behavior.
 
 ## Scenario 7: Compose Multiple Classes with One Array Binding
 
 Situation: a candidate card always needs its business root class, receives a reusable density class, and conditionally applies active and disabled states.
+
+**Positive example:**
 
 Use one `:class` array containing every class source:
 
@@ -227,7 +302,59 @@ For one permanent class plus one conditional state, use the same structure even 
 <div :class="['candidate-card', { 'candidate-card-active': active }]" />
 ```
 
-Do not split classes between a static attribute and a dynamic binding:
+Use the simplest form when only one class source exists:
+
+```vue
+<div class="candidate-card" />
+
+<div :class="{ 'candidate-card-active': active }" />
+```
+
+For the three exact negative cases below, keep the same class sources in readable arrays:
+
+```vue
+<div
+  :class="[
+    'candidate-card',
+    'candidate-card-compact',
+    {
+      'candidate-card-active': active,
+      'candidate-card-disabled': disabled
+    }
+  ]"
+/>
+```
+
+```vue
+<div
+  :class="[
+    'candidate-card',
+    `candidate-card-${density}`,
+    {
+      'candidate-card-active': active,
+      'candidate-card-disabled': disabled
+    }
+  ]"
+/>
+```
+
+```vue
+<div
+  :class="[
+    'candidate-card',
+    densityClass,
+    {
+      'candidate-card-active': active,
+      'candidate-card-disabled': disabled,
+      'candidate-card-loading': loading
+    }
+  ]"
+/>
+```
+
+**Negative example:**
+
+Do not split those same classes between a static attribute and a dynamic binding:
 
 ```vue
 <div
@@ -251,14 +378,6 @@ Do not place every class into one long array line when multiple sources make the
 
 ```vue
 <div :class="['candidate-card', densityClass, { 'candidate-card-active': active, 'candidate-card-disabled': disabled, 'candidate-card-loading': loading }]" />
-```
-
-Use the simplest form when only one class source exists:
-
-```vue
-<div class="candidate-card" />
-
-<div :class="{ 'candidate-card-active': active }" />
 ```
 
 The array requirement begins when an element combines multiple sources. It is not a reason to wrap every single class binding mechanically.

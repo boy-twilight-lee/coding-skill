@@ -12,6 +12,8 @@
 
 ## Scenario 1: Await and Handle an API Call
 
+**Positive example:**
+
 ```ts
 // 加载候选人详情并同步页面状态。
 const loadCandidate = async () => {
@@ -27,6 +29,8 @@ const loadCandidate = async () => {
 }
 ```
 
+**Negative example:**
+
 Avoid `.then()` chains for ordinary sequential logic:
 
 ```ts
@@ -39,13 +43,9 @@ Use `try/catch` when the current layer handles, enriches, reports, or translates
 
 ## Scenario 2: Avoid Discarding a Promise
 
-Do not silence a promise with unary `void`:
+**Positive example:**
 
-```ts
-void saveCandidate(payload)
-```
-
-Await it when completion or failure matters:
+Await the same save operation when completion or failure matters:
 
 ```ts
 await saveCandidate(payload)
@@ -65,9 +65,19 @@ const reportCandidateExposure = () => {
 reportCandidateExposure()
 ```
 
+**Negative example:**
+
+Do not silence that same save promise with unary `void`:
+
+```ts
+void saveCandidate(payload)
+```
+
 Fire-and-forget is justified only when the caller intentionally does not depend on completion and the operation owns its failure path.
 
 ## Scenario 3: Check API Support Against the Configured Baseline
+
+**Positive example:**
 
 Before using an API outside the repository's already verified baseline:
 
@@ -85,11 +95,26 @@ When `Array.prototype.at` is not supported by the actual targets, use the approv
 const lastCandidate = candidates[candidates.length - 1]
 ```
 
+**Negative example:**
+
+Do not use the unsupported API for that same last-item lookup:
+
+```ts
+// 读取候选人列表中的最后一项。
+const lastCandidate = candidates.at(-1)
+```
+
 The fallback is illustrative; actual support decisions must come from the repository's target matrix.
 
 ## Scenario 4: Format Only Changed Files
 
+**Positive example:**
+
 Run the configured Prettier command only for TypeScript, TSX, or Vue files changed by the task. Do not format an entire directory when unrelated user changes may exist.
+
+```text
+prettier --write src/components/candidate-card/index.vue
+```
 
 Before formatting, retain the current file content so existing user edits can be distinguished from formatter output. After formatting, restore formatting-only changes outside the task's affected regions from that pre-format content, not from `HEAD`. Keep adjustments needed for the changed syntax. If a whole-file formatter check still fails because of untouched legacy formatting, report that limitation without expanding the edit or claiming the check passed.
 
@@ -103,6 +128,14 @@ After formatting, manually re-check rules Prettier cannot enforce:
 - Target-runtime API support.
 
 Formatter success does not prove architectural or compatibility compliance.
+
+**Negative example:**
+
+Do not broaden that same formatting task to the entire source tree:
+
+```text
+prettier --write src
+```
 
 ## Review Checklist
 

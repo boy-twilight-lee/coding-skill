@@ -18,6 +18,8 @@ Read the scenario that matches the current change. Each scenario explains the ow
 
 Situation: an existing Vue component uses SCSS, while newly created components in the user's usual Vue projects default to Less.
 
+**Positive example:**
+
 Keep the existing component in SCSS:
 
 ```vue
@@ -36,9 +38,21 @@ Use Less for a new component only when the repository has not deliberately stand
 
 Do not convert an existing SCSS file to Less merely to match the default preference. First inspect neighboring components, build configuration, shared variables, and formatter rules. Preserve the verified stylesheet language or mechanism, including CSS Modules or another configured solution, rather than emitting invalid Less-specific syntax.
 
+**Negative example:**
+
+Do not rewrite that same existing SCSS component as Less solely for consistency:
+
+```vue
+<style lang="less" scoped>
+@import './index.less';
+</style>
+```
+
 ## Scenario 2: Choose Scoped or Unscoped Vue Styles
 
 Situation: a component owns ordinary DOM under its root and also configures a dropdown rendered through Teleport.
+
+**Positive example:**
 
 Keep ordinary component styles scoped:
 
@@ -70,6 +84,8 @@ Give teleported content its own fully qualified root in an unscoped block:
 </style>
 ```
 
+**Negative example:**
+
 Do not make the ordinary component root global:
 
 ```vue
@@ -84,6 +100,8 @@ Do not use a generic teleported root such as `.popper` or `.dropdown`. A global 
 ## Scenario 3: Extract a Growing Component Style
 
 Situation: the inline component style block in `index.vue` has reached 200 physical lines after formatting.
+
+**Positive example:**
 
 For one scoped stylesheet, keep both files beside each other:
 
@@ -113,6 +131,8 @@ talent-select/
     `-- global.less
 ```
 
+**Negative example:**
+
 Do not split one component by visual region or feature:
 
 ```text
@@ -128,6 +148,8 @@ That split makes selector ownership harder to follow and encourages duplicate pa
 ## Scenario 4: Place Global and Component-Owned Rules
 
 Situation: a project needs a reset, theme tokens, a shared utility, and a one-off Element Plus input adjustment.
+
+**Positive example:**
 
 Use the established application style area for application-wide ownership:
 
@@ -149,6 +171,17 @@ Keep the one-off library override under the business component root:
 ```
 
 Move an override to the established global library-override file only when it intentionally applies to every matching library component across the application. Library ownership alone does not make a rule global; application breadth does.
+
+**Negative example:**
+
+Do not move that same one-off form override into the global style entry:
+
+```less
+/* src/styles/element-plus.less */
+.el-input__wrapper {
+  border-radius: var(--radius-medium);
+}
+```
 
 ## Review Checklist
 

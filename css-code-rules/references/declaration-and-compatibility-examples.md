@@ -20,20 +20,12 @@ Use these scenarios to keep declarations readable, non-duplicated, compatible wi
 
 Situation: a selector contains an obvious color declaration.
 
+**Positive example:**
+
 Write the rule without narration:
 
 ```less
 .talent-card {
-  color: var(--text-color-primary);
-}
-```
-
-Do not add a section label or a comment that restates the declaration:
-
-```less
-/* 卡片标题样式 */
-.talent-card {
-  /* 设置主要文字颜色 */
   color: var(--text-color-primary);
 }
 ```
@@ -47,11 +39,25 @@ A concise Chinese comment is acceptable when a non-obvious external constraint c
 }
 ```
 
+**Negative example:**
+
+Do not add a section label or a comment that restates the same declaration:
+
+```less
+/* 卡片标题样式 */
+.talent-card {
+  /* 设置主要文字颜色 */
+  color: var(--text-color-primary);
+}
+```
+
 The comment must explain why the unusual declaration exists. Remove commented-out code; version control already preserves history.
 
 ## Scenario 2: Use Blank Lines Only for Structure
 
 Situation: a component has declarations followed by one nested selector.
+
+**Positive example:**
 
 Keep related content together:
 
@@ -82,6 +88,8 @@ One blank line may separate distinct nested selector groups:
 }
 ```
 
+**Negative example:**
+
 Do not use leading, trailing, consecutive, or immediately-inside-block blank lines:
 
 ```less
@@ -102,6 +110,8 @@ Do not insert a blank line between a declaration group and its directly related 
 ## Scenario 3: Apply Declaration Category Order
 
 Situation: one selector uses declarations from every category.
+
+**Positive example:**
 
 ```less
 .talent-card {
@@ -142,9 +152,40 @@ The category sequence is:
 
 The example demonstrates order, not a required declaration set. Omit every property that does not affect the result. If the active Stylelint configuration enforces another property order, follow that executable configuration and record the scoped exception rather than leaving the file lint-invalid.
 
+**Negative example:**
+
+Do not reorder those same declarations by visual preference:
+
+```less
+.talent-card {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  transition: transform 160ms ease;
+  color: var(--text-color-primary);
+  font-size: 14px;
+  line-height: 20px;
+  box-shadow: var(--shadow-small);
+  border-radius: 8px;
+  border: 1px solid var(--border-color);
+  background: var(--surface-color);
+  padding: 16px;
+  margin: 12px 0;
+  width: 320px;
+  height: 120px;
+  pointer-events: auto;
+  overflow: hidden;
+  position: relative;
+  .talent-card-title {
+  }
+}
+```
+
 ## Scenario 4: Consolidate Duplicate Selector Blocks
 
 Situation: one child selector was repeated for spacing, border, and layout edits.
+
+**Positive example:**
 
 Consolidate it beneath its nearest meaningful owner:
 
@@ -158,6 +199,8 @@ Consolidate it beneath its nearest meaningful owner:
   }
 }
 ```
+
+**Negative example:**
 
 Do not separate the same selector by declaration category:
 
@@ -182,13 +225,7 @@ Likewise, keep all child changes for one business state inside the parent's stat
 
 Situation: a concise modern selector would simplify a form-field error style, but the repository's target-browser matrix may not support it.
 
-Do not assume support based on syntax familiarity:
-
-```less
-.form-field:has(.form-field-error-message) {
-  border-color: var(--color-danger);
-}
-```
+**Positive example:**
 
 When the target matrix does not support that selector, expose a repository-approved state class from the component logic:
 
@@ -207,13 +244,29 @@ Before choosing a fallback:
 3. Prefer an existing project pattern over inventing a new compatibility layer.
 4. Verify both the supported path and fallback behavior in the affected target.
 
+**Negative example:**
+
+Do not use the modern selector for that same error state based only on syntax familiarity:
+
+```less
+.form-field:has(.form-field-error-message) {
+  border-color: var(--color-danger);
+}
+```
+
 The state-class fallback is illustrative. It is not a universal claim that `:has()` is unsupported; the repository's actual targets decide.
 
 ## Scenario 6: Format Only the Changed Style Files
 
 Situation: a task changes `src/components/talent-card/index.less` while unrelated style files already contain formatting differences.
 
+**Positive example:**
+
 Run the repository's configured formatter against the changed file only. Do not format the entire style tree, because broad formatting can overwrite unrelated user work and obscure the functional diff.
+
+```text
+prettier --write src/components/talent-card/index.less
+```
 
 Retain the pre-format content and restore formatting-only changes outside the task's affected regions from that content, preserving existing user edits rather than resetting to `HEAD`. Keep formatting required by the changed syntax. If a whole-file formatting check still fails solely because of untouched legacy formatting, report the failure instead of silently widening the task.
 
@@ -227,6 +280,14 @@ After formatting, re-check the changed file for rules a generic formatter cannot
 - Target-browser compatibility.
 
 Formatter success confirms syntax and configured formatting, not architectural compliance.
+
+**Negative example:**
+
+Do not broaden that same formatting task to every style file:
+
+```text
+prettier --write "src/**/*.less"
+```
 
 ## Review Checklist
 

@@ -8,31 +8,7 @@
 
 ## Scenario 1: Order Contract Macros and Handle Async Exposure
 
-Do not place compiler macros after unrelated runtime declarations or inside nested control flow:
-
-```vue
-<script setup lang="ts">
-import { onMounted, ref } from 'vue'
-
-// 保存页面加载状态。
-const loading = ref(false)
-// ❌ 组件契约宏被普通运行时声明隔开。
-const props = defineProps<{ candidateId: string }>()
-
-// ❌ 编译宏不能放在函数或其他嵌套作用域中。
-const createEmitter = () => {
-  return defineEmits<{ saved: [candidateId: string] }>()
-}
-
-// 打开候选人编辑器。
-const openEditor = () => {
-  visible.value = true
-}
-defineExpose({ openEditor })
-// ❌ 没有顶层 await 时，defineExpose 后面不能再出现声明或可执行语句。
-onMounted(loadCandidate)
-</script>
-```
+**Positive example:**
 
 Keep every macro except `defineExpose` together as the first declaration group after required imports. Without top-level `await`, put `defineExpose` last, after every declaration and executable statement. Macro declarations do not receive declaration comments:
 
@@ -46,6 +22,17 @@ const emit = defineEmits<{ saved: [candidateId: string] }>()
 
 // 保存页面加载状态。
 const loading = ref(false)
+// 控制候选人编辑器是否显示。
+const visible = ref(false)
+// 加载当前候选人详情并维护加载状态。
+const loadCandidate = async () => {
+  loading.value = true
+  try {
+    await getCandidate(props.candidateId)
+  } finally {
+    loading.value = false
+  }
+}
 // 提交当前候选人并通知父组件。
 const handleSave = async () => {
   await saveCandidate(props.candidateId)
@@ -83,6 +70,34 @@ candidateName.value = await loadCandidateName(props.candidateId)
 
 The explicit `ref` import assumes auto-import does not cover it. The API returns the candidate name as a string. This exception applies to top-level `await`, not to an `await` inside a function or lifecycle callback. Do not move exposure ahead of the initialization of its public bindings. See [Vue template refs](https://vuejs.org/guide/essentials/template-refs.html#ref-on-component) for the exposure-before-await requirement.
 
+**Negative example:**
+
+Do not place the same compiler macros after unrelated runtime declarations, inside nested control flow, or put executable statements after `defineExpose` when there is no top-level `await`:
+
+```vue
+<script setup lang="ts">
+import { onMounted, ref } from 'vue'
+
+// 保存页面加载状态。
+const loading = ref(false)
+// ❌ 组件契约宏被普通运行时声明隔开。
+const props = defineProps<{ candidateId: string }>()
+
+// ❌ 编译宏不能放在函数或其他嵌套作用域中。
+const createEmitter = () => {
+  return defineEmits<{ saved: [candidateId: string] }>()
+}
+
+// 打开候选人编辑器。
+const openEditor = () => {
+  visible.value = true
+}
+defineExpose({ openEditor })
+// ❌ 没有顶层 await 时，defineExpose 后面不能再出现声明或可执行语句。
+onMounted(loadCandidate)
+</script>
+```
+
 ## Scenario 2: Omit Imports Covered by Vite Auto-Import
 
 Inspect the active Vite configuration and any imported shared plugin configuration. For example:
@@ -100,14 +115,12 @@ export default defineConfig({
 })
 ```
 
-With that configuration active, these explicit imports are redundant:
+**Positive example:**
+
+With that configuration active, use the covered APIs directly:
 
 ```vue
 <script setup lang="ts">
-// ❌ These APIs are already supplied by the active Vite auto-import plugin.
-import { computed, ref } from 'vue'
-import { useRoute, useRouter } from 'vue-router'
-
 const props = defineProps<{ candidateId: string }>()
 
 // 读取当前候选人页面的路由信息。
@@ -121,10 +134,16 @@ const normalizedKeyword = computed(() => keyword.value.trim())
 </script>
 ```
 
-Use the covered APIs directly:
+**Negative example:**
+
+Do not retain explicit imports for those same APIs:
 
 ```vue
 <script setup lang="ts">
+// ❌ These APIs are already supplied by the active Vite auto-import plugin.
+import { computed, ref } from 'vue'
+import { useRoute, useRouter } from 'vue-router'
+
 const props = defineProps<{ candidateId: string }>()
 
 // 读取当前候选人页面的路由信息。
@@ -148,6 +167,8 @@ AutoImport({
 })
 ```
 
+**Positive example:**
+
 Import the uncovered APIs and continue using the covered API directly:
 
 ```vue
@@ -167,6 +188,23 @@ const normalizedKeyword = computed(() => keyword.value.trim())
 ```
 
 Check configuration branches, modes, shared plugin factories, and target-specific Vite files before deciding coverage. A generated `auto-imports.d.ts` can corroborate the configuration but does not replace checking whether the corresponding plugin is active for the current build.
+
+**Negative example:**
+
+Do not omit imports for the same uncovered `computed` and `useRoute` APIs:
+
+```vue
+<script setup lang="ts">
+const props = defineProps<{ candidateId: string }>()
+
+// 读取当前候选人页面的路由信息。
+const route = useRoute()
+// 保存候选人搜索关键字。
+const keyword = ref('')
+// 提供规范化后的候选人搜索关键字。
+const normalizedKeyword = computed(() => keyword.value.trim())
+</script>
+```
 
 ## Review Checklist
 

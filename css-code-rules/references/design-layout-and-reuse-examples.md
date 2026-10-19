@@ -20,6 +20,8 @@ Use these scenarios to choose semantic values, layout primitives, units, local c
 
 Situation: the repository already defines semantic spacing, border, radius, and text tokens.
 
+**Positive example:**
+
 Reuse those values:
 
 ```less
@@ -30,6 +32,8 @@ Reuse those values:
   color: var(--text-color-primary);
 }
 ```
+
+**Negative example:**
 
 Do not introduce near-duplicate literals:
 
@@ -47,6 +51,8 @@ Before adding a new token, search the repository for the same semantic purpose, 
 ## Scenario 2: Build a One-Dimensional Row with Flexbox
 
 Situation: a row has a fixed avatar and a title area that fills the remaining width and truncates long text.
+
+**Positive example:**
 
 ```less
 .talent-row {
@@ -73,8 +79,6 @@ Situation: a row has a fixed avatar and a title area that fills the remaining wi
 
 `flex-shrink: 0` protects the fixed avatar. `flex: 1` assigns remaining space to the content. `overflow: hidden` on the flexible region allows it to shrink and makes the nested ellipsis observable.
 
-Do not use Grid for this row. Grid becomes reasonable only when both row and column tracks must align across multiple items and Flexbox cannot express the relationship correctly.
-
 When a real two-dimensional matrix requires every row to share the same column tracks, Grid is an allowed last resort:
 
 ```less
@@ -90,23 +94,27 @@ When a real two-dimensional matrix requires every row to share the same column t
 
 This case is genuinely two-dimensional: both the time rows and weekday columns must remain aligned across independent cells. Do not use Grid when wrapping Flexbox rows, a table component, or a simpler one-dimensional flow already expresses the required relationship.
 
+**Negative example:**
+
+Do not use Grid for that same one-dimensional talent row:
+
+```less
+.talent-row {
+  display: grid;
+  grid-template-columns: 40px 1fr;
+  gap: 12px;
+}
+```
+
 ## Scenario 3: Respect Target Ownership
+
+**Positive example:**
 
 First determine target ownership from the application architecture. When Vue already separates desktop and mobile implementations, keep each presentation change in the stylesheet owned by that target:
 
 ```text
 src/pages/talent-list/index.less
 src/pages-pc/talent-list/index.less
-```
-
-Do not recreate the other target inside either stylesheet with a component-local media-query fork:
-
-```less
-@media (max-width: 768px) {
-  .talent-list {
-    padding: 12px;
-  }
-}
 ```
 
 A media query remains valid when the repository intentionally uses one shared responsive implementation. In that architecture, keep both the base rule and its responsive adjustment in the shared owner:
@@ -123,11 +131,25 @@ A media query remains valid when the repository intentionally uses one shared re
 }
 ```
 
+**Negative example:**
+
+Do not recreate the other target inside either target-specific stylesheet with a component-local media-query fork:
+
+```less
+@media (max-width: 768px) {
+  .talent-list {
+    padding: 12px;
+  }
+}
+```
+
 CSS owns the presentation technique; `vue-code-rules` owns whether the component belongs to a shared tree or a target-specific tree. The existence of a media query elsewhere in the repository does not override the ownership of the component being changed.
 
 ## Scenario 4: Follow the Configured Unit Strategy
 
 Situation: PostCSS converts ordinary mobile dimensions from `px` to `vw`.
+
+**Positive example:**
 
 Write design dimensions in `px`:
 
@@ -149,9 +171,23 @@ Reserve viewport units for a real viewport relationship:
 
 Do not manually convert `320px` into a calculated `vw` value when the build pipeline owns that transformation. Manual conversion creates inconsistent output and bypasses the repository's configured exclusions and precision.
 
+**Negative example:**
+
+Do not hand-convert that same card width and spacing:
+
+```less
+.talent-card {
+  width: 85.3333vw;
+  padding: 4.2667vw;
+  font-size: 3.7333vw;
+}
+```
+
 ## Scenario 5: Customize a Library Locally
 
 Situation: a documented Element Plus custom property controls the dialog radius.
+
+**Positive example:**
 
 Set the variable on the owning component root:
 
@@ -160,6 +196,8 @@ Set the variable on the owning component root:
   --el-dialog-border-radius: 12px;
 }
 ```
+
+**Negative example:**
 
 Do not escalate specificity or add `!important` when the variable handles the same behavior:
 
@@ -175,6 +213,8 @@ If no documented variable exists, use the smallest ordinary nested or deep selec
 
 Situation: a flex child has a fixed square size.
 
+**Positive example:**
+
 Keep only the declarations with distinct effects:
 
 ```less
@@ -186,6 +226,8 @@ Keep only the declarations with distinct effects:
   }
 }
 ```
+
+**Negative example:**
 
 Remove equivalent or ineffective declarations:
 
@@ -209,7 +251,31 @@ Here the matching minimum dimensions repeat the fixed dimensions, `display: bloc
 
 Situation: the global reset already defines box sizing and base element resets.
 
-Do not repeat them in a component without a real need:
+**Positive example:**
+
+Keep only declarations that produce the intended card typography:
+
+```less
+.talent-card {
+  font-size: 14px;
+  line-height: 1;
+}
+```
+
+Keep an otherwise common declaration when it enables an observable layout result. A flexible text region often needs `min-width: 0` to shrink below its intrinsic content width:
+
+```less
+.talent-row {
+  .talent-row-content {
+    min-width: 0;
+    flex: 1;
+  }
+}
+```
+
+**Negative example:**
+
+Do not repeat the global reset on that same card:
 
 ```less
 .talent-card {
@@ -222,22 +288,13 @@ Do not repeat them in a component without a real need:
 }
 ```
 
-Keep an otherwise common reset when it enables an observable layout result. A flexible text region often needs `min-width: 0` to shrink below its intrinsic content width:
-
-```less
-.talent-row {
-  .talent-row-content {
-    min-width: 0;
-    flex: 1;
-  }
-}
-```
-
 The decision depends on computed layout behavior. Do not remove a declaration solely because it resembles a default; verify whether it changes sizing, truncation, typography, or interaction on the matched element.
 
 ## Scenario 8: Extract a Repeated Pattern
 
 Situation: two owned elements use the same inline-flex centering behavior and transition value.
+
+**Positive example:**
 
 After repetition is confirmed, extract focused abstractions:
 
@@ -280,9 +337,30 @@ After repetition is confirmed, extract focused abstractions:
 
 Keep the mixin focused on one recurring behavior. Do not create a broad mixin that also injects unrelated color, spacing, or component-specific dimensions. Do not extract a pattern used only once, because indirection would obscure ownership without creating reuse.
 
+**Negative example:**
+
+Do not extract that same pattern for only one consumer or mix unrelated component styling into it:
+
+```less
+.talent-action-style() {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 96px;
+  padding: 8px;
+  color: var(--color-primary);
+}
+
+.talent-card-action {
+  .talent-action-style();
+}
+```
+
 ## Scenario 9: Use a Loop Only for a Stable Mechanical Sequence
 
 Situation: six card delay modifiers follow the same naming rule and increase by the same interval.
+
+**Positive example:**
 
 Use a scoped Less loop when it makes the repeated relationship explicit:
 
@@ -299,6 +377,22 @@ Use a scoped Less loop when it makes the repeated relationship explicit:
 ```
 
 The loop owns one predictable sequence, generates complete readable modifier names, and keeps the increment in one place. Do not use a loop for unrelated values, irregular business states, or a short one-off declaration set whose meaning becomes less visible through generation.
+
+**Negative example:**
+
+Do not force irregular business states into a numeric loop:
+
+```less
+.talent-card {
+  .generate-state(@index) when (@index <= 3) {
+    &.talent-card-state-@{index} {
+      color: if(@index = 1, green, if(@index = 2, orange, red));
+    }
+    .generate-state(@index + 1);
+  }
+  .generate-state(1);
+}
+```
 
 ## Review Checklist
 

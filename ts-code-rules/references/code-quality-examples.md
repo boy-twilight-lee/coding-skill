@@ -22,6 +22,8 @@
 
 Situation: a defect fix changes one status branch in a service that also contains unrelated naming and formatting issues.
 
+**Positive example:**
+
 Change the defective branch and its directly affected imports, comments, tests, and types. Do not rename neighboring functions, reorder unrelated imports, or retain unrelated whole-file formatting changes. A formatter may process the changed file, but restore its formatting-only changes outside the affected regions against the pre-format state, preserving pre-existing user edits. Preserve existing comments unless the current change makes them inaccurate or obsolete.
 
 If the defect is an inclusive retry boundary, keep the correction local:
@@ -33,9 +35,22 @@ export const canRetryCandidateSync = (retryCount: number) => {
 }
 ```
 
-Do not combine that fix with unrelated renaming, return-shape changes, logging rewrites, or conversion of neighboring functions to a new abstraction. Those changes enlarge regression risk and obscure the actual defect correction.
+**Negative example:**
+
+Do not combine the same boundary fix with an unrelated rename and return-shape change:
+
+```ts
+// 判断候选人同步任务是否仍允许重试，并返回包装结果。
+export const evaluateCandidateSyncRetry = (retryCount: number) => {
+  return { allowed: retryCount <= MAX_CANDIDATE_SYNC_RETRY_COUNT }
+}
+```
+
+Unrelated renaming, logging rewrites, or conversion of neighboring functions to a new abstraction enlarges regression risk and obscures the actual defect correction.
 
 ## Scenario 2: Avoid a One-Off Abstraction
+
+**Positive example:**
 
 Keep a clear one-time transformation at its call site:
 
@@ -44,6 +59,8 @@ Keep a clear one-time transformation at its call site:
 const candidateName = form.name.trim()
 await saveCandidate({ ...form, name: candidateName })
 ```
+
+**Negative example:**
 
 Do not create a wrapper that only renames or forwards one operation:
 
@@ -54,13 +71,31 @@ const getCandidateName = (name: string) => {
 }
 ```
 
+```ts
+await saveCandidate({ ...form, name: getCandidateName(form.name) })
+```
+
 Extract when logic is reused, independently testable, genuinely complex, or forms a clear responsibility boundary.
 
 ## Scenario 3: Remove Only Change-Owned Dead Code
 
 After an implementation change, remove imports, variables, types, debug logging, aliases, and wrappers made unused by that change:
 
-Before cleanup, the changed path still contains a removed debugger dependency, console output, and a pass-through wrapper:
+**Positive example:**
+
+After cleanup, keep only the imports and behavior required by the new path:
+
+```ts
+import { saveCandidate } from '@/apis'
+
+// 保存当前候选人的提交参数。
+const candidatePayload = buildCandidatePayload(form)
+await saveCandidate(candidatePayload)
+```
+
+**Negative example:**
+
+Before cleanup, the same changed path still contains the removed debugger dependency, console output, and pass-through wrapper:
 
 ```ts
 import { debugCandidate, saveCandidate } from '@/apis'
@@ -75,19 +110,11 @@ console.log(debugCandidate(candidatePayload))
 await submitCandidateRequest(candidatePayload)
 ```
 
-After cleanup, keep only the imports and behavior required by the new path:
-
-```ts
-import { saveCandidate } from '@/apis'
-
-// 保存当前候选人的提交参数。
-const candidatePayload = buildCandidatePayload(form)
-await saveCandidate(candidatePayload)
-```
-
 Do not remove unrelated legacy code merely because it appears unused unless the task includes that cleanup and project tooling confirms it is safe. Cleanup follows ownership of the current change, not a file-wide desire for tidiness.
 
 ## Scenario 4: Comment Runtime Declarations
+
+**Positive example:**
 
 ```ts
 // 保存当前编辑的候选人标识。
@@ -96,13 +123,6 @@ const candidateId = route.params.id
 let loading = false
 // 读取提交结果中的候选人信息。
 const { candidate, updatedAt } = result
-```
-
-Avoid comments that repeat the identifier:
-
-```ts
-// 定义 candidateId。
-const candidateId = route.params.id
 ```
 
 Imports, parameters, interfaces, type aliases, and other type-only declarations do not need separate variable comments.
@@ -133,7 +153,18 @@ export class CandidateDraftService {
 }
 ```
 
+**Negative example:**
+
+Avoid a comment that merely repeats the same declaration's identifier:
+
+```ts
+// 定义 candidateId。
+const candidateId = route.params.id
+```
+
 ## Scenario 5: Comment Functions and Callbacks
+
+**Positive example:**
 
 ```ts
 // 提交候选人数据并返回保存后的详情。
@@ -163,7 +194,20 @@ const candidateMap = new Map(candidates.map((candidate) => [candidate.id, candid
 
 Extract an inline callback only when it has an independent responsibility, genuine reuse, focused testing value, or a concrete readability benefit beyond shortening its owner. Keep a one-use continuation inline even when it contains several related branches or side effects that form the same workflow.
 
+**Negative example:**
+
+Do not leave the same responsibility unexplained or replace it with a comment that repeats the function name:
+
+```ts
+// 定义 submitCandidate。
+const submitCandidate = async (): Promise<Candidate> => {
+  return await saveCandidate(buildCandidatePayload(form))
+}
+```
+
 ## Scenario 6: Limit Internal Comments to Important Logic
+
+**Positive example:**
 
 ```ts
 // 保存候选人并向调用方保留服务端校验错误。
@@ -180,7 +224,30 @@ const submitCandidate = async () => {
 
 Do not narrate each assignment, call, or return. Declaration comments remain mandatory; internal comments are reserved for non-obvious transformations, branches, side effects, and error handling.
 
+**Negative example:**
+
+Do not narrate every step in that same submission flow:
+
+```ts
+// 保存候选人并向调用方保留服务端校验错误。
+const submitCandidate = async () => {
+  try {
+    // 构建候选人参数。
+    const payload = buildCandidatePayload(form)
+    // 调用候选人保存接口。
+    return await saveCandidate(payload)
+  } catch (error) {
+    // 调用字段错误标准化函数。
+    normalizeFieldErrors(error)
+    // 抛出错误。
+    throw error
+  }
+}
+```
+
 ## Scenario 7: Use Blank Lines for Logical Regions
+
+**Positive example:**
 
 ```ts
 import { computed, ref } from 'vue'
@@ -199,9 +266,44 @@ const refreshCandidates = async () => {
 
 Do not place a blank line between a required comment and its declaration, inside the opening or closing edge of a function, or between tightly coupled object members, type members, statements, or JSX nodes. Never use consecutive, leading, or trailing blank lines.
 
+**Negative example:**
+
+Do not separate the same comments from their declarations or split tightly coupled statements:
+
+```ts
+// 保存当前候选人筛选条件。
+
+const filters = ref(createDefaultFilters())
+
+// 使用当前筛选条件刷新候选人列表。
+const refreshCandidates = async () => {
+
+  await loadCandidates(filters.value)
+
+}
+```
+
 ## Scenario 8: Remove Redundant Wrappers, Intermediates, and Guards
 
-Do not retain an extra function, variable, or condition just because it provides a place for a required declaration comment:
+**Positive example:**
+
+Prefer the direct predicate and the verified callback contract:
+
+```ts
+// 判断当前查询字段是否要求短信验证码验证。
+const hasSmsPhoneConfig = (field: SearchField) => {
+  return field.format === ValidatorType.PHONE && field.smsOpen === true
+}
+
+// 在手机号变化时清除原短信准入签名。
+watch(phone, () => {
+  resetVerification()
+})
+```
+
+**Negative example:**
+
+Do not retain an extra function, variable, or condition in that same workflow just because it provides a place for a required declaration comment:
 
 ```ts
 // 判断当前查询字段是否要求短信验证码验证。
@@ -223,25 +325,51 @@ watch(phone, (currentPhone, previousPhone) => {
 })
 ```
 
-Prefer the direct predicate and the verified callback contract:
-
-```ts
-// 判断当前查询字段是否要求短信验证码验证。
-const hasSmsPhoneConfig = (field: SearchField) => {
-  return field.format === ValidatorType.PHONE && field.smsOpen === true
-}
-
-// 在手机号变化时清除原短信准入签名。
-watch(phone, () => {
-  resetVerification()
-})
-```
-
 An intermediate value is still useful when it names a real business concept, is reused, enables type narrowing, or makes a complex expression materially clearer. A guard remains necessary when the caller, framework, or API can deliver the guarded state; verify that contract before simplifying it.
 
 ## Scenario 9: Keep One-Use Callback Workflows Together
 
-A named callback is not automatically clearer. The following callbacks each have one registration site and no independent responsibility, while the verification function repeats a precondition already guaranteed by its only caller:
+**Positive example:**
+
+Keep the callbacks where the workflow registers them, and remove only the guard guaranteed by the private call path:
+
+```ts
+// 校验用户输入的短信验证码并保存查询准入签名。
+const verifyCurrentCode = async () => {
+  if (status.value === 'verifying' || phone.value !== sentPhone.value) return
+  await verifyPhoneVerificationCode({ phone: phone.value, code: code.value })
+}
+// 接收验证码输入并在达到完整位数后立即校验。
+const handleCodeInput = async (value: string | number) => {
+  code.value = String(value).slice(0, PHONE_VERIFICATION_CODE_LENGTH)
+  if (code.value.length === PHONE_VERIFICATION_CODE_LENGTH) {
+    await verifyCurrentCode()
+  }
+}
+// 打开图形验证码并在通过后请求发送短信验证码。
+const handleRequestCode = () => {
+  if (requestCodeDisabled.value) return
+  openCaptcha({
+    // 图形验证码通过后继续完成短信发送流程。
+    onOk: async (validate: string) => {
+      status.value = 'sending'
+      await sendPhoneVerificationCode({ phone: phone.value, validate })
+      status.value = 'sent'
+      startCountdown()
+    }
+  })
+}
+// 在手机号变化时就地清理关联的验证码及准入状态。
+watch(phone, () => {
+  code.value = ''
+  status.value = 'idle'
+  onVerifiedChange(null)
+})
+```
+
+**Negative example:**
+
+A named callback is not automatically clearer. In the same workflow, the following callbacks each have one registration site and no independent responsibility, while the verification function repeats a precondition already guaranteed by its only caller:
 
 ```ts
 // ❌ 校验函数重复检查唯一调用方已经保证的验证码长度。
@@ -282,42 +410,6 @@ const resetVerification = () => {
 }
 // 在手机号变化时作废原短信验证状态。
 watch(phone, resetVerification)
-```
-
-Keep the callbacks where the workflow registers them, and remove only the guard guaranteed by the private call path:
-
-```ts
-// 校验用户输入的短信验证码并保存查询准入签名。
-const verifyCurrentCode = async () => {
-  if (status.value === 'verifying' || phone.value !== sentPhone.value) return
-  await verifyPhoneVerificationCode({ phone: phone.value, code: code.value })
-}
-// 接收验证码输入并在达到完整位数后立即校验。
-const handleCodeInput = async (value: string | number) => {
-  code.value = String(value).slice(0, PHONE_VERIFICATION_CODE_LENGTH)
-  if (code.value.length === PHONE_VERIFICATION_CODE_LENGTH) {
-    await verifyCurrentCode()
-  }
-}
-// 打开图形验证码并在通过后请求发送短信验证码。
-const handleRequestCode = () => {
-  if (requestCodeDisabled.value) return
-  openCaptcha({
-    // 图形验证码通过后继续完成短信发送流程。
-    onOk: async (validate: string) => {
-      status.value = 'sending'
-      await sendPhoneVerificationCode({ phone: phone.value, validate })
-      status.value = 'sent'
-      startCountdown()
-    }
-  })
-}
-// 在手机号变化时就地清理关联的验证码及准入状态。
-watch(phone, () => {
-  code.value = ''
-  status.value = 'idle'
-  onVerifiedChange(null)
-})
 ```
 
 Extraction is appropriate when the callback is reused, has an independent business contract, needs focused tests, or materially reduces otherwise confusing nesting. A guard is appropriate when another caller can bypass the precondition. Verify callers before removing either structure.

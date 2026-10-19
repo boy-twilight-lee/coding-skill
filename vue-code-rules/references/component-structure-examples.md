@@ -31,6 +31,8 @@ Use this map for a directory-managed page or component. Omit optional directorie
 
 Situation: one page handles filters, results, pagination, editing, and dialog state.
 
+**Positive example:**
+
 Keep route orchestration in the page and extract cohesive private units:
 
 ```text
@@ -52,7 +54,23 @@ The filter is a cohesive SFC, so it needs no directory. The table owns selection
 
 Do not extract a component that only wraps one element or forwards one prop without adding responsibility. Do not move a continuous event flow into several one-use wrappers. Line count is a signal, not the split criterion; responsibility and reuse determine the boundary.
 
+**Negative example:**
+
+Do not split that same page into wrapper-only units with no independent responsibility:
+
+```text
+candidate-list/
+|-- index.vue
+|-- index.ts
+`-- component/
+    |-- candidate-title-wrapper.vue
+    |-- candidate-button-wrapper.vue
+    `-- candidate-pagination-proxy.vue
+```
+
 ## Scenario 2: Extract Reusable Behavior into a Composable
+
+**Positive example:**
 
 Move state, derived values, actions, and side effects that form one reusable behavior into a focused composable:
 
@@ -71,9 +89,18 @@ export const useCandidateFilters = () => {
 }
 ```
 
-Keep one-off presentation state in its component. Use a `use**Context` facade only when the same owned state and actions must cross several descendant levels; do not introduce provide/inject for a direct parent-child exchange.
+Keep one-off presentation state in its component. For a one-off dialog state, keep the ref in the owning component:
 
-Do not extract a composable that only relocates one component-owned ref without reusable behavior or an independent responsibility:
+```ts
+// 标识候选人弹窗是否显示。
+const candidateDialogVisible = ref(false)
+```
+
+Use a `use**Context` facade only when the same owned state and actions must cross several descendant levels; do not introduce provide/inject for a direct parent-child exchange.
+
+**Negative example:**
+
+Do not extract that same one-off dialog ref into a composable without reusable behavior or an independent responsibility:
 
 ```ts
 // 创建候选人弹窗的显示状态。
@@ -84,16 +111,11 @@ export const useCandidateDialogVisible = () => {
 }
 ```
 
-Keep that one-off state in the owning component:
-
-```ts
-// 标识候选人弹窗是否显示。
-const candidateDialogVisible = ref(false)
-```
-
 Extraction becomes useful when the behavior owns a cohesive set of state, derived values, actions, and side effects, has real reuse, or forms a clear testing and maintenance boundary. Moving syntax to another file is not itself a responsibility boundary.
 
 ## Scenario 3: Apply Naming Conventions
+
+**Positive example:**
 
 ```text
 components/
@@ -121,7 +143,22 @@ candidate-page/
 
 Component directories, private single-file children, custom tags, and ordinary composable files use kebab-case. Hook files inside `hooks/` use camelCase. Every directory-managed component has both `index.vue` and `index.ts`; `index.less` remains optional. First-level `user-avatar` uses a directory even when simple. Only the simple private child `user-card-label.vue` uses the named single-file form inside `component/`.
 
+**Negative example:**
+
+Do not use mixed casing or omit the required entries for those same components:
+
+```text
+components/
+|-- UserAvatar.vue
+`-- user_card/
+    |-- UserCard.vue
+    `-- hooks/
+        `-- use-user-card.ts
+```
+
 ## Scenario 4: Keep Private Children and Hooks with Their Owner
+
+**Positive example:**
 
 ```text
 workbench/
@@ -136,7 +173,19 @@ workbench/
 
 Do not promote a private toolbar or hook to `src/components` or a global hooks directory before another page has a clear consumer. Local ownership reduces accidental public API surface.
 
+**Negative example:**
+
+Do not move those same private units to global directories without a second consumer:
+
+```text
+src/components/workbench-toolbar/index.vue
+src/components/workbench-toolbar/index.ts
+src/hooks/useWorkbenchSearch.ts
+```
+
 ## Scenario 5: Choose Directory or Single-File Form
+
+**Positive example:**
 
 First-level pages, views, and shared components always use directories, even if they need no hooks, children, or separate styles:
 
@@ -161,14 +210,6 @@ src/components/user-card/component/user-card-label.vue
 
 For example, `user-card-label.vue` can keep its props, derived display text, and local styles in one file. Having a script or a style block does not require separate files.
 
-Avoid wrapping that same simple private child in an otherwise unnecessary directory:
-
-```text
-src/components/user-card/component/user-card-label/
-|-- index.vue
-`-- index.ts
-```
-
 Choose the form from the actual responsibility and supporting files:
 
 | Situation | Form |
@@ -179,7 +220,19 @@ Choose the form from the actual responsibility and supporting files:
 | Private child needs extracted logic, styles, children, or hooks | `component/child-name/index.vue` + `index.ts`, with only the needed supporting files |
 | Simple private child is promoted to a first-level shared component | Convert to `src/components/child-name/` with `index.vue` and `index.ts` |
 
+**Negative example:**
+
+Avoid wrapping that same simple private child in an otherwise unnecessary directory:
+
+```text
+src/components/user-card/component/user-card-label/
+|-- index.vue
+`-- index.ts
+```
+
 ## Scenario 6: Organize a Component That Needs Supporting Files
+
+**Positive example:**
 
 A candidate picker owns search state, a results child, and substantial styling that benefits from a separate Less file in a project already configured for Less:
 
@@ -217,9 +270,50 @@ Use the established public barrel for cross-module imports when one exists. Do n
 
 When `component/user-card-label.vue` later needs several private files, convert it to `component/user-card-label/index.vue`, add `component/user-card-label/index.ts`, and place those files beside it. If it instead becomes a first-level shared component, move it to `src/components/user-card-label/` with both entries even if its implementation is still simple. Update consumers and check automatic component discovery so the registered name and imports still resolve. Do not convert unrelated components during that change.
 
+**Negative example:**
+
+Do not create unused supporting directories or bypass the same component's public entry:
+
+```text
+src/components/candidate-picker/
+|-- index.vue
+|-- component/
+|-- hooks/
+|-- constants/
+`-- type/
+```
+
+```ts
+import CandidatePicker from '@/components/candidate-picker/index.vue'
+```
+
 ## Scenario 7: Handle the 1000-Line Limit
 
+**Positive example:**
+
 When a `.vue` file approaches 1000 lines, identify cohesive responsibilities first: data orchestration, filter UI, results UI, dialogs, or reusable behavior. Extract those units and keep their private dependencies beside them. Do not mechanically move arbitrary line ranges into files that still share hidden state or duplicate parent logic.
+
+```text
+candidate-list/
+|-- index.vue
+`-- component/
+    |-- candidate-filter.vue
+    |-- candidate-results.vue
+    `-- candidate-dialog.vue
+```
+
+**Negative example:**
+
+Do not split the same file into arbitrary numbered fragments that have no responsibility boundary:
+
+```text
+candidate-list/
+|-- index.vue
+`-- component/
+    |-- candidate-part-1.vue
+    |-- candidate-part-2.vue
+    `-- candidate-part-3.vue
+```
 
 ## Review Checklist
 

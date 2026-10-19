@@ -60,12 +60,27 @@ For every task that writes, modifies, refactors, reviews, debugs, or completes C
 
 ## 🌏 中文阅读版
 
-Codex 执行时以各 Skill 的 `SKILL.md` 和按需加载的 references 为准。仓库同时提供合并后的中文版本，方便人工通读和评审：
+Codex 执行时以各 Skill 的 `SKILL.md` 和按需加载的 references 为准。`translation/` 只翻译对应的 reference，并使用同名 `*-cn.md` 文件保持一一对应：
 
-- [Command Execution Rules 中文版](./command-execution-rules/translation/command-execution-rules-zh-CN.md)
-- [TypeScript Code Rules 中文版](./ts-code-rules/translation/ts-code-rules-zh-CN.md)
-- [Vue Code Rules 中文版](./vue-code-rules/translation/vue-code-rules-zh-CN.md)
-- [CSS Code Rules 中文版](./css-code-rules/translation/css-code-rules-zh-CN.md)
+- Command Execution
+  - [command-execution-examples-cn.md](./command-execution-rules/translation/command-execution-examples-cn.md)
+- TypeScript
+  - [code-quality-examples-cn.md](./ts-code-rules/translation/code-quality-examples-cn.md)
+  - [imports-and-types-cn.md](./ts-code-rules/translation/imports-and-types-cn.md)
+  - [async-and-compatibility-examples-cn.md](./ts-code-rules/translation/async-and-compatibility-examples-cn.md)
+- Vue
+  - [template-examples-cn.md](./vue-code-rules/translation/template-examples-cn.md)
+  - [blank-line-examples-cn.md](./vue-code-rules/translation/blank-line-examples-cn.md)
+  - [script-structure-examples-cn.md](./vue-code-rules/translation/script-structure-examples-cn.md)
+  - [script-comment-examples-cn.md](./vue-code-rules/translation/script-comment-examples-cn.md)
+  - [component-structure-examples-cn.md](./vue-code-rules/translation/component-structure-examples-cn.md)
+  - [complex-component-context-examples-cn.md](./vue-code-rules/translation/complex-component-context-examples-cn.md)
+  - [application-architecture-examples-cn.md](./vue-code-rules/translation/application-architecture-examples-cn.md)
+- CSS
+  - [scope-and-file-organization-examples-cn.md](./css-code-rules/translation/scope-and-file-organization-examples-cn.md)
+  - [naming-and-nesting-examples-cn.md](./css-code-rules/translation/naming-and-nesting-examples-cn.md)
+  - [design-layout-and-reuse-examples-cn.md](./css-code-rules/translation/design-layout-and-reuse-examples-cn.md)
+  - [declaration-and-compatibility-examples-cn.md](./css-code-rules/translation/declaration-and-compatibility-examples-cn.md)
 
 ## 📄 License
 
