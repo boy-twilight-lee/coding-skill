@@ -59,6 +59,25 @@ src/components-pc/candidate-card/index.ts
 
 Make target-specific presentation changes in the matching tree. Do not merge them into one component with runtime device detection unless shared behavior is explicitly required and the ownership tradeoff has been accepted.
 
+Do not collapse the established entries into a shared component that chooses a target at runtime:
+
+```vue
+<template>
+  <candidate-card-pc v-if="deviceTarget === 'pc'" :candidate="candidate" />
+  <candidate-card-mobile v-else :candidate="candidate" />
+</template>
+
+<script setup lang="ts">
+import CandidateCardMobile from '@/components/candidate-card'
+import CandidateCardPc from '@/components-pc/candidate-card'
+
+// 读取当前运行环境对应的展示目标端。
+const deviceTarget = getRuntimeDeviceTarget()
+</script>
+```
+
+This runtime branch makes both target implementations part of one ownership and loading path, weakens route-level separation, and encourages target-specific behavior to leak into shared code. Keep the target entries separate. When both targets genuinely share data or behavior, extract only that neutral capability to the nearest common owner; do not merge their presentation roots merely to reuse it.
+
 ## Scenario 3: Evaluate Dependencies before Reimplementation
 
 Before hand-writing a substantial capability:

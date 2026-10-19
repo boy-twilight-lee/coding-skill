@@ -772,6 +772,26 @@ export const useCandidateFilters = () => {
 }
 ```
 
+不要提取只搬走一个组件私有 ref、没有复用行为或独立职责的 composable：
+
+```ts
+// 创建候选人弹窗的显示状态。
+export const useCandidateDialogVisible = () => {
+  // 标识候选人弹窗是否显示。
+  const visible = ref(false)
+  return { visible }
+}
+```
+
+一次性展示状态留在拥有组件中：
+
+```ts
+// 标识候选人弹窗是否显示。
+const candidateDialogVisible = ref(false)
+```
+
+只有行为拥有内聚的状态、派生值、操作和副作用，具备真实复用，或形成清晰的测试与维护边界时才提取。
+
 #### 场景 3：应用命名约定
 
 组件文件和标签使用 kebab-case；composable 文件通常 kebab-case，`hooks/` 内按约定使用 camelCase。
@@ -1042,6 +1062,25 @@ src/components/candidate-card/index.ts
 src/components-pc/candidate-card/index.vue
 src/components-pc/candidate-card/index.ts
 ```
+
+不要把既有目标端入口合并为一个在运行时判断设备的共享组件：
+
+```vue
+<template>
+  <candidate-card-pc v-if="deviceTarget === 'pc'" :candidate="candidate" />
+  <candidate-card-mobile v-else :candidate="candidate" />
+</template>
+
+<script setup lang="ts">
+import CandidateCardMobile from '@/components/candidate-card'
+import CandidateCardPc from '@/components-pc/candidate-card'
+
+// 读取当前运行环境对应的展示目标端。
+const deviceTarget = getRuntimeDeviceTarget()
+</script>
+```
+
+该分支会让两个目标端实现进入同一所有权和加载路径，削弱路由级分离。真实共享的数据或行为可以提取到最近共同拥有者，但不能仅为复用而合并展示根。
 
 #### 场景 3：重新实现前评估依赖
 

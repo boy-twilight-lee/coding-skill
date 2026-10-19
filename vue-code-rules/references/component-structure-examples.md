@@ -73,6 +73,26 @@ export const useCandidateFilters = () => {
 
 Keep one-off presentation state in its component. Use a `use**Context` facade only when the same owned state and actions must cross several descendant levels; do not introduce provide/inject for a direct parent-child exchange.
 
+Do not extract a composable that only relocates one component-owned ref without reusable behavior or an independent responsibility:
+
+```ts
+// 创建候选人弹窗的显示状态。
+export const useCandidateDialogVisible = () => {
+  // 标识候选人弹窗是否显示。
+  const visible = ref(false)
+  return { visible }
+}
+```
+
+Keep that one-off state in the owning component:
+
+```ts
+// 标识候选人弹窗是否显示。
+const candidateDialogVisible = ref(false)
+```
+
+Extraction becomes useful when the behavior owns a cohesive set of state, derived values, actions, and side effects, has real reuse, or forms a clear testing and maintenance boundary. Moving syntax to another file is not itself a responsibility boundary.
+
 ## Scenario 3: Apply Naming Conventions
 
 ```text

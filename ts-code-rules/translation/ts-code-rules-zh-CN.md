@@ -319,6 +319,66 @@ watch(phone, () => {
 
 ### 对应强制规则：`references/imports-and-types.md`
 
+#### 场景 1：按配置分组导入并选择类型语法
+
+已验证编译器、打包器、Lint 和包运行时契约能安全擦除纯类型用法，且不要求 `import type` 时，使用普通导入并保持分组：
+
+```ts
+import { ref } from 'vue'
+import { CandidatePayload } from './type'
+import { CandidateQuery } from '@/type'
+import { loadCandidates } from '@/apis'
+import CandidateCard from '@/components/candidate-card'
+```
+
+活动配置要求类型导入时，使用独立声明并保留相同类型分组：
+
+```ts
+import { ref } from 'vue'
+import type { CandidatePayload } from './type'
+import type { CandidateQuery } from '@/type'
+import { loadCandidates } from '@/apis'
+import CandidateCard from '@/components/candidate-card'
+```
+
+不要根据相邻文件猜测，也不要打乱分组或使用行内 `type` 修饰符：
+
+```ts
+import CandidateCard from '@/components/candidate-card'
+import { loadCandidates, type CandidatePayload } from '@/apis'
+import { ref } from 'vue'
+```
+
+#### 场景 2：跨模块使用公开入口
+
+跨模块消费者通过别名和拥有者公开入口导入：
+
+```ts
+import { normalizeCandidate } from '@/features/candidate'
+import CandidateCard from '@/components/candidate-card'
+```
+
+不要跨越多个父目录、绕过组件入口或访问其他功能的私有实现：
+
+```ts
+import CandidateCard from '../../components/candidate-card/index.vue'
+import { normalizeCandidate } from '@/features/candidate/private/normalize-candidate'
+```
+
+同一拥有模块内部仍可使用不会跨越模块边界的相对导入；公开入口规则不要求所有局部兄弟导入都经过全局 barrel。
+
+#### 场景 3：类型跟随真实拥有者
+
+使用仓库既有目录的等价位置：
+
+```text
+src/pages/candidate-list/component/candidate-dialog/type.ts   弹窗私有类型
+src/features/candidate/type/index.ts                          可复用或公开功能契约
+src/type/env.d.ts                                             配置的环境声明位置
+```
+
+不要把弹窗私有类型过早放进全局兜底类型模块，不要把公开契约藏在私有组件内，也不要把环境声明放进任意实现文件。只有真实消费者跨越当前所有权边界后才提升类型。
+
 ## 异步与兼容性
 
 1. 普通顺序流程使用 `await`；只在能够恢复、转换、补充或报告错误的层捕获。

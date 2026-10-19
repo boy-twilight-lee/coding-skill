@@ -92,16 +92,38 @@ This case is genuinely two-dimensional: both the time rows and weekday columns m
 
 ## Scenario 3: Respect Target Ownership
 
-First determine target ownership from the application architecture. When Vue already separates desktop and mobile implementations, edit the stylesheet owned by the affected target and do not recreate the other target inside it:
+First determine target ownership from the application architecture. When Vue already separates desktop and mobile implementations, keep each presentation change in the stylesheet owned by that target:
+
+```text
+src/pages/talent-list/index.less
+src/pages-pc/talent-list/index.less
+```
+
+Do not recreate the other target inside either stylesheet with a component-local media-query fork:
 
 ```less
 @media (max-width: 768px) {
   .talent-list {
+    padding: 12px;
   }
 }
 ```
 
-A media query remains valid when the repository intentionally uses one shared responsive implementation. CSS owns the presentation technique; `vue-code-rules` owns whether the component belongs to a shared or target-specific tree.
+A media query remains valid when the repository intentionally uses one shared responsive implementation. In that architecture, keep both the base rule and its responsive adjustment in the shared owner:
+
+```less
+.talent-list {
+  width: 100%;
+}
+
+@media (min-width: 1024px) {
+  .talent-list {
+    width: 960px;
+  }
+}
+```
+
+CSS owns the presentation technique; `vue-code-rules` owns whether the component belongs to a shared tree or a target-specific tree. The existence of a media query elsewhere in the repository does not override the ownership of the component being changed.
 
 ## Scenario 4: Follow the Configured Unit Strategy
 

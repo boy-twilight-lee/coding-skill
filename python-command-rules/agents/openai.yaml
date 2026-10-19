@@ -1,5 +1,0 @@
-interface:
-  display_name: "Python Command Rules"
-  short_description: "Apply Python-first scripting and command execution standards."
-  icon_small: "./assets/python-logo.png"
-  icon_large: "./assets/python-logo.png"
