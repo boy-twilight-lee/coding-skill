@@ -12,12 +12,11 @@ src/
 |-- components-pc/        Optional target-specific reusable UI
 |-- layout/               Page frames
 |-- hooks/                Cross-page reusable composables
-|-- styles/               Application-wide styles
-`-- utils/                Cross-page stateless utilities
+`-- styles/               Application-wide styles
 ```
 
 1. 保留既有页面树和移动端/PC 端分离，不创建竞争目录，也不通过运行时设备分支合并目标专属实现，除非请求明确要求。
-2. 页面私有组件、hooks 和辅助函数跟随页面；只有真实跨页面复用后才提升到 `src` 一级目录。提升后的工具按明确业务领域或技术能力组织，并从目录入口导出。
+2. 页面私有组件和 hooks 跟随页面；只有真实跨页面复用后才提升到 `src` 一级目录。TypeScript 辅助模块所有权、共享工具模块和公开入口以 `ts-code-rules` 为准。
 3. 手写大型能力前检查已有依赖和包装层。只有获得授权且现有栈确有缺口时才新增包，并核实维护情况、来源、目标兼容性、包体积和许可证；商业使用安全无法确认时必须报告。
 
 ## 场景 1：放置路由编排与可复用 UI
@@ -122,43 +121,6 @@ import dayjs from 'dayjs'
 // 将候选人更新时间格式化为列表展示文本。
 export const formatCandidateUpdatedAt = (value: Date) => {
   return dayjs(value).format('YYYY-MM-DD HH:mm')
-}
-```
-
-## 场景 4：仅在跨页面共享时提升无状态工具
-
-无状态辅助函数只有被不同页面真实共享时才提升到 `src/utils`，同页共享仍留在最近拥有者。
-
-**正例：**
-
-```text
-src/utils/date.ts
-src/utils/index.ts
-```
-
-```ts
-import { format } from 'date-fns'
-
-// 将日期值格式化为候选人列表使用的展示文本。
-export const formatCandidateDate = (value: Date) => {
-  return format(value, 'yyyy-MM-dd')
-}
-```
-
-```ts
-export * from './date'
-```
-
-**反例：**
-
-```text
-src/utils/common.ts
-```
-
-```ts
-// 仅供候选人列表筛选器和表格使用，却被提前提升为全局工具。
-export const formatCandidateDate = (value: Date) => {
-  return format(value, 'yyyy-MM-dd')
 }
 ```
 

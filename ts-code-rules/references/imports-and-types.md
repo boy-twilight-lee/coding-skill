@@ -1,4 +1,4 @@
-# Imports and Type Organization Rules
+# Imports, Types, and Module Ownership Rules
 
 ## Mandatory Rules
 
@@ -6,6 +6,7 @@
 2. Prefer standard imports when the compiler and bundler safely erase type-only usage. Use a separate `import type` only when required by the verified compiler, lint, bundler, or package runtime contract; never use inline `type` modifiers.
 3. Import another module through its configured alias and public entry. Do not climb two or more parent directories or reach into another module's private files.
 4. Keep concise private types near their owner. Move reusable or public contracts to the repository's established type module, and keep ambient `.d.ts` declarations in its configured declaration location.
+5. Keep stateless helpers with their nearest actual owner. Promote one to a shared source-layer module only after real consumers cross that ownership boundary; organize promoted utilities by focused business domain or technical capability, and re-export them through the directory's public entry without placing implementation in the barrel.
 
 ## Scenario 1: Group Imports and Choose Type Syntax from Configuration
 
@@ -104,9 +105,53 @@ src/pages/candidate-list/index.ts                            Ambient declaration
 
 Promote a type only after a real consumer crosses its current ownership boundary, and export public contracts through the owning module's entry.
 
+## Scenario 4: Promote a Stateless Utility Only after Cross-Owner Reuse
+
+**Positive example:**
+
+When consumers in different ownership boundaries actually share the same stateless date behavior, move it into the repository's established shared utility layer:
+
+```text
+src/utils/date.ts
+src/utils/index.ts
+```
+
+```ts
+import { format } from 'date-fns'
+
+// <zh: format a date value for display in the candidate list.>
+export const formatCandidateDate = (value: Date) => {
+  return format(value, 'yyyy-MM-dd')
+}
+```
+
+Re-export it from the public entry without placing implementation there:
+
+```ts
+export * from './date'
+```
+
+**Negative example:**
+
+Do not promote a helper used only inside one owner into a catch-all global utility:
+
+```text
+src/utils/common.ts
+```
+
+```ts
+// <zh: used only by the candidate-list filter and table but prematurely promoted to a global utility.>
+export const formatCandidateDate = (value: Date) => {
+  return format(value, 'yyyy-MM-dd')
+}
+```
+
+Extend an existing matching module before creating another. Same-owner reuse does not establish a shared source-layer contract. Promote the helper only when a real consumer crosses the ownership boundary; real complexity or focused testing may justify a private module but not global placement.
+
 ## Review Checklist
 
 - Runtime, type, internal, and UI imports follow the required grouping.
 - Type-only imports match the verified compiler, lint, bundler, and runtime contract.
 - Cross-module imports use configured aliases and public entries.
 - Private, reusable, public, and ambient types remain with their intended owners.
+- Stateless helpers remain with their nearest owner until real cross-owner reuse justifies a focused shared module and public export.

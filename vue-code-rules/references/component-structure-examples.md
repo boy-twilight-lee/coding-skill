@@ -72,7 +72,7 @@ candidate-list/
 
 **Positive example:**
 
-Move state, derived values, actions, and side effects that form one reusable behavior into a focused composable:
+When the abstraction rules in `ts-code-rules` justify extraction, place the cohesive Vue state, derived values, actions, and side effects in a focused composable:
 
 ```ts
 // <zh: manage candidate filters and their reset behavior.>
@@ -100,7 +100,7 @@ Use a `use**Context` facade only when the same owned state and actions must cros
 
 **Negative example:**
 
-Do not extract that same one-off dialog ref into a composable without reusable behavior or an independent responsibility:
+Do not move that same one-off dialog ref out of its owning component merely to create a composable:
 
 ```ts
 // <zh: create the visibility state for the candidate dialog.>
@@ -110,8 +110,6 @@ export const useCandidateDialogVisible = () => {
   return { visible }
 }
 ```
-
-Extraction becomes useful when the behavior owns a cohesive set of state, derived values, actions, and side effects, has real reuse, or forms a clear testing and maintenance boundary. Moving syntax to another file is not itself a responsibility boundary.
 
 ## Scenario 3: Apply Naming Conventions
 

@@ -16,7 +16,7 @@ In examples, `<zh: ...>` marks required Chinese comment content. Replace the mar
 ## Reference Routing
 
 - Read [Code Quality Examples](references/code-quality-examples.md) when deciding change scope, abstraction, cleanup, declaration comments, callback comments, internal comments, redundant wrappers, or blank lines.
-- Read [Imports and Type Organization Rules](references/imports-and-types.md) when adding, removing, grouping, or relocating imports and types, or when selecting module boundaries and public entries.
+- Read [Imports, Types, and Module Ownership Rules](references/imports-and-types.md) when adding, removing, grouping, or relocating imports and types, or when selecting module boundaries, stateless utility ownership, and public entries.
 - Read [Async and Compatibility Examples](references/async-and-compatibility-examples.md) when handling promises, errors, fire-and-forget contracts, newer APIs, target support, or final formatting checks.
 
 ## Working Process

@@ -1,4 +1,4 @@
-# 导入与类型组织规则
+# 导入、类型与模块所有权规则
 
 > 本文件仅翻译 `ts-code-rules/references/imports-and-types.md`，规则结构和代码行为与英文 reference 对应，示例注释按中文规则本地化。
 
@@ -6,6 +6,7 @@
 2. 编译器和打包器能安全擦除纯类型用法时优先普通导入。只有已验证的编译器、Lint、打包器或包运行时契约要求时才使用独立 `import type`，禁止行内 `type` 修饰符。
 3. 通过项目配置的别名和公开入口导入其他模块；不要跨越两个以上父目录，也不要访问其他模块的私有文件。
 4. 简洁私有类型跟随拥有者；可复用或公开契约放入仓库既有类型模块，环境 `.d.ts` 声明放入项目配置的声明位置。
+5. 无状态辅助函数跟随最近的真实拥有者。只有真实消费者跨越当前所有权边界后才提升到共享源码层；提升后的工具按明确业务领域或技术能力组织，并通过目录公开入口导出，barrel 中不放实现。
 
 ## 场景 1：按配置分组导入并选择类型语法
 
@@ -91,3 +92,46 @@ src/type/dialog-form.ts                                      Dialog-only type pr
 src/pages/candidate-list/component/type.ts                   Public feature contract hidden privately
 src/pages/candidate-list/index.ts                            Ambient declaration mixed into implementation
 ```
+
+## 场景 4：仅在跨所有者复用后提升无状态工具
+
+只有不同所有权边界中的真实消费者共享同一无状态日期行为时，才将它移动到仓库既有共享工具层：
+
+**正例：**
+
+```text
+src/utils/date.ts
+src/utils/index.ts
+```
+
+```ts
+import { format } from 'date-fns'
+
+// 将日期值格式化为候选人列表使用的展示文本。
+export const formatCandidateDate = (value: Date) => {
+  return format(value, 'yyyy-MM-dd')
+}
+```
+
+公开入口只负责重新导出，不在 barrel 中放实现：
+
+```ts
+export * from './date'
+```
+
+**反例：**
+
+不要把只在一个拥有者内部使用的辅助函数提升为全局兜底工具：
+
+```text
+src/utils/common.ts
+```
+
+```ts
+// 仅供候选人列表筛选器和表格使用，却被提前提升为全局工具。
+export const formatCandidateDate = (value: Date) => {
+  return format(value, 'yyyy-MM-dd')
+}
+```
+
+先扩展已有匹配模块，再考虑创建新模块。同一拥有者内部的复用不能建立共享源码层契约；只有真实消费者跨越所有权边界后才提升。真实复杂度或聚焦测试可以证明私有模块合理，但不能证明全局放置合理。

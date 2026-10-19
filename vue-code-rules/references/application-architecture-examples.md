@@ -12,12 +12,11 @@ src/
 |-- components-pc/        Optional target-specific reusable UI
 |-- layout/               Page frames
 |-- hooks/                Cross-page reusable composables
-|-- styles/               Application-wide styles
-`-- utils/                Cross-page stateless utilities
+`-- styles/               Application-wide styles
 ```
 
 1. Preserve the established page tree and any mobile/PC separation. Do not create a competing tree or merge target-specific implementations through runtime device branches unless the request requires it.
-2. Keep page-private components, hooks, and helpers beside the page. Promote them to a `src`-level directory only after actual cross-page reuse; organize promoted utilities by focused business domain or technical capability and export them through the directory entry.
+2. Keep page-private components and hooks beside the page. Promote them to a `src`-level directory only after actual cross-page reuse. TypeScript helper ownership, shared utility modules, and public entries are governed by `ts-code-rules`.
 3. Before hand-writing a substantial capability, inspect installed dependencies and wrappers. Add a package only with authorization and a demonstrated gap, after checking maintenance, provenance, target compatibility, bundle impact, and license; report unresolved commercial-use safety.
 
 ## Scenario 1: Place Route Orchestration and Reusable UI
@@ -144,53 +143,9 @@ export const formatCandidateUpdatedAt = (value: Date) => {
 
 If the installed dependency cannot meet a demonstrated requirement, document that gap first. Add a replacement only when dependency changes are in scope and its maintenance, license, provenance, bundle impact, and target compatibility can be verified.
 
-## Scenario 4: Promote a Stateless Utility Only for Cross-Page Sharing
-
-**Positive example:**
-
-When two different pages actually consume the same stateless date behavior, move it into a focused implementation module:
-
-```text
-src/utils/date.ts
-src/utils/index.ts
-```
-
-```ts
-import { format } from 'date-fns'
-
-// <zh: format a date value for display in the candidate list.>
-export const formatCandidateDate = (value: Date) => {
-  return format(value, 'yyyy-MM-dd')
-}
-```
-
-Re-export it from the barrel without placing implementation there:
-
-```ts
-export * from './date'
-```
-
-**Negative example:**
-
-Do not promote that same candidate-only helper into a catch-all global utility before another page consumes it:
-
-```text
-src/utils/common.ts
-```
-
-```ts
-// <zh: used only by the candidate-list filter and table but prematurely promoted to a global utility.>
-export const formatCandidateDate = (value: Date) => {
-  return format(value, 'yyyy-MM-dd')
-}
-```
-
-Extend an existing matching module before creating another. If only a candidate page's filter and table share the helper, keep it in a focused module beside that page and import it locally; two components on the same page do not establish cross-page reuse. Promote it when another page becomes an actual consumer. Real complexity or focused testing needs can justify a private module, but not a `src/utils` promotion. Application-wide infrastructure such as the request client retains its designated layer; it is not a promotion of page-private code.
-
 ## Review Checklist
 
 - Route orchestration, reusable UI, and layouts live in their intended layers.
-- Private modules remain beside their owner until cross-page reuse is real.
+- Private components and hooks remain beside their owner until cross-page reuse is real.
 - Mobile and PC presentation trees remain separate.
 - New dependencies are introduced only when changes are in scope and capability, provenance, compatibility, bundle impact, and license checks succeed.
-- Owner-private stateless helpers move to focused `src/utils` modules and barrel exports only for actual cross-page sharing; same-page sharing stays with the page or nearest common owner.
