@@ -5,8 +5,8 @@
 1. 修改限定在请求及直接相关清理，不顺手重排、改名或重写无关代码。
 2. 一次性简单逻辑保持内联；真实复杂度、复用或职责边界才抽象。
 3. 删除本次修改拥有的无用导入、变量、类型、调试代码、过时注释和透传包装器。
-4. 每个运行时变量、常量和函数都用紧邻的中文注释说明业务用途、职责、副作用或返回含义；导入、参数和纯类型声明除外。
-5. 内部只注释关键业务、非显然转换、重要分支、副作用和错误处理。
+4. 仅当命名、类型、签名和上下文不足以表达业务含义、单位、生命周期、不变量、副作用、时序或错误契约时，才为运行时声明或函数添加紧邻的中文注释；自解释代码不机械加注释。
+5. 内部注释解释关键业务、非显然转换、重要分支、副作用和错误处理存在的原因，不逐句复述实现。
 6. 不为注释而制造包装器、中间变量或重复守卫；一次性连续回调留在注册处。
 7. 空行只分隔真实逻辑区域，禁止连续、首尾、块边缘及注释与声明之间空行。
 
@@ -86,39 +86,38 @@ console.log(debugCandidate(candidatePayload))
 await submitCandidateRequest(candidatePayload)
 ```
 
-## 场景 4：为运行时声明添加注释
+## 场景 4：只为非显然运行时声明添加注释
 
-运行时声明使用紧邻的中文业务注释；导入、参数和纯类型声明不需要变量注释。
+自解释声明不需要注释；只有命名和类型无法表达的重要单位、来源、不变量或业务契约才添加紧邻注释。导入、参数和纯类型声明不需要声明注释。
 
 **正例：**
 
 ```ts
-// 保存当前编辑的候选人标识。
 const candidateId = route.params.id
-// 标识候选人详情是否正在加载。
 let loading = false
-// 读取提交结果中的候选人信息。
 const { candidate, updatedAt } = result
 ```
 
 ```ts
+// 接口返回秒级时间戳，Date 需要毫秒。
+const updatedAt = new Date(result.updatedAt * 1000)
+```
+
+```ts
 export class CandidateDraftService {
-  // 保存当前草稿所属的候选人标识。
   private readonly candidateId: string
-  // 标识当前草稿是否正在提交。
   private submitting = false
 
-  // 创建指定候选人的草稿服务。
   public constructor(candidateId: string) {
     this.candidateId = candidateId
   }
 
-  // 提交当前候选人的草稿内容。
   public async submit(payload: CandidateDraftPayload) {
     this.submitting = true
     try {
       await saveCandidateDraft(this.candidateId, payload)
     } finally {
+      // 无论保存成功还是失败，都允许用户再次提交。
       this.submitting = false
     }
   }
@@ -128,44 +127,46 @@ export class CandidateDraftService {
 **反例：**
 
 ```ts
-// 定义 candidateId。
+// 保存候选人标识。
 const candidateId = route.params.id
+// 标识是否正在加载。
+let loading = false
 ```
 
-## 场景 5：为函数和回调添加注释
+这些注释没有提供标识符、类型和初始化表达式之外的信息。
 
-函数和回调用相邻注释说明职责；简短且只有一个注册点的回调可以保持内联。
+## 场景 5：仅在必要时为函数和回调添加注释
+
+名称、签名和上下文已经清楚的函数、谓词、转换和事件处理器不需要注释。只有非显然契约、副作用、时序或错误行为才使用相邻注释；一次性回调保持在注册位置，不能只为添加注释而提取。
 
 **正例：**
 
 ```ts
-// 提交候选人数据并返回保存后的详情。
 const submitCandidate = async (): Promise<Candidate> => {
   return await saveCandidate(buildCandidatePayload(form))
 }
 
-// 保留拥有有效联系方式的候选人。
 const hasValidContact = (candidate: Candidate) => {
   return Boolean(candidate.mobile || candidate.email)
 }
-// 提供当前可以联系的候选人列表。
 const contactableCandidates = candidates.filter(hasValidContact)
 
-// 处理候选人卡片的选择事件。
 const handleCandidateSelect = (candidateId: string) => {
   selectedCandidateId.value = candidateId
 }
 ```
 
 ```ts
-// 按候选人标识建立详情索引。
-const candidateMap = new Map(candidates.map((candidate) => [candidate.id, candidate]))
+// 曝光上报是尽力而为的后台任务，不能阻塞页面导航。
+router.afterEach(() => {
+  reportCandidateExposure().catch(reportTelemetryError)
+})
 ```
 
 **反例：**
 
 ```ts
-// 定义 submitCandidate。
+// 提交候选人数据。
 const submitCandidate = async (): Promise<Candidate> => {
   return await saveCandidate(buildCandidatePayload(form))
 }
@@ -211,7 +212,7 @@ const submitCandidate = async () => {
 
 ## 场景 7：用空行分隔逻辑区域
 
-空行只分隔真实逻辑区域，不能隔开注释与声明或紧密相关语句。
+空行只分隔真实逻辑区域；存在必要注释时，不能将它与所说明的声明或语句隔开。
 
 **正例：**
 
@@ -219,12 +220,9 @@ const submitCandidate = async () => {
 import { computed, ref } from 'vue'
 import { loadCandidates } from '@/apis'
 
-// 保存当前候选人筛选条件。
 const filters = ref(createDefaultFilters())
-// 标识是否存在已应用的筛选条件。
 const hasActiveFilters = computed(() => hasFilters(filters.value))
 
-// 使用当前筛选条件刷新候选人列表。
 const refreshCandidates = async () => {
   await loadCandidates(filters.value)
 }
@@ -233,11 +231,10 @@ const refreshCandidates = async () => {
 **反例：**
 
 ```ts
-// 保存当前候选人筛选条件。
+// 保留服务端默认值，使重置恢复原始查询契约。
 
 const filters = ref(createDefaultFilters())
 
-// 使用当前筛选条件刷新候选人列表。
 const refreshCandidates = async () => {
 
   await loadCandidates(filters.value)
@@ -247,7 +244,7 @@ const refreshCandidates = async () => {
 
 ## 场景 8：删除冗余包装器、中间变量和守卫
 
-不要为命名或注释而保留透传包装器、一次性中间值或调用契约已保证的守卫。
+不要仅为了制造名称或注释目标而保留透传包装器、一次性中间值或调用契约已保证的守卫。
 
 **正例：**
 
@@ -287,4 +284,7 @@ watch(phone, (currentPhone, previousPhone) => {
 
 ## 复核清单
 
-按本节规则逐项复核：所有权、命名、结构、兼容性、修改范围和示例所展示的正反模式都必须满足。
+- 只有无法由命名、类型、签名和上下文表达的业务含义或契约才使用注释。
+- 必要注释紧邻目标、保持简洁，并在没有例外时使用中文。
+- 内部注释解释原因、约束、副作用和错误路径，不逐句复述实现。
+- 不为注释制造冗余抽象、中间变量或守卫。

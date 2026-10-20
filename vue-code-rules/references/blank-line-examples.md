@@ -10,7 +10,7 @@ This reference owns whitespace between SFC blocks, inside templates, and inside 
 
 2. In templates, keep tightly coupled nodes together. Use one blank line only when it materially separates independent UI regions; do not separate repeated items, adjacent label/value pairs, or one component's slot declarations.
 
-3. In JavaScript Vue scripts, do not place blank lines immediately inside a code block, between a required comment and its declaration, or between tightly coupled statements. TypeScript scripts apply the equivalent rule from `ts-code-rules` instead of duplicating it here.
+3. In JavaScript Vue scripts, do not place blank lines immediately inside a code block, between a comment and the declaration or statement it documents, or between tightly coupled statements. TypeScript scripts apply the equivalent rule from `ts-code-rules` instead of duplicating it here.
 
 4. Style blocks apply `css-code-rules` directly. Do not infer style whitespace from template or script examples.
 
@@ -90,15 +90,12 @@ Do not split the same label/value group with decorative blank lines:
 
 **Positive example:**
 
-One blank line may separate different responsibilities, while comments remain attached to their declarations:
+One blank line may separate different responsibilities. When a comment is justified, keep it attached to what it documents:
 
 ```js
-// <zh: store the identifier of the currently selected user.>
 const selectedUserId = ref('')
-// <zh: indicate whether a user is currently selected.>
 const hasSelectedUser = computed(() => Boolean(selectedUserId.value))
 
-// <zh: clear the current user selection.>
 const clearSelectedUser = () => {
   selectedUserId.value = ''
 }
@@ -111,11 +108,10 @@ For a TypeScript script, use the corresponding `ts-code-rules` blank-line rule r
 Do not detach those same comments or add blank lines at function edges:
 
 ```js
-// <zh: store the identifier of the currently selected user.>
+// <zh: preserve the server selection so cancellation can restore it.>
 
 const selectedUserId = ref('')
 
-// <zh: clear the current user selection.>
 const clearSelectedUser = () => {
 
   selectedUserId.value = ''
@@ -127,5 +123,5 @@ const clearSelectedUser = () => {
 
 - SFC blocks have at most one blank line between them and no leading or trailing inner blank lines.
 - Template blank lines separate independent UI regions rather than tightly coupled nodes.
-- JavaScript comments touch their declarations and logical groups use at most one blank line.
+- Justified JavaScript comments touch what they document, and logical groups use at most one blank line.
 - TypeScript-script and style-block whitespace are reviewed by their canonical language skills.

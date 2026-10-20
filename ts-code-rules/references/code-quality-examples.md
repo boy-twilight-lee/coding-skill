@@ -8,15 +8,15 @@
 
 3. Remove unused imports, variables, functions, types, temporary debugging code, obsolete comments, redundant aliases, and pass-through wrappers when they belong to the current change.
 
-4. Add a concise comment for every declared variable and constant, including `const`, `let`, class fields, reactive state, refs, computed values, and destructured bindings. Place the comment immediately above the declaration and explain its business purpose or state meaning; never merely repeat the identifier or syntax. Write comments in Chinese unless another language is strictly necessary because the project explicitly mandates it, an external protocol or third-party term must be quoted exactly, or Chinese would make the technical meaning less accurate. Imports, function parameters, and type-only declarations do not require separate variable comments. In a Vue SFC, follow the declaration-comment and compiler-macro exceptions in `vue-code-rules`; do not apply this rule a second time with different placement.
+4. Comment a runtime declaration only when its business meaning, units, lifecycle, invariant, data origin, or relationship cannot be made clear through naming, types, and nearby structure. Do not comment self-explanatory variables, constants, class fields, reactive state, refs, computed values, or destructured bindings merely because they are declarations. Place a justified comment immediately above the declaration, explain the non-obvious information, and write it in Chinese unless the project explicitly mandates another language, an external protocol or third-party term must be quoted exactly, or Chinese would make the technical meaning less accurate. Imports, function parameters, and type-only declarations do not require separate declaration comments. In a Vue SFC, follow the placement and compiler-macro rules in `vue-code-rules`.
 
-5. Add a concise comment for every function, method, composable, callback, event handler, and lifecycle hook. Place the comment immediately above its declaration or definition and explain its responsibility, side effect, or return meaning. In a Vue SFC, use the callback and lifecycle comment placement defined by `vue-code-rules`. Extract an inline callback into a named, commented function only when it has an independent responsibility, real reuse, or a concrete testing or readability benefit. Keep a callback inline at its only registration site when it merely continues the containing action or API workflow and an adjacent comment can describe it clearly; callback length alone is not a reason to split the flow into a one-use handler.
+5. Comment a function, method, composable, callback, event handler, or lifecycle hook only when its contract, responsibility, side effect, sequencing constraint, error behavior, or return meaning is not clear from its name, signature, and immediate context. Do not narrate obvious accessors, predicates, short transformations, or conventionally named handlers. Place a justified comment immediately above the declaration or containing registration site. In a Vue SFC, use the callback and lifecycle placement defined by `vue-code-rules`. Extract an inline callback only when it has an independent responsibility, real reuse, or a concrete testing or readability benefit; never extract one solely to create a comment target.
 
-6. Inside a function or method, comment only key business logic, non-obvious transformations, important branches, side effects, and error handling. Do not comment every statement or restate self-explanatory implementation details. Declaration-level comments required by rules 4 and 5 remain mandatory even when the implementation is obvious.
+6. Inside a function or method, comment only key business logic, non-obvious transformations, important branches, side effects, and error handling. Explain why the code needs an unusual step or constraint rather than narrating what each statement does. Remove a comment when clearer naming or structure makes it redundant.
 
 7. Do not introduce or preserve redundant code merely to create a name or comment target. Prohibit pass-through functions that only call and return another function, one-use callback wrappers that separate a continuous workflow without an independent responsibility, single-use intermediate variables that add no business meaning, reuse, type narrowing, or readability, and validation or guard conditions already guaranteed by the only caller, framework, or API contract. Inline the underlying expression, callback, or call instead. Keep a wrapper, intermediate value, callback extraction, or guard only when it has an independent responsibility or a concrete correctness benefit; a comment does not justify redundant structure.
 
-8. Do not leave meaningless blank lines in TypeScript or TSX. A blank line is allowed only when one line materially separates distinct logical regions; never use consecutive blank lines, file-leading or file-trailing blank lines, blank lines immediately inside an opening or closing code block, blank lines between a required comment and its declaration, or blank lines between tightly coupled imports, declarations, statements, object members, JSX nodes, or type members. Keep at most one intentional blank line between genuinely separate logical groups and remove every blank line that does not improve structural readability.
+8. Do not leave meaningless blank lines in TypeScript or TSX. A blank line is allowed only when one line materially separates distinct logical regions; never use consecutive blank lines, file-leading or file-trailing blank lines, blank lines immediately inside an opening or closing code block, blank lines between a comment and the declaration or statement it documents, or blank lines between tightly coupled imports, declarations, statements, object members, JSX nodes, or type members. Keep at most one intentional blank line between genuinely separate logical groups and remove every blank line that does not improve structural readability.
 
 ## Scenario 1: Keep the Change Scoped
 
@@ -112,41 +112,44 @@ await submitCandidateRequest(candidatePayload)
 
 Do not remove unrelated legacy code merely because it appears unused unless the task includes that cleanup and project tooling confirms it is safe. Cleanup follows ownership of the current change, not a file-wide desire for tidiness.
 
-## Scenario 4: Comment Runtime Declarations
+## Scenario 4: Comment Only Non-Obvious Runtime Declarations
 
 **Positive example:**
 
+Self-explanatory declarations do not need comments:
+
 ```ts
-// <zh: store the identifier of the candidate currently being edited.>
 const candidateId = route.params.id
-// <zh: indicate whether the candidate details are loading.>
 let loading = false
-// <zh: read the candidate information from the submission result.>
 const { candidate, updatedAt } = result
 ```
 
-Imports, parameters, interfaces, type aliases, and other type-only declarations do not need separate variable comments.
+Add a comment when the declaration contains a non-obvious unit or contract that naming and types do not fully convey:
 
-Class fields follow the same declaration rule, and methods follow the function rule:
+```ts
+// <zh: convert the API timestamp from seconds to the milliseconds expected by Date.>
+const updatedAt = new Date(result.updatedAt * 1000)
+```
+
+Imports, parameters, interfaces, type aliases, and other type-only declarations do not need separate declaration comments.
+
+Class fields and methods follow the same decision rule. Keep clear members uncommented, and document only a non-obvious invariant or failure behavior:
 
 ```ts
 export class CandidateDraftService {
-  // <zh: store the identifier of the candidate that owns the current draft.>
   private readonly candidateId: string
-  // <zh: indicate whether the current draft is being submitted.>
   private submitting = false
 
-  // <zh: create a draft service for the specified candidate.>
   public constructor(candidateId: string) {
     this.candidateId = candidateId
   }
 
-  // <zh: submit the current candidate's draft content.>
   public async submit(payload: CandidateDraftPayload) {
     this.submitting = true
     try {
       await saveCandidateDraft(this.candidateId, payload)
     } finally {
+      // <zh: allow a retry after either a successful save or a rejected request.>
       this.submitting = false
     }
   }
@@ -155,55 +158,61 @@ export class CandidateDraftService {
 
 **Negative example:**
 
-Avoid a comment that merely repeats the same declaration's identifier:
+Do not add comments that merely translate identifiers or syntax into prose:
 
 ```ts
-// <zh: define candidateId.>
+// <zh: store the candidate identifier.>
 const candidateId = route.params.id
+// <zh: indicate whether loading is active.>
+let loading = false
 ```
 
-## Scenario 5: Comment Functions and Callbacks
+These comments add no information that the names, types, and initializers do not already provide.
+
+## Scenario 5: Comment Functions and Callbacks When Needed
 
 **Positive example:**
 
+Clear predicates, transformations, and event handlers may remain uncommented:
+
 ```ts
-// <zh: submit candidate data and return the saved details.>
 const submitCandidate = async (): Promise<Candidate> => {
   return await saveCandidate(buildCandidatePayload(form))
 }
 
-// <zh: keep candidates that have valid contact details.>
 const hasValidContact = (candidate: Candidate) => {
   return Boolean(candidate.mobile || candidate.email)
 }
-// <zh: provide the list of candidates who can currently be contacted.>
 const contactableCandidates = candidates.filter(hasValidContact)
 
-// <zh: handle selection of a candidate card.>
 const handleCandidateSelect = (candidateId: string) => {
   selectedCandidateId.value = candidateId
 }
 ```
 
-A short inline callback may remain when an immediately adjacent comment clearly describes it:
+A short inline callback may remain at its registration site. Add a comment only when it conveys a non-obvious contract:
 
 ```ts
-// <zh: index candidate details by candidate identifier.>
-const candidateMap = new Map(candidates.map((candidate) => [candidate.id, candidate]))
+// <zh: exposure reporting is best-effort and must not block navigation.>
+router.afterEach(() => {
+  reportCandidateExposure().catch(reportTelemetryError)
+})
 ```
 
 Extract an inline callback only when it has an independent responsibility, genuine reuse, focused testing value, or a concrete readability benefit beyond shortening its owner. Keep a one-use continuation inline even when it contains several related branches or side effects that form the same workflow.
 
 **Negative example:**
 
-Do not leave the same responsibility unexplained or replace it with a comment that repeats the function name:
+Do not comment a function by restating its name:
 
 ```ts
-// <zh: define submitCandidate.>
+// <zh: submit candidate data.>
 const submitCandidate = async (): Promise<Candidate> => {
   return await saveCandidate(buildCandidatePayload(form))
 }
 ```
+
+Do not omit the explanation when a surprising contract cannot be recovered from the code, such as intentionally swallowing a background failure. Prefer expressing the contract through a clear API first, then add a concise comment if the reason remains non-obvious.
 
 ## Scenario 6: Limit Internal Comments to Important Logic
 
@@ -222,7 +231,7 @@ const submitCandidate = async () => {
 }
 ```
 
-Do not narrate each assignment, call, or return. Declaration comments remain mandatory; internal comments are reserved for non-obvious transformations, branches, side effects, and error handling.
+Do not narrate each assignment, call, or return. A declaration-level comment follows the same non-obviousness test; internal comments are reserved for transformations, branches, side effects, and error handling whose reason is not already clear.
 
 **Negative example:**
 
@@ -253,29 +262,25 @@ const submitCandidate = async () => {
 import { computed, ref } from 'vue'
 import { loadCandidates } from '@/apis'
 
-// <zh: store the current candidate filters.>
 const filters = ref(createDefaultFilters())
-// <zh: indicate whether any filters are currently applied.>
 const hasActiveFilters = computed(() => hasFilters(filters.value))
 
-// <zh: refresh the candidate list with the current filters.>
 const refreshCandidates = async () => {
   await loadCandidates(filters.value)
 }
 ```
 
-Do not place a blank line between a required comment and its declaration, inside the opening or closing edge of a function, or between tightly coupled object members, type members, statements, or JSX nodes. Never use consecutive, leading, or trailing blank lines.
+When a comment is justified, keep it attached to the declaration or statement it documents. Do not place blank lines inside the opening or closing edge of a function or between tightly coupled object members, type members, statements, or JSX nodes. Never use consecutive, leading, or trailing blank lines.
 
 **Negative example:**
 
 Do not separate the same comments from their declarations or split tightly coupled statements:
 
 ```ts
-// <zh: store the current candidate filters.>
+// <zh: retain server-provided defaults so reset restores the original query contract.>
 
 const filters = ref(createDefaultFilters())
 
-// <zh: refresh the candidate list with the current filters.>
 const refreshCandidates = async () => {
 
   await loadCandidates(filters.value)
@@ -303,7 +308,7 @@ watch(phone, () => {
 
 **Negative example:**
 
-Do not retain an extra function, variable, or condition in that same workflow just because it provides a place for a required declaration comment:
+Do not retain an extra function, variable, or condition in that same workflow merely to create a name or comment target:
 
 ```ts
 // <zh: determine whether the current search field requires SMS verification.>
@@ -332,8 +337,9 @@ An intermediate value is still useful when it names a real business concept, is 
 - The diff contains only requested behavior and directly affected cleanup.
 - Abstractions represent reuse, complexity, or responsibility.
 - Change-owned dead code and debugging artifacts are removed.
-- Every runtime declaration and function has a meaningful adjacent Chinese comment.
-- Internal comments explain only important non-obvious logic.
+- Runtime declarations and functions receive comments only when naming, types, signatures, and nearby structure do not communicate the needed business meaning or contract.
+- Justified comments are concise, adjacent to what they document, and written in Chinese unless a defined exception applies.
+- Internal comments explain why important non-obvious logic, constraints, side effects, or error paths exist instead of narrating statements.
 - No comment is used to justify a pass-through wrapper, meaningless intermediate variable, or redundant guard.
 - One-use callbacks that merely continue their owner workflow remain at the registration site, and private call paths do not repeat caller-guaranteed preconditions.
 - Every blank line marks a real logical boundary.

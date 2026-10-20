@@ -121,7 +121,7 @@ Before formatting, retain the current file content so existing user edits can be
 After formatting, manually re-check rules Prettier cannot enforce:
 
 - Change scope and absence of drive-by cleanup.
-- Required declaration and function comments.
+- Comments justified by the code-quality rules, without narration of self-explanatory declarations or functions.
 - Meaningful blank lines.
 - Import grouping and source-layer ownership.
 - Awaited promises and intentional error paths.

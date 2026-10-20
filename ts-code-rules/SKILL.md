@@ -11,7 +11,7 @@ Higher-priority instructions override this skill. Repository configuration or co
 
 Detailed rules and examples live in references grouped by the decisions they govern. Read every reference matching the current task before acting. References are authoritative requirements, not optional background, and they do not weaken the rules.
 
-In examples, `<zh: ...>` marks required Chinese comment content. Replace the marker with a concise Chinese comment expressing the enclosed meaning; never copy the marker into project code.
+In examples, `<zh: ...>` marks placeholder content for a justified Chinese comment. Replace the marker with concise Chinese text when the surrounding rule calls for that comment; never copy the marker into project code or add the comment mechanically when the code is already self-explanatory.
 
 ## Reference Routing
 

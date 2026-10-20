@@ -6,7 +6,7 @@
 
 1. 顶层 SFC 区块或真正独立的逻辑区域之间最多一个空行；禁止连续空行和区块内部首尾空行。
 2. template 中紧密节点保持连续，只在独立 UI 区域之间保留一个空行。
-3. JavaScript 脚本中不在代码块边缘、注释与声明之间或紧密语句之间插入空行。
+3. JavaScript 脚本中不在代码块边缘、注释与它所说明的声明或语句之间，以及紧密语句之间插入空行。
 4. style 区块直接应用 CSS skill，不从 template 或 script 示例推断样式空行规则。
 
 ## 场景 1：分隔 SFC 区块
@@ -75,19 +75,16 @@ const props = defineProps<{ name: string }>()
 
 ## 场景 3：组织 JavaScript 脚本逻辑
 
-JavaScript 脚本中，空行只分隔不同职责，注释必须紧贴声明：
+JavaScript 脚本中，空行只分隔不同职责；存在必要注释时，必须紧贴它所说明的内容：
 
 TypeScript 脚本改用 TS skill 的对应规则，不把此 JavaScript 示例叠加为另一套要求。
 
 **正例：**
 
 ```js
-// 保存当前选中的用户标识。
 const selectedUserId = ref('')
-// 展示当前是否已经选择用户。
 const hasSelectedUser = computed(() => Boolean(selectedUserId.value))
 
-// 清除当前用户选择。
 const clearSelectedUser = () => {
   selectedUserId.value = ''
 }
@@ -96,11 +93,10 @@ const clearSelectedUser = () => {
 **反例：**
 
 ```js
-// 保存当前选中的用户标识。
+// 保留服务端选择，使取消操作可以恢复原值。
 
 const selectedUserId = ref('')
 
-// 清除当前用户选择。
 const clearSelectedUser = () => {
 
   selectedUserId.value = ''
@@ -110,4 +106,4 @@ const clearSelectedUser = () => {
 
 ## 复核清单
 
-确认 SFC 区块内外没有装饰性空行，template 只在独立 UI 区域间分组，JavaScript 注释紧贴声明，并由 TS/CSS skill 分别检查 TypeScript 与样式空行。
+确认 SFC 区块内外没有装饰性空行，template 只在独立 UI 区域间分组，必要的 JavaScript 注释紧贴所说明内容，并由 TS/CSS skill 分别检查 TypeScript 与样式空行。
