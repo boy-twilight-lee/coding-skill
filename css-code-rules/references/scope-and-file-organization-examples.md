@@ -6,7 +6,7 @@
 
 2. Scope ordinary Vue component styles. In a Less-based project, use `<style lang="less" scoped>` in that attribute order. In a repository deliberately using CSS, Sass, SCSS, CSS Modules, or another configured solution, preserve that language or mechanism and its valid syntax. Use an unscoped style block only for true global rules or content rendered outside the component root.
 
-3. Keep a component's extracted styles beside its entry point. Use the repository's matching extension, such as `index.less` beside `index.vue`, for one style file; introduce a `style/` directory only when scoped and unscoped styles genuinely must be isolated. When an inline component style block reaches 200 physical lines after formatting, move the whole owned stylesheet to the sibling file and include it through the component's scoped style block. Do not split the file by visual region merely to meet the threshold.
+3. Keep a component's extracted styles beside its entry point. Use the repository's matching extension, such as `index.less` beside `index.vue`, for one style file; introduce a `style/` directory only when scoped and unscoped styles genuinely must be isolated. Extract an inline component style block when its selector groups, nesting, states, deep or library overrides, or close coupling with a large template make the SFC materially harder to read or maintain. Line count may prompt a review but never determines the split by itself. Move the whole owned stylesheet to the sibling file and include it through the component's scoped style block; do not split the file by visual region.
 
 4. Keep all styles for one component in one stylesheet. Do not split files by visual region or feature. Separate stylesheets are justified only when CSS scope itself requires it.
 
@@ -97,9 +97,9 @@ Do not make the ordinary component root global:
 
 Do not use a generic teleported root such as `.popper` or `.dropdown`. A global selector must still identify the owning business component so it cannot leak into unrelated overlays.
 
-## Scenario 3: Extract a Growing Component Style
+## Scenario 3: Extract a Complex Component Style
 
-Situation: the inline component style block in `index.vue` has reached 200 physical lines after formatting.
+Situation: the inline component style block in `index.vue` contains several cohesive selector groups, nested interaction states, and library overrides. Keeping those rules inline now obscures the component's template and script responsibilities, even though no line-count threshold decides the issue.
 
 **Positive example:**
 
@@ -188,6 +188,7 @@ Do not move that same one-off form override into the global style entry:
 - The stylesheet language and Vue style mechanism match verified repository usage.
 - Ordinary component styles remain scoped.
 - Teleported or global rules have a collision-resistant business root.
+- Inline styles are extracted only when their actual complexity creates a maintenance or readability cost; line count is only a review signal.
 - A single extracted component stylesheet stays beside its entry point.
 - Multiple component stylesheets are split only by scope.
 - Global assets and component-owned library overrides live with their actual owners.
