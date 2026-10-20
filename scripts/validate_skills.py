@@ -112,6 +112,41 @@ def check_markdown_links(root: Path, report: ValidationReport) -> None:
                 report.fail(f"Broken local link in {path}: {raw_target}")
 
 
+def check_skill_reference_contracts(root: Path, report: ValidationReport) -> None:
+    """Require each skill entrypoint to expose and require every reference."""
+    for skill_name in SKILL_NAMES:
+        skill_root = root / skill_name
+        skill_path = skill_root / "SKILL.md"
+        skill_text = read_text(skill_path)
+        if skill_text.count("## Required Reference Loading") != 1:
+            report.fail(f"Missing unique required-reference heading: {skill_path}")
+        if skill_name != "command-execution-rules" and skill_text.count("## Core Rules") != 1:
+            report.fail(f"Missing unique core-rules heading: {skill_path}")
+
+        _, heading_found, loading_tail = skill_text.partition("## Required Reference Loading")
+        loading_section = loading_tail.split("\n## ", 1)[0] if heading_found else ""
+        if (
+            skill_name != "command-execution-rules"
+            and "Every task covered by this skill must open at least one reference." not in loading_section
+        ):
+            report.fail(f"Missing minimum reference-loading requirement: {skill_path}")
+        actual_references = {
+            path.relative_to(skill_root).as_posix()
+            for path in (skill_root / "references").glob("*.md")
+        }
+        linked_references: set[str] = set()
+        for match in LINK_PATTERN.finditer(loading_section):
+            raw_target = unquote(match.group(1).strip().strip("<>").split("#", 1)[0])
+            normalized_target = raw_target.replace("\\", "/").removeprefix("./")
+            if normalized_target.startswith("references/"):
+                linked_references.add(normalized_target)
+
+        for missing in sorted(actual_references - linked_references):
+            report.fail(f"Reference is not routed from {skill_path}: {missing}")
+        for extra in sorted(linked_references - actual_references):
+            report.fail(f"Entrypoint routes a missing reference from {skill_path}: {extra}")
+
+
 def check_text_formatting(root: Path, report: ValidationReport) -> None:
     """Reject trailing whitespace and missing final newlines in repository text files."""
     for path in root.rglob("*"):
@@ -229,6 +264,7 @@ def main() -> int:
     check_runtime_language(root, report)
     check_translation_pairs(root, report)
     check_markdown_links(root, report)
+    check_skill_reference_contracts(root, report)
     check_text_formatting(root, report)
     check_runtime_boundaries(root, report)
     run_quick_validators(root, report)

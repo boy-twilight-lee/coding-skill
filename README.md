@@ -14,7 +14,7 @@
   <strong>面向 Codex 的命令执行、TypeScript、Vue 3 与 CSS 工程规则。</strong>
 </p>
 
-这组 Skill 帮助 Codex 在执行命令以及编写、修改、调试和审查代码时，遵循一致且可验证的工程约束。每个 Skill 独立负责一个领域，可以按任务自动加载或显式指定。
+这组 Skill 帮助 Codex 在执行命令以及编写、修改、调试和审查代码时，遵循一致且可验证的工程约束。每个 Skill 独立负责一个领域，可以按任务自动加载或显式指定。顶层 `SKILL.md` 保留必须遵守的核心规则；reference 提供完整的适用边界、示例和复核清单，命中路由时必须实际读取，不能只加载顶层文件。
 
 ## 🧰 包含的 Skill
 
@@ -39,19 +39,19 @@
 
 # Command Execution Skill Routing
 
-For every task that executes shell or system commands, or writes, modifies, refactors, reviews, debugs, or completes command-execution helpers or automation scripts, always use the command-execution-rules skill and treat its execution-method selection, argument-safety, subprocess, output, encoding, timeout, and failure-reporting rules as mandatory unless higher-priority instructions conflict.
+For every task that executes shell or system commands, or writes, modifies, refactors, reviews, debugs, or completes command-execution helpers or automation scripts, always use the command-execution-rules skill, read every reference required by its Required Reference Loading section in full before acting, and treat its execution-method selection, argument-safety, subprocess, output, encoding, timeout, and failure-reporting rules as mandatory unless higher-priority instructions conflict.
 
 # Vue Skill Routing
 
-For every task that writes, modifies, refactors, reviews, debugs, or completes Vue project code, always use the vue-code-rules skill and treat its template and component-architecture rules as mandatory unless higher-priority instructions conflict.
+For every task that writes, modifies, refactors, reviews, debugs, or completes Vue project code, always use the vue-code-rules skill, read every reference required by its Required Reference Loading section in full before acting, and treat its template and component-architecture rules as mandatory unless higher-priority instructions conflict.
 
 # TypeScript Skill Routing
 
-For every task that writes, modifies, refactors, reviews, debugs, or completes TypeScript, TSX, Vue <script lang="ts"> or <script setup lang="ts"> code, always use the ts-code-rules skill and treat its coding, type, import, async, source-layer, formatting, and compatibility rules as mandatory unless higher-priority instructions conflict.
+For every task that writes, modifies, refactors, reviews, debugs, or completes TypeScript, TSX, Vue <script lang="ts"> or <script setup lang="ts"> code, always use the ts-code-rules skill, read every reference required by its Required Reference Loading section in full before acting, and treat its coding, type, import, async, source-layer, formatting, and compatibility rules as mandatory unless higher-priority instructions conflict.
 
 # CSS Skill Routing
 
-For every task that writes, modifies, refactors, reviews, debugs, or completes CSS, Less, Sass, SCSS, or a Vue <style> block, always use the css-code-rules skill and treat its style architecture, naming, scope, layout, and compatibility rules as mandatory unless higher-priority instructions conflict.
+For every task that writes, modifies, refactors, reviews, debugs, or completes CSS, Less, Sass, SCSS, or a Vue <style> block, always use the css-code-rules skill, read every reference required by its Required Reference Loading section in full before acting, and treat its style architecture, naming, scope, layout, and compatibility rules as mandatory unless higher-priority instructions conflict.
 
 5. 使用 skill-creator 的 quick_validate.py 校验四个安装后的 Skill；如果该校验器不可用，就检查目录名、frontmatter name、引用文件和 agents/openai.yaml 是否完整一致。
 6. 比较四个 Skill 源目录与安装后的文件，确认运行内容一致；仓库根目录 `translation` 不参与比较。最后报告安装目录、AGENTS.md 路径、校验结果以及是否需要重启 Codex。不要提交、推送或修改本仓库中的其他文件。
@@ -61,7 +61,7 @@ For every task that writes, modifies, refactors, reviews, debugs, or completes C
 
 ## ✅ 校验
 
-校验四个 Skill、翻译映射、本地链接和运行内容语言边界：
+校验四个 Skill、reference 加载契约、翻译映射、本地链接和运行内容语言边界：
 
 ```text
 python scripts/validate_skills.py

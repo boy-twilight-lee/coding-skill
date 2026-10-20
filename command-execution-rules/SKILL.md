@@ -7,7 +7,9 @@ description: "Apply safe command-execution and Python-first automation rules whe
 
 Use the simplest safe execution method that fits the task. Preserve the user's authorization boundaries, repository instructions, working directory, and existing implementation language.
 
-Read [Command Execution Examples](references/command-execution-examples.md) before implementing a reusable command runner, handling subprocess output or timeouts, or composing dynamic command arguments.
+## Required Reference Loading
+
+Loading this entrypoint is sufficient only for simple fixed command execution. Read [Command Execution Examples](references/command-execution-examples.md) in full before implementing or reviewing a reusable command runner, handling subprocess output or timeouts, composing dynamic command arguments, or making a failure-sensitive choice between direct execution, Python orchestration, and shell scripting. Do not claim the reference was loaded without opening it; when uncertain whether it applies, read it.
 
 ## Working Process
 
