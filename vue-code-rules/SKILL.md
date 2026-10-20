@@ -9,7 +9,7 @@ Apply every rule relevant to the Vue code created, changed, or reviewed by the t
 
 Higher-priority instructions override this skill. Repository configuration or conventions override a rule only where that rule explicitly delegates the decision to project configuration. If a mandatory rule cannot be followed, make the smallest necessary deviation and report the exact conflict instead of silently skipping it.
 
-Core rules live in this entrypoint as a safety baseline; this does not make reference loading optional. References add the detailed decision boundaries, examples, and review checklists needed to apply those rules correctly.
+Core rules live in this entrypoint as a safety baseline; this does not make reference loading optional. References add detailed decision boundaries and review checklists, with examples only where concrete contrasts improve the decision.
 
 In examples, `<zh: ...>` marks placeholder content for a justified Chinese comment. Replace the marker with concise Chinese text when the surrounding rule calls for that comment; never copy the marker into project code or add the comment mechanically when the code is already self-explanatory.
 
@@ -26,6 +26,7 @@ In examples, `<zh: ...>` marks placeholder content for a justified Chinese comme
 9. Use kebab-case component files, directories, and tags. First-level pages and components use directory form with `index.vue` and `index.ts`; only simple private children may remain single files. Keep each `.vue` file at or below 1000 lines.
 10. Implement every `use**Context` composable as an owner-scoped facade returning exactly `provide()` and `inject()`. Create state inside `provide()`, provide and return the same complete context object, and make `inject()` return an exactly matching safe fallback.
 11. Preserve established page trees and mobile/PC separation. Keep page-private units beside the page and promote them only after real cross-page reuse.
+12. Keep state in its narrowest real owner: use `ref` for individual values and instances, `reactive` for cohesive local records, `computed` for derivation, owner-scoped context for one complex subtree, and the established store only for state shared across independent owners or routes. Use watchers for side effects rather than mirrored derivation, initialize only after required dependencies exist, and release every listener, observer, timer, dynamic mount, or third-party instance at the lifecycle boundary that created it.
 
 ## Required Reference Loading
 
@@ -38,6 +39,7 @@ Loading this entrypoint is not the complete workflow. After the initial reposito
 - Read [Script Comment Examples](references/script-comment-examples.md) for Vue-specific compiler-macro, watcher, and lifecycle comment placement, and for the generic script baseline in JavaScript SFCs. For TypeScript SFCs, `ts-code-rules` owns the generic declaration, callback, internal-comment, and redundancy rules.
 - Read [Component Structure Examples](references/component-structure-examples.md) when deciding component splits, composable extraction, naming, directory layout, public entries, or private ownership.
 - Read [Complex Component Context Examples](references/complex-component-context-examples.md) before implementing or reviewing any `use**Context` composable, provider, injector, fallback, or consumer.
+- Read [State and Lifecycle Examples](references/state-and-lifecycle-examples.md) when choosing among `ref`, `reactive`, `computed`, context, or store state, or when implementing watchers, initialization timing, resource ownership, dynamic mounts, or lifecycle cleanup.
 - Read [Application Architecture Examples](references/application-architecture-examples.md) when placing pages, components, layouts, or target-specific trees.
 
 ## Working Process

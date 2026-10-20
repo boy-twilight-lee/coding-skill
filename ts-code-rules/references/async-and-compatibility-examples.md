@@ -10,6 +10,8 @@
 
 4. Use the repository's configured Prettier formatter only on files changed for the task. Compare its output with the pre-format state and restore formatting-only changes outside the task's affected regions, preserving pre-existing user edits. Keep formatting adjustments necessary for the changed syntax. If a whole-file formatter check still fails solely on untouched formatting, report that limitation instead of broadening the edit silently. Re-check the final diff against these rules and the established local convention.
 
+5. Keep dependent operations sequential. Use `Promise.all` only when operations are independent, may start together, and should share one failure boundary. Set operation-owned loading before work begins and restore it in `finally`; commit related state together after the required data has arrived so consumers do not observe a partial update.
+
 ## Scenario 1: Await and Handle an API Call
 
 **Positive example:**
@@ -137,11 +139,86 @@ Do not broaden that same formatting task to the entire source tree:
 prettier --write src
 ```
 
+## Scenario 5: Choose Sequential or Parallel Work from Dependencies
+
+**Positive example:**
+
+Keep dependent work in order:
+
+```ts
+const profile = await fetchCandidateProfile(candidateId)
+const permissions = await fetchCandidatePermissions(profile.roleId)
+```
+
+Start independent requests together only when their shared failure behavior is intended:
+
+```ts
+const [roles, benefits] = await Promise.all([
+  fetchRoles(),
+  fetchBenefits()
+])
+```
+
+**Negative example:**
+
+Do not start the permission request before the profile supplies its input:
+
+```ts
+const [profile, permissions] = await Promise.all([
+  fetchCandidateProfile(candidateId),
+  fetchCandidatePermissions(profile.roleId)
+])
+```
+
+Do not parallelize merely to shorten code when one result controls whether the next operation is allowed.
+
+## Scenario 6: Restore Loading and Commit Related State Together
+
+**Positive example:**
+
+```ts
+const loadCandidatePage = async () => {
+  page.loading = true
+  try {
+    const { data } = await fetchCandidatePage(query.value)
+    Object.assign(page, {
+      total: data.total,
+      pageNumber: data.pageNumber
+    })
+    candidates.value = data.records
+  } catch (error) {
+    Message.error(error.message)
+  } finally {
+    page.loading = false
+  }
+}
+```
+
+The page owner reports the user-facing failure, restores loading on every path, and commits the related pagination fields from one response together.
+
+**Negative example:**
+
+```ts
+const loadCandidatePage = async () => {
+  page.loading = true
+  const { data } = await fetchCandidatePage(query.value)
+  page.total = data.total
+  await nextTick()
+  page.pageNumber = data.pageNumber
+  candidates.value = data.records
+  page.loading = false
+}
+```
+
+This leaves loading stuck on rejection and deliberately exposes an unnecessary partial state between assignments. Separate commits remain appropriate when the UI is intentionally progressive; that behavior must be part of the contract rather than an accident of statement order.
+
 ## Review Checklist
 
 - Ordinary asynchronous flow uses `await`.
+- Dependent work remains sequential; parallel work is genuinely independent and has an intentional shared failure boundary.
 - Errors are handled at the layer that owns recovery, reporting, or translation.
 - No promise is discarded with unary `void`; an intentional fire-and-forget boundary owns its rejection path.
 - Fire-and-forget operations own their rejection path.
+- Operation-owned loading is restored through `finally`, and related state does not expose accidental partial updates.
 - Newer APIs match actual runtime targets or approved polyfills.
 - Only changed files are formatted; unrelated formatter changes are restored without losing user edits, and legacy formatting failures are reported.

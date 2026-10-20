@@ -1,12 +1,11 @@
-# Imports, Types, and Module Ownership Rules
+# Imports, Type Syntax, and Public Entry Rules
 
 ## Mandatory Rules
 
 1. Order imports as third-party runtime dependencies, type dependencies, internal runtime modules, then UI or component modules when applicable. Within the type group, place module-local types before shared types.
 2. Prefer standard imports when the compiler and bundler safely erase type-only usage. Use a separate `import type` only when required by the verified compiler, lint, bundler, or package runtime contract; never use inline `type` modifiers.
 3. Import another module through its configured alias and public entry. Do not climb two or more parent directories or reach into another module's private files.
-4. Keep concise private types near their owner. Move reusable or public contracts to the repository's established type module, and keep ambient `.d.ts` declarations in its configured declaration location.
-5. Keep stateless helpers with their nearest actual owner. Promote one to a shared source-layer module only after real consumers cross that ownership boundary; organize promoted utilities by focused business domain or technical capability, and re-export them through the directory's public entry without placing implementation in the barrel.
+4. Use `interface` for ordinary extendable object contracts and `type` for unions, intersections, tuples, mapped or conditional types, and function signatures. Use primitive `boolean`, `number`, and `string`, never the boxed `Boolean`, `Number`, or `String` types. Avoid new `any`; accept `unknown` at an untrusted external boundary and validate or narrow it once before ordinary business code consumes it.
 
 ## Scenario 1: Group Imports and Choose Type Syntax from Configuration
 
@@ -79,79 +78,72 @@ import { normalizeCandidate } from '@/features/candidate/private/normalize-candi
 
 Relative imports remain appropriate inside one owning module when they do not cross the module boundary. The public-entry rule prevents external consumers from coupling to private layout; it does not require every local sibling import to go through a global barrel.
 
-## Scenario 3: Keep Types with Their Actual Owner
-
-Situation: one dialog has a private form shape, the candidate feature publishes a reusable request contract, and the application needs an ambient environment declaration.
+## Scenario 3: Match Type Syntax to the Contract
 
 **Positive example:**
 
-Use the repository's established equivalents of these locations:
+Use an interface for an ordinary object contract and type aliases for composition or a closed set of values:
 
-```text
-src/pages/candidate-list/component/candidate-dialog/type.ts   Private dialog type
-src/features/candidate/type/index.ts                          Reusable or public feature contract
-src/type/env.d.ts                                             Configured ambient declaration location
+```ts
+interface CanvasLayout {
+  x: number
+  y: number
+  width: number
+  height: number
+}
+
+type ElementType = 'figure' | 'font' | 'sticker' | 'video'
+type Sticker = Video & { id: string; assetType: number }
 ```
 
 **Negative example:**
 
-Do not place those same three contracts under unrelated owners:
+Do not use boxed primitives or weaken the same contracts with `any`:
 
-```text
-src/type/dialog-form.ts                                      Dialog-only type promoted globally
-src/pages/candidate-list/component/type.ts                   Public feature contract hidden privately
-src/pages/candidate-list/index.ts                            Ambient declaration mixed into implementation
+```ts
+interface CanvasLayout {
+  x: Number
+  y: Number
+  metadata: any
+}
+
+type ElementType = String
 ```
 
-Promote a type only after a real consumer crosses its current ownership boundary, and export public contracts through the owning module's entry.
+Boxed primitives have different runtime behavior from primitive values, and `any` silently removes checking from every downstream use.
 
-## Scenario 4: Promote a Stateless Utility Only after Cross-Owner Reuse
+## Scenario 4: Narrow an Untrusted Boundary Once
+
+Situation: storage, route data, JSON, or a third-party SDK returns a value with no trustworthy static shape.
 
 **Positive example:**
 
-When consumers in different ownership boundaries actually share the same stateless date behavior, move it into the repository's established shared utility layer:
-
-```text
-src/utils/date.ts
-src/utils/index.ts
-```
+Keep the boundary unknown, validate it once, and expose a stable result to the rest of the module:
 
 ```ts
-import { format } from 'date-fns'
-
-// <zh: format a date value for display in the candidate list.>
-export const formatCandidateDate = (value: Date) => {
-  return format(value, 'yyyy-MM-dd')
+const parseCandidateMessage = (value: unknown): CandidateMessage => {
+  if (!isCandidateMessage(value)) {
+    throw new Error('Invalid candidate message')
+  }
+  return value
 }
-```
-
-Re-export it from the public entry without placing implementation there:
-
-```ts
-export * from './date'
 ```
 
 **Negative example:**
 
-Do not promote a helper used only inside one owner into a catch-all global utility:
-
-```text
-src/utils/common.ts
-```
+Do not cast the same value to `any` and let unchecked property access spread through business logic:
 
 ```ts
-// <zh: used only by the candidate-list filter and table but prematurely promoted to a global utility.>
-export const formatCandidateDate = (value: Date) => {
-  return format(value, 'yyyy-MM-dd')
-}
+const message = JSON.parse(rawMessage) as any
+candidateName.value = message.payload.candidate.name
 ```
 
-Extend an existing matching module before creating another. Same-owner reuse does not establish a shared source-layer contract. Promote the helper only when a real consumer crosses the ownership boundary; real complexity or focused testing may justify a private module but not global placement.
+A narrowly scoped assertion remains acceptable when a framework or generated declaration already guarantees the shape but cannot express it. Explain only non-obvious external contracts; do not add a comment to justify an avoidable `any`.
 
 ## Review Checklist
 
 - Runtime, type, internal, and UI imports follow the required grouping.
 - Type-only imports match the verified compiler, lint, bundler, and runtime contract.
 - Cross-module imports use configured aliases and public entries.
-- Private, reusable, public, and ambient types remain with their intended owners.
-- Stateless helpers remain with their nearest owner until real cross-owner reuse justifies a focused shared module and public export.
+- Object, composition, and function contracts use fitting type syntax and primitive types.
+- Untrusted boundaries are validated once instead of spreading `any` or repeated assertions.

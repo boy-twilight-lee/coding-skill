@@ -14,7 +14,7 @@
   <strong>面向 Codex 的命令执行、TypeScript、Vue 3 与 CSS 工程规则。</strong>
 </p>
 
-这组 Skill 帮助 Codex 在执行命令以及编写、修改、调试和审查代码时，遵循一致且可验证的工程约束。每个 Skill 独立负责一个领域，可以按任务自动加载或显式指定。顶层 `SKILL.md` 保留必须遵守的核心规则；reference 提供完整的适用边界、示例和复核清单，命中路由时必须实际读取，不能只加载顶层文件。
+这组 Skill 帮助 Codex 在执行命令以及编写、修改、调试和审查代码时，遵循一致且可验证的工程约束。每个 Skill 独立负责一个领域，可以按任务自动加载或显式指定。顶层 `SKILL.md` 保留必须遵守的核心规则；reference 提供完整的适用边界和复核清单，只在具体对比能帮助决策时保留示例。命中路由时必须实际读取对应 reference，不能只加载顶层文件。
 
 ## 🧰 包含的 Skill
 
@@ -72,33 +72,6 @@ python scripts/validate_skills.py
 ```text
 python scripts/validate_skills.py --check-installed
 ```
-
-## 🌏 中文阅读版
-
-Codex 执行时以各 Skill 的 `SKILL.md` 和按需加载的 references 为准。仓库根目录 `translation/<skill-name>/` 只翻译对应 Skill 的 reference，并使用同名 `*-cn.md` 文件保持一一对应：
-
-- Command Execution
-  - [command-execution-examples-cn.md](./translation/command-execution-rules/command-execution-examples-cn.md)
-- TypeScript
-  - [code-quality-examples-cn.md](./translation/ts-code-rules/code-quality-examples-cn.md)
-  - [imports-and-types-cn.md](./translation/ts-code-rules/imports-and-types-cn.md)
-  - [async-and-compatibility-examples-cn.md](./translation/ts-code-rules/async-and-compatibility-examples-cn.md)
-- Vue
-  - [template-examples-cn.md](./translation/vue-code-rules/template-examples-cn.md)
-  - [class-binding-examples-cn.md](./translation/vue-code-rules/class-binding-examples-cn.md)
-  - [blank-line-examples-cn.md](./translation/vue-code-rules/blank-line-examples-cn.md)
-  - [script-structure-examples-cn.md](./translation/vue-code-rules/script-structure-examples-cn.md)
-  - [script-comment-examples-cn.md](./translation/vue-code-rules/script-comment-examples-cn.md)
-  - [component-structure-examples-cn.md](./translation/vue-code-rules/component-structure-examples-cn.md)
-  - [complex-component-context-examples-cn.md](./translation/vue-code-rules/complex-component-context-examples-cn.md)
-  - [application-architecture-examples-cn.md](./translation/vue-code-rules/application-architecture-examples-cn.md)
-- CSS
-  - [scope-and-file-organization-examples-cn.md](./translation/css-code-rules/scope-and-file-organization-examples-cn.md)
-  - [naming-examples-cn.md](./translation/css-code-rules/naming-examples-cn.md)
-  - [nesting-and-deep-examples-cn.md](./translation/css-code-rules/nesting-and-deep-examples-cn.md)
-  - [design-and-layout-examples-cn.md](./translation/css-code-rules/design-and-layout-examples-cn.md)
-  - [reuse-and-redundancy-examples-cn.md](./translation/css-code-rules/reuse-and-redundancy-examples-cn.md)
-  - [declaration-and-compatibility-examples-cn.md](./translation/css-code-rules/declaration-and-compatibility-examples-cn.md)
 
 ## 📄 License
 

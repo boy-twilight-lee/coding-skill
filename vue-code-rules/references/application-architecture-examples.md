@@ -2,21 +2,33 @@
 
 ## Mandatory Rules
 
-Use the established equivalents of these directories; optional target-specific trees exist only when the repository already separates those targets.
+Use the established equivalents of these entries. This complete map is for ownership decisions, not for generating empty directories; optional target-specific trees exist only when the repository already separates those targets.
 
 ```text
 src/
-|-- pages/ (or views/)    Route-level page units
-|-- pages-pc/             Optional target-specific pages
-|-- components/           Cross-page reusable UI
-|-- components-pc/        Optional target-specific reusable UI
-|-- layout/               Page frames
-|-- hooks/                Cross-page reusable composables
-`-- styles/               Application-wide styles
+|-- App.vue                Application root
+|-- main.ts                Application bootstrap owned by ts-code-rules
+|-- apis/                  Backend transport modules owned by ts-code-rules
+|-- assets/                Bundled static assets
+|-- components/            Cross-page reusable UI
+|-- components-pc/         Optional target-specific reusable UI
+|-- constants/             Shared constants owned by ts-code-rules
+|-- hooks/                 Cross-page reusable composables
+|-- layout/                Page frames
+|-- pages/ (or views/)     Route-level page units
+|-- pages-pc/              Optional target-specific pages
+|-- router/                Route records, guards, and router assembly
+|-- services/              Capability adapters owned by ts-code-rules
+|-- store/                 Application-wide state owned by ts-code-rules
+|-- styles/                Application-wide styles owned by css-code-rules
+|-- type/                  Ambient or application-wide types owned by ts-code-rules
+`-- utils/                 Shared stateless helpers owned by ts-code-rules
 ```
 
 1. Preserve the established page tree and any mobile/PC separation. Do not create a competing tree or merge target-specific implementations through runtime device branches unless the request requires it.
 2. Keep page-private components and hooks beside the page. Promote them to a `src`-level directory only after actual cross-page reuse. TypeScript helper ownership, shared utility modules, and public entries are governed by `ts-code-rules`.
+3. Keep application bootstrap, APIs, constants, services, stores, types, and utilities in the source layers defined by `ts-code-rules`; keep global styles in the layer defined by `css-code-rules`. Do not move these responsibilities into pages or components merely because the current consumer is UI code.
+4. Preserve established singular or plural names and layer semantics. Do not create both `api/` and `apis/`, both `page/` and `pages/`, or both `view/` and `views/` to mirror this map.
 
 ## Scenario 1: Place Route Orchestration and Reusable UI
 
@@ -98,3 +110,4 @@ This runtime branch makes both target implementations part of one ownership and 
 - Route orchestration, reusable UI, and layouts live in their intended layers.
 - Private components and hooks remain beside their owner until cross-page reuse is real.
 - Mobile and PC presentation trees remain separate.
+- TypeScript and style source layers remain with their owning skills, without competing directories or placeholder folders.
