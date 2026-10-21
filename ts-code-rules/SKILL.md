@@ -24,8 +24,7 @@ In examples, `<zh: ...>` marks placeholder content for a Chinese comment. Replac
 7. Prefer `await` for ordinary sequential flow, and use `Promise.all` only when operations are independent and their combined failure semantics are intended. Catch only where the error can be recovered, translated, enriched, or reported. Never discard a Promise with unary `void`; intentional fire-and-forget work must handle or report its own rejection. Set operation-owned loading before the request and restore it through `finally`.
 8. Read `error.message` directly for caught errors. Do not add narrowing or fallback branches around the guaranteed `message` property.
 9. Verify new runtime APIs against the actual TypeScript target, runtime versions, Browserslist, and polyfill strategy. Transpilation does not provide missing runtime APIs.
-10. Keep transport wrappers thin, shared HTTP concerns centralized, and page or feature orchestration with its real owner. API modules own endpoint paths and transport-facing payloads; HTTP infrastructure owns request and response normalization; UI or feature owners own loading, user messages, navigation, list merging, and state commits.
-11. Format only changed files, restore unrelated formatter churn, preserve pre-existing user edits, and re-check the final diff against these rules.
+10. Format only changed files, restore unrelated formatter churn, preserve pre-existing user edits, and re-check the final diff against these rules.
 
 ## Required Reference Loading
 
@@ -33,7 +32,7 @@ Loading this entrypoint is not the complete workflow. After the initial reposito
 
 - Read [Code Quality Examples](references/code-quality-examples.md) when deciding change scope, abstraction, cleanup, declaration comments, callback comments, internal comments, redundant wrappers, or blank lines.
 - Read [Imports and Public Entry Rules](references/imports-and-types.md) when adding, removing, grouping, or relocating imports, choosing type-import syntax, or selecting cross-module import paths and public entries.
-- Read [TypeScript Application Architecture](references/application-architecture.md) when placing application bootstrap code, API or HTTP modules, constants, services, stores, ambient or shared types, stateless utilities, owner-private source-layer directories, or transport versus UI orchestration.
+- Read [TypeScript Application Architecture](references/application-architecture.md) when placing application bootstrap code, API modules, constants, services, stores, ambient or shared types, stateless utilities, or owner-private source-layer directories.
 - Read [Async and Compatibility Examples](references/async-and-compatibility-examples.md) when handling promises, dependent or parallel work, loading state, errors, cancellation, fire-and-forget contracts, newer APIs, target support, or final formatting checks.
 
 ## Working Process

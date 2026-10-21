@@ -15,8 +15,8 @@ In examples, `<zh: ...>` marks placeholder content for a Chinese comment. Replac
 
 ## Core Rules
 
-1. Keep present SFC blocks in `<template>`, `<script>`, `<style>` order and omit empty blocks. Keep business transformations out of templates, use kebab-case custom tags, and self-close components without content.
-2. Keep the DOM shallow and aligned with business responsibility. Add wrappers only for a real layout, positioning, animation, interaction, or grouping role. Use native interactive or semantic elements only when their behavior or document meaning applies.
+1. Keep present SFC blocks in `<template>`, `<script>`, `<style>` order and omit empty blocks. Use kebab-case custom tags, and self-close components without content.
+2. Implement the required functionality with as few DOM nodes and nesting levels as possible. Do not add unnecessary nodes or meaningless wrappers. Add a wrapper only when existing elements cannot implement the required behavior or layout directly, and keep any necessary structure minimal. Use native interactive or semantic elements only when their behavior or document meaning applies.
 3. Combine multiple class sources in one `:class` array. Do not split the same element across `class` and `:class` or build long concatenated class strings.
 4. Use blank lines only between genuinely separate SFC blocks or logical regions. Never use consecutive, leading, trailing, block-edge, comment-separating, or tightly-coupled blank lines.
 5. Keep compiler macros at `<script setup>` scope. Put macros other than `defineExpose` immediately after imports and before runtime logic. Put `defineExpose` last unless top-level `await` requires exposed bindings to be initialized and exposed before the first await.
@@ -29,7 +29,7 @@ In examples, `<zh: ...>` marks placeholder content for a Chinese comment. Replac
 
 Loading this entrypoint is not the complete workflow. After the initial repository inspection and before making implementation or review judgments, map every affected concern to the list below and read each matching reference in full. Every task covered by this skill must open at least one reference. When no route seems to match, read the closest reference instead of proceeding with only this entrypoint. Do not merely mention or summarize a reference without opening it. When uncertain whether a reference applies, read it. References are authoritative requirements, not optional background.
 
-- Read [Template Examples](references/template-examples.md) when deciding SFC block order, template expressions, component tags, slots, DOM depth, or semantic elements.
+- Read [Template Examples](references/template-examples.md) when deciding SFC block order, component tags, slots, DOM depth, or semantic elements.
 - Read [Class Binding Examples](references/class-binding-examples.md) when an element combines static, reusable, or conditional class sources.
 - Read [Blank Line Examples](references/blank-line-examples.md) when deciding SFC block spacing, template whitespace, or JavaScript-script whitespace. TypeScript-script whitespace belongs to `ts-code-rules`; style-block whitespace belongs to `css-code-rules`.
 - Read [Script Structure Examples](references/script-structure-examples.md) when ordering Vue imports, compiler macros, runtime declarations, or deciding whether Vue and Vue Router APIs need explicit imports.

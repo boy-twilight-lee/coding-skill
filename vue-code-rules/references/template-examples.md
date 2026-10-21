@@ -4,17 +4,15 @@
 
 1. Keep the SFC blocks that are present in strict relative order: `<template>`, then `<script>`, then `<style>`. Omit an unused block; never add an empty block solely to complete the sequence.
 
-2. Keep business transformations and non-trivial conditions out of the template. Name them in computed state or functions so the template remains a readable declaration of the UI.
+2. Use kebab-case custom component tags and self-close components that have no slots or child content.
 
-3. Use kebab-case custom component tags and self-close components that have no slots or child content.
+3. Keep each component root and its template hierarchy aligned with the business responsibility. Use named slots for intentional extension points; do not add wrapper elements only to satisfy an abstract convention.
 
-4. Keep each component root and its template hierarchy aligned with the business responsibility. Use named slots for intentional extension points; do not add wrapper elements only to satisfy an abstract convention.
+4. Implement the required functionality with as few DOM nodes and nesting levels as possible. Do not add unnecessary nodes or meaningless wrappers. Reuse existing elements for behavior and styling directly; add a wrapper only when the required behavior or layout cannot otherwise be achieved, and keep its structure minimal.
 
-5. Avoid meaningless DOM. Do not nest elements solely for styling or layout when the target element can be styled directly. Keep the DOM shallow and node count low. Add a container only when it has a clear, independent layout, positioning, animation, interaction, or grouping responsibility, and give it a name that expresses that purpose.
+5. In non-interactive business layout, prefer `div` for block grouping and `span` for inline content. Use `i` only for decorative icon placeholders and mark it appropriately when accessibility tooling requires it. Use native interactive elements such as `button`, `a`, `input`, and `label` when their behavior or accessibility semantics apply. Use landmarks, headings, lists, tables, and other semantic elements only when they express real document structure, SEO meaning, data relationships, or accessibility—not merely for browser-default styling.
 
-6. In non-interactive business layout, prefer `div` for block grouping and `span` for inline content. Use `i` only for decorative icon placeholders and mark it appropriately when accessibility tooling requires it. Use native interactive elements such as `button`, `a`, `input`, and `label` when their behavior or accessibility semantics apply. Use landmarks, headings, lists, tables, and other semantic elements only when they express real document structure, SEO meaning, data relationships, or accessibility—not merely for browser-default styling.
-
-7. Apply the template-comment coverage in [Vue Script Comment Examples](script-comment-examples.md): document major business regions in multi-region templates and significant rendering or interaction rules with concise Chinese HTML comments. Do not label every element, duplicate visible text, or split conditional sibling chains with annotations. Read that reference when deciding template comment coverage.
+6. Apply the template-comment coverage in [Vue Script Comment Examples](script-comment-examples.md): document major business regions in multi-region templates and significant rendering or interaction rules with concise Chinese HTML comments. Do not label every element, duplicate visible text, or split conditional sibling chains with annotations. Read that reference when deciding template comment coverage.
 
 ## Scenario 1: Keep SFC Blocks in Order
 
@@ -62,49 +60,7 @@ const props = defineProps<{
 
 Omit a block when unused, but preserve the relative order of blocks that remain.
 
-## Scenario 2: Move Business Logic out of the Template
-
-**Positive example:**
-
-Keep the template declarative:
-
-The explicit Vue import in this example assumes the active Vite auto-import configuration does not cover `computed`. Omit the runtime import after verifying that it is covered; otherwise keep it explicit.
-
-```vue
-<template>
-  <span class="order-card-status">{{ orderStatusText }}</span>
-</template>
-
-<script setup lang="ts">
-import { computed } from 'vue'
-
-const props = defineProps<{
-  status: string
-}>()
-// <zh: provide the business-mapped status text for the current order.>
-const orderStatusText = computed(() => getOrderStatusText(props.status))
-</script>
-```
-
-**Negative example:**
-
-Do not perform that same business mapping directly in the template:
-
-```vue
-<template>
-  <span class="order-card-status">{{ getOrderStatusText(props.status) }}</span>
-</template>
-
-<script setup lang="ts">
-const props = defineProps<{
-  status: string
-}>()
-</script>
-```
-
-Avoid nested conditions, transformations, or chained collection operations directly in interpolation or directives. A short property read or simple boolean condition may remain inline when it is immediately understandable.
-
-## Scenario 3: Use Custom Component Tags and Slots
+## Scenario 2: Use Custom Component Tags and Slots
 
 **Positive example:**
 
@@ -157,11 +113,11 @@ Do not render those same components with PascalCase tags, an unnecessary closing
 </UserCard>
 ```
 
-## Scenario 4: Remove Meaningless DOM
+## Scenario 3: Use the Minimum Necessary DOM
 
 **Positive example:**
 
-Prefer direct styling:
+Use the existing target element directly when it can implement the required behavior and styling:
 
 ```vue
 <span class="user-card-name">{{ user.name }}</span>
@@ -169,7 +125,7 @@ Prefer direct styling:
 
 **Negative example:**
 
-Avoid wrappers with no independent responsibility:
+Do not introduce extra nodes or nesting when they are unnecessary for the required functionality:
 
 ```vue
 <div class="user-card-name-wrapper">
@@ -179,9 +135,9 @@ Avoid wrappers with no independent responsibility:
 </div>
 ```
 
-A wrapper is justified when it owns layout, positioning, animation, interaction, or a meaningful group. Its class name should express that responsibility.
+A wrapper is allowed only when the required behavior or layout cannot be implemented directly with existing elements. Give each necessary wrapper a clear purpose and keep the number of nodes and nesting levels to the minimum needed.
 
-## Scenario 5: Choose General-Purpose, Interactive, or Semantic Elements
+## Scenario 4: Choose General-Purpose, Interactive, or Semantic Elements
 
 **Positive example:**
 
@@ -224,9 +180,8 @@ Use a business class and CSS for visual styling. Conversely, do not replace a re
 ## Review Checklist
 
 - SFC blocks follow template, script, style order.
-- Business transformations have named script declarations.
 - Custom tags are kebab-case and empty components self-close.
 - Slots represent intentional extension points.
-- Every wrapper has an independent responsibility.
+- The required functionality uses the minimum necessary DOM nodes and nesting; no unnecessary wrapper is present.
 - Interactive and semantic elements match actual behavior, structure, SEO, data relationships, or accessibility.
 - Multi-region templates have useful business-region and rendering-rule comments, following the comment reference without per-node narration or broken conditional chains.

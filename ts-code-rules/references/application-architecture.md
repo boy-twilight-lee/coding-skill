@@ -1,6 +1,6 @@
 # TypeScript Application Architecture
 
-This reference is a placement decision map, not a directory-generation template. Use the repository's established equivalents, and create a directory only when it has a real responsibility. Directory responsibilities are clearer here as a map and decision table than as repeated positive and negative examples; one transport-boundary contrast is included because that boundary is easy to misclassify.
+This reference is a placement decision map, not a directory-generation template. Use the repository's established equivalents, and create a directory only when it has a real responsibility. Directory responsibilities are presented as a source map and placement decision table.
 
 ## Application Source Map
 
@@ -30,61 +30,13 @@ Optional target-specific UI trees such as `pages-pc/` and `components-pc/` follo
 ## Mandatory Rules
 
 1. Keep `main.ts` limited to application creation, global plugin and style registration, router or store installation, and mounting. Feature workflows and reusable helpers belong to their actual owners.
-2. Keep backend transport calls and their transport-facing contracts in the established API layer. Do not duplicate endpoint wrappers in `services/` or hide unrelated business state in API modules.
-3. Use `services/` only when the repository has a distinct external-capability or cross-module orchestration layer. A service must add a real boundary beyond forwarding one API call; otherwise keep the behavior with its API or feature owner.
+2. Place backend API modules in the repository's established API source layer.
+3. Use `services/` according to the repository's established external-capability or cross-module orchestration layer.
 4. Keep owner-private constants, types, and stateless helpers beside the page, component, feature, or service that owns them. Promote them to `src/constants`, `src/type`, or `src/utils` only after consumers cross that ownership boundary or an application-wide contract requires it.
 5. Keep `src/type` focused on configured ambient declarations and truly application-wide contracts. Do not turn it into a catch-all for page, component, API, service, or store types that have a clearer owner.
 6. Keep `src/utils` stateless and organize shared helpers by focused business domain or technical capability. Extend an existing matching module before creating another, avoid catch-all files such as `common.ts`, and re-export public helpers through the directory's established entry without placing implementation in the barrel.
 7. Keep application-wide state in the established store layer only when it is shared across routes or independent owners. Component-subtree state, page-private state, and request-local state remain with their nearest owner.
 8. Keep route records, guards, and router assembly in `router/`. Route components and page workflows remain in the page tree rather than moving into route configuration.
-
-## API, HTTP, and UI Boundary Contrast
-
-**Positive example:**
-
-Keep the endpoint wrapper transport-focused:
-
-```ts
-export const fetchCandidateList = (data: CandidateListQuery) => {
-  return service.post<CandidateListResponse>('/candidate/page', data)
-}
-```
-
-Let shared HTTP infrastructure own content type, credentials, response normalization, network failures, and cross-cutting request validation. Let the page or feature owner coordinate loading, list replacement or merging, user messages, and navigation:
-
-```ts
-const loadCandidates = async () => {
-  page.loading = true
-  try {
-    const { data } = await fetchCandidateList(filters)
-    candidates.value = data.records
-  } catch (error) {
-    Message.error(error.message)
-  } finally {
-    page.loading = false
-  }
-}
-```
-
-**Negative example:**
-
-Do not hide UI orchestration in the API layer:
-
-```ts
-export const fetchCandidateList = async (data: CandidateListQuery) => {
-  pageStore.loading = true
-  try {
-    const response = await service.post('/candidate/page', data)
-    pageStore.candidates = response.data.records
-    Message.success('Loaded')
-    return response
-  } finally {
-    pageStore.loading = false
-  }
-}
-```
-
-Do not create a service that only forwards this API call under another name. Introduce a service only when it owns a distinct external-capability adapter or cross-module orchestration contract.
 
 ## Placement Decisions
 
@@ -106,9 +58,8 @@ Use configured aliases and public entries across ownership boundaries. Relative 
 ## Review Checklist
 
 - Existing source-layer names and responsibilities are preserved rather than duplicated.
-- Bootstrap, transport, orchestration, routing, application state, and stateless utility responsibilities remain distinct.
+- Bootstrap, routing, application state, and stateless utility modules remain in their established source layers.
 - Private constants, types, helpers, and composables stay with their nearest owner until real cross-owner reuse exists.
 - `src/type` and `src/utils` are focused layers rather than catch-all directories.
 - Optional directories are created only for real contents and are not added as placeholders.
 - Cross-owner consumers use configured aliases and established public entries.
-- Endpoint wrappers, shared HTTP infrastructure, and UI orchestration remain separate, without pass-through service layers.
