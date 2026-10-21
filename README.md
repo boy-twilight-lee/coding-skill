@@ -11,10 +11,10 @@
 </p>
 
 <p align="center">
-  <strong>面向 Codex 的命令执行、TypeScript、Vue 3 与 CSS 工程规则。</strong>
+  <strong>面向 Codex 的命令执行、TypeScript、Vue 3、CSS 与设计稿组件复用工程规则。</strong>
 </p>
 
-这组 Skill 帮助 Codex 在执行命令以及编写、修改、调试和审查代码时，遵循一致且可验证的工程约束。每个 Skill 独立负责一个领域，可以按任务自动加载或显式指定。顶层 `SKILL.md` 保留必须遵守的核心规则；reference 提供完整的适用边界和复核清单，只在具体对比能帮助决策时保留示例。命中路由时必须实际读取对应 reference，不能只加载顶层文件。
+这组 Skill 帮助 Codex 在执行命令、编写和审查代码，以及将 Figma 或 HTML 转换为 Vue 时，遵循一致且可验证的工程约束。每个 Skill 独立负责一个领域，可以按任务自动加载或显式指定。顶层 `SKILL.md` 保留必须遵守的核心规则；reference 提供完整的适用边界和复核清单，只在具体对比能帮助决策时保留示例。命中路由时必须实际读取对应 reference，不能只加载顶层文件。
 
 ## 🧰 包含的 Skill
 
@@ -24,18 +24,27 @@
 | `ts-code-rules`           | TypeScript、TSX、Vue TypeScript          | 修改范围、类型、导入、异步流程、错误处理和运行时兼容性       |
 | `vue-code-rules`          | Vue 3 SFC、组件、页面、布局和 composable | 模板规范、编译器宏、响应式逻辑、组件职责和架构边界           |
 | `css-code-rules`          | CSS、Less、Sass、SCSS、Vue style         | 作用域、命名、嵌套、布局、设计令牌和浏览器兼容性             |
+| `vue-design-system-reuse` | Figma 或 HTML 转 Vue 的组件选择          | 二开组件优先、组件库复用、主题适配和通用控件复核             |
 
 ## 📦 安装
+
+### 本地 UI 复用标注插件
+
+新增 [ui-use-preview 插件](ui-reuse-preview-plugin/README.md)：关联当前会话工作区，选择 HTML 或设计图片，在插件内部预览带组件名称、真实路径和主题适配说明的标注 HTML。仅分析 UI，可下载 HTML 后人工补充。
+
+插件源码位于一级目录 `ui-reuse-preview-plugin/`；内部工作流位于 `ui-reuse-preview-plugin/skills/ui-reuse-annotation/`，随插件分发，无需单独安装。实际转换 Vue 代码使用独立的 `vue-design-system-reuse` Skill。插件的开发、验证和安装方式见其说明文件。
+
+### 独立 Skill
 
 克隆并打开本仓库后，将下面的提示词发送给 Codex：
 
 ```text
 请检查当前 coding-skill 仓库，并完成以下配置：
 
-1. 将 command-execution-rules、ts-code-rules、vue-code-rules、css-code-rules 四个 Skill 目录安装或更新到 Codex 的 skills 目录。优先使用 CODEX_HOME；未配置时使用当前用户目录下的 .codex。必须复制每个 Skill 的 SKILL.md、agents、references、assets 等运行所需内容，不能只复制 SKILL.md。
+1. 将 command-execution-rules、ts-code-rules、vue-code-rules、css-code-rules、vue-design-system-reuse 五个 Skill 目录安装或更新到 Codex 的 skills 目录。优先使用 CODEX_HOME；未配置时使用当前用户目录下的 .codex。必须复制每个 Skill 的 SKILL.md、agents、references、assets 等运行所需内容，不能只复制 SKILL.md。
 2. 仓库根目录的 `translation/<skill-name>/` 仅供人工阅读和评审，不属于 Skill 运行内容。安装或更新时不要复制根目录 `translation`，也不要用翻译文件覆盖 references。
-3. 写入前确认源目录和目标目录，保留其他已安装 Skill，不要删除或覆盖这四个目标之外的内容。
-4. 更新 Codex 根目录的 AGENTS.md；文件不存在时创建，存在时保留其他规则。删除以下四个 Skill 的旧版或重复 routing，然后加入：
+3. 写入前确认源目录和目标目录，保留其他已安装 Skill，不要删除或覆盖这五个目标之外的内容。
+4. 更新 Codex 根目录的 AGENTS.md；文件不存在时创建，存在时保留其他规则。删除以下五个 Skill 的旧版或重复 routing，然后加入：
 
 # Command Execution Skill Routing
 
@@ -53,15 +62,19 @@ For every task that writes, modifies, refactors, reviews, debugs, or completes T
 
 For every task that writes, modifies, refactors, reviews, debugs, or completes CSS, Less, Sass, SCSS, or a Vue <style> block, always use the css-code-rules skill, read every reference required by its Required Reference Loading section in full before acting, and treat its style architecture, naming, scope, layout, and compatibility rules as mandatory unless higher-priority instructions conflict.
 
-5. 使用 skill-creator 的 quick_validate.py 校验四个安装后的 Skill；如果该校验器不可用，就检查目录名、frontmatter name、引用文件和 agents/openai.yaml 是否完整一致。
-6. 比较四个 Skill 源目录与安装后的文件，确认运行内容一致；仓库根目录 `translation` 不参与比较。最后报告安装目录、AGENTS.md 路径、校验结果以及是否需要重启 Codex。不要提交、推送或修改本仓库中的其他文件。
+# Vue Design System Reuse Skill Routing
+
+For every task that converts Figma or HTML interfaces into Vue, always use the vue-design-system-reuse skill, inspect the project's shared components and configured UI library before implementing common controls, read every reference required by its Required Reference Loading section in full, and apply its component-priority and theme-adaptation rules unless higher-priority instructions conflict.
+
+5. 使用 skill-creator 的 quick_validate.py 校验五个安装后的 Skill；如果该校验器不可用，就检查目录名、frontmatter name、引用文件和 agents/openai.yaml 是否完整一致。
+6. 比较五个 Skill 源目录与安装后的文件，确认运行内容一致；仓库根目录 `translation` 不参与比较。最后报告安装目录、AGENTS.md 路径、校验结果以及是否需要重启 Codex。不要提交、推送或修改本仓库中的其他文件。
 ```
 
 安装或更新后，请在新的 Codex 任务中使用；如果暂时没有识别新 Skill，重启 Codex 后再试。
 
 ## ✅ 校验
 
-校验四个 Skill、reference 加载契约、翻译映射、本地链接和运行内容语言边界：
+校验五个 Skill、reference 加载契约、翻译映射、本地链接和运行内容语言边界：
 
 ```text
 python scripts/validate_skills.py

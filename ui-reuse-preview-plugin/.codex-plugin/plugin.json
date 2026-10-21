@@ -1,0 +1,11 @@
+{
+  "name": "ui-use-preview",
+  "version": "0.1.1",
+  "description": "当前工作区 UI 复用标注与 HTML 内嵌预览",
+  "skills": "./skills/",
+  "mcpServers": "./.mcp.json",
+  "interface": {
+    "displayName": "ui-use-preview",
+    "shortDescription": "当前工作区的设计稿与 HTML 复用标注"
+  }
+}

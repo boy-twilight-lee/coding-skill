@@ -1,0 +1,68 @@
+.reuse-app {
+  --reuse-brand: #6554c0;
+  --reuse-surface: #fff;
+  --reuse-background: #f6f7fb;
+  --reuse-text: #242735;
+  --reuse-muted: #737889;
+  --reuse-border: #e4e6ef;
+  margin: 0;
+  background: var(--color-background-primary, var(--reuse-background));
+  font: 14px/1.6 system-ui, "Microsoft YaHei", sans-serif;
+  color: var(--color-text-primary, var(--reuse-text));
+}
+.reuse-app * { box-sizing: border-box; }
+.reuse-app .reuse-header {
+  padding: 22px 28px;
+  background: var(--color-background-secondary, var(--reuse-surface));
+  border-bottom: 1px solid var(--reuse-border);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 16px;
+}
+.reuse-app .reuse-brand { display: flex; align-items: center; gap: 12px; }
+.reuse-app .reuse-logo { height: 42px; width: 42px; background: var(--reuse-brand); border-radius: 12px; font-size: 26px; color: #fff; display: flex; align-items: center; justify-content: center; }
+.reuse-app h1 { margin: 0; font-size: 20px; font-weight: 650; }
+.reuse-app .reuse-brand p { margin: 0; font-size: 12px; color: var(--reuse-muted); }
+.reuse-app .reuse-workspace { max-width: 100%; padding: 6px 12px; background: #f0edfb; border-radius: 7px; font-size: 12px; color: #514292; overflow-wrap: anywhere; }
+.reuse-app .reuse-main { padding: 22px 28px; }
+.reuse-app .reuse-toolbar { display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 14px; }
+.reuse-app .reuse-upload { display: flex; align-items: center; flex-wrap: wrap; gap: 12px; }
+.reuse-app #filename { max-width: 280px; font-size: 12px; color: var(--reuse-muted); overflow-wrap: anywhere; }
+.reuse-app .reuse-actions { display: flex; flex-wrap: wrap; gap: 8px; }
+.reuse-app button { cursor: pointer; padding: 9px 16px; background: var(--reuse-brand); border: 1px solid var(--reuse-brand); border-radius: 7px; font: inherit; font-size: 13px; color: #fff; }
+.reuse-app button.reuse-secondary { background: var(--reuse-surface); border-color: var(--reuse-border); color: #514292; }
+.reuse-app button:disabled { cursor: default; opacity: .5; }
+.reuse-app button:focus-visible, .reuse-app input:focus-visible { outline: 2px solid var(--reuse-brand); outline-offset: 3px; }
+.reuse-app .reuse-status { min-height: 24px; margin: 14px 0; font-size: 12px; color: var(--reuse-muted); }
+.reuse-app .reuse-status.reuse-status-error { color: #b53d43; }
+.reuse-app .reuse-content { display: flex; align-items: stretch; gap: 18px; }
+.reuse-app .reuse-canvas { overflow: hidden; min-width: 0; background: var(--reuse-surface); border: 1px solid var(--reuse-border); border-radius: 12px; flex: 1; }
+.reuse-app .reuse-canvas-header { padding: 13px 18px; border-bottom: 1px solid var(--reuse-border); font-size: 13px; display: flex; justify-content: space-between; flex-wrap: wrap; gap: 8px; }
+.reuse-app #preview-caption { font-size: 11px; color: var(--reuse-muted); }
+.reuse-app .reuse-empty { min-height: 520px; padding: 56px 24px; text-align: center; display: flex; align-items: center; justify-content: center; flex-direction: column; }
+.reuse-app .reuse-empty-symbol { height: 76px; width: 76px; background: #f1eefc; border-radius: 20px; font-size: 40px; color: var(--reuse-brand); display: flex; align-items: center; justify-content: center; }
+.reuse-app .reuse-empty h2 { margin: 20px 0 8px; font-size: 20px; }
+.reuse-app .reuse-empty p { margin: 0; font-size: 13px; color: var(--reuse-muted); }
+.reuse-app .reuse-scope { margin-top: 24px; font-size: 11px; color: #8b819f; }
+.reuse-app #preview { position: relative; overflow: auto; height: 740px; width: 100%; }
+.reuse-app .reuse-inspector { overflow: auto; width: 320px; max-height: 790px; padding: 18px; background: var(--reuse-surface); border: 1px solid var(--reuse-border); border-radius: 12px; flex-shrink: 0; }
+.reuse-app .reuse-inspector-header { display: flex; align-items: center; justify-content: space-between; }
+.reuse-app .reuse-inspector-header h2 { margin: 0; font-size: 15px; }
+.reuse-app #count { padding: 1px 8px; background: #f0edfb; border-radius: 5px; font-size: 12px; color: var(--reuse-brand); }
+.reuse-app .reuse-inspector-note, .reuse-app .reuse-placeholder { font-size: 12px; color: var(--reuse-muted); }
+.reuse-app .reuse-card { margin-top: 14px; padding: 14px; border: 1px solid var(--reuse-border); border-radius: 8px; }
+.reuse-app .reuse-card h3 { margin: 0 0 10px; font-size: 13px; color: #514292; }
+.reuse-app .reuse-card p { margin: 7px 0; font-size: 12px; }
+.reuse-app .reuse-card code { font-family: ui-monospace, Consolas, monospace; font-size: 11px; color: #6554a0; overflow-wrap: anywhere; }
+.reuse-app .reuse-card .reuse-kind { color: var(--reuse-muted); }
+.reuse-app .reuse-footer { margin-top: 18px; font-size: 11px; color: var(--reuse-muted); }
+.reuse-app [hidden] { display: none; }
+@media (max-width: 850px) {
+  .reuse-app .reuse-content { flex-direction: column; }
+  .reuse-app .reuse-inspector { width: 100%; max-height: none; }
+  .reuse-app .reuse-header { padding: 16px; }
+  .reuse-app .reuse-main { padding: 16px; }
+  .reuse-app .reuse-empty { min-height: 360px; }
+}

@@ -1,0 +1,4 @@
+interface:
+  display_name: "Vue Design System Reuse"
+  short_description: "Reuse project components when converting designs to Vue."
+  default_prompt: "Use $vue-design-system-reuse to convert this Figma or HTML UI into Vue with project-native components."

@@ -1,0 +1,4 @@
+interface:
+  display_name: "UI Reuse Annotation"
+  short_description: "Create annotated HTML showing reusable UI and source paths."
+  default_prompt: "Use $ui-reuse-annotation to create an annotated HTML from this design and repository, showing reusable UI components and verified paths."

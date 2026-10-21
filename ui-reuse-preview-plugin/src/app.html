@@ -1,0 +1,32 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>ui-use-preview</title>
+  <style>/* APP_STYLES */</style>
+</head>
+<body class="reuse-app">
+  <header class="reuse-header">
+    <div class="reuse-brand"><span class="reuse-logo" aria-hidden="true">↗</span><div><h1>ui-use-preview</h1><p>让设计与项目已有组件对齐</p></div></div>
+    <span id="workspace" class="reuse-workspace">正在关联当前工作区…</span>
+  </header>
+  <main class="reuse-main">
+    <section class="reuse-toolbar" aria-label="选择设计文件">
+      <div class="reuse-upload"><button id="choose" class="reuse-secondary" type="button" disabled>＋ 选择 HTML / 设计图</button><input id="source" type="file" accept=".html,.htm,.png,.jpg,.jpeg,.webp" disabled hidden><span id="filename">HTML、PNG、JPG、WebP · 最大 8 MiB</span></div>
+      <div class="reuse-actions"><button id="generate" type="button" disabled>生成标注</button><button id="download" class="reuse-secondary" type="button" disabled>下载标注 HTML</button></div>
+    </section>
+    <p id="status" class="reuse-status" role="status" aria-live="polite">正在连接插件…</p>
+    <div class="reuse-content">
+      <section class="reuse-canvas" aria-label="标注预览">
+        <div class="reuse-canvas-header"><span>设计预览</span><span id="preview-caption">标记将在页面中直接显示</span></div>
+        <div id="empty" class="reuse-empty"><span class="reuse-empty-symbol" aria-hidden="true">▤</span><h2>从一份设计开始</h2><p>选择文件后，当前 agent 会查找工作区中的公共 UI 组件，<br>并将组件名称、路径和适配建议标注到页面上。</p><span class="reuse-scope">仅分析 UI 复用 · 无需选择仓库</span></div>
+        <div id="preview" role="region" aria-label="带组件复用标注的 HTML 预览" hidden></div>
+      </section>
+      <aside class="reuse-inspector" aria-label="组件复用清单"><div class="reuse-inspector-header"><h2>复用清单</h2><span id="count">0</span></div><p class="reuse-inspector-note">页面编号与下方清单对应。组件路径和样式适配说明直接展示。</p><div id="annotations"><p class="reuse-placeholder">生成后将在这里展示复用组件。</p></div></aside>
+    </div>
+    <footer class="reuse-footer">优先公共二开组件，再使用有主题且使用最频繁的组件库。样式差异通过主题适配。</footer>
+  </main>
+  <script>/* APP_SCRIPT */</script>
+</body>
+</html>

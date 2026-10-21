@@ -1,0 +1,17 @@
+{
+  "$schema": "https://agent-plugins.org/schemas/1.0.0/plugin.schema.json",
+  "name": "ui-use-preview",
+  "version": "0.1.1",
+  "description": "Inspect UI reuse in the current Codex workspace and preview annotated HTML inside the plugin.",
+  "extensions": {
+    "com.openai": {
+      "interface": {
+        "displayName": "ui-use-preview",
+        "shortDescription": "当前工作区的设计稿与 HTML 复用标注",
+        "longDescription": "选择 HTML 或设计图片，在当前工作区中查找可复用 UI 组件，并在插件内预览带编号、组件路径及主题适配说明的 HTML。",
+        "capabilities": ["Interactive"],
+        "defaultPrompt": "打开 ui-use-preview，关联当前会话工作区。"
+      }
+    }
+  }
+}
