@@ -32,9 +32,13 @@ export function renderPreview(source, annotations, nonce) {
   const data = JSON.stringify(annotations).replaceAll('<', '\\u003c').replaceAll('\u2028', '\\u2028').replaceAll('\u2029', '\\u2029');
   const policy = `default-src 'none'; img-src data:; style-src 'unsafe-inline'; script-src 'nonce-${nonce}'; form-action 'none'; base-uri 'none'`;
   const bootstrap = `<meta http-equiv="Content-Security-Policy" content="${policy}"><style>
-  [data-ui-reuse-target] { outline: 2px dashed #6257d4; outline-offset: 3px; }
+  [data-ui-reuse-target] { outline: 1px dashed rgba(0,82,217,.45); outline-offset: 5px; }
+  [data-ui-reuse-target][data-ui-reuse-active] { outline-color: #0052d9; outline-width: 2px; }
   .ui-reuse-overlay { position: absolute; top: 0; left: 0; z-index: 2147483647; pointer-events: none; width: 100%; }
-  .ui-reuse-marker { position: absolute; max-width: 240px; padding: 3px 7px; background: #f0edff; border: 1px solid #6257d4; border-radius: 5px; font: 12px/1.5 system-ui,sans-serif; color: #372a86; display: block; overflow-wrap: anywhere; }
+  .ui-reuse-overlay .ui-reuse-marker { position: absolute; pointer-events: auto; cursor: pointer; height: 20px; width: 20px; margin: 0; padding: 0; background: #0052d9; border: 0; border-radius: 50%; box-shadow: 0 0 0 2px #fff; font: 700 9px/20px system-ui,sans-serif; color: #fff; text-align: center; display: block; }
+  .ui-reuse-overlay .ui-reuse-marker[aria-pressed="true"] { box-shadow: 0 0 0 3px #bfd3fa; transform: scale(1.15); }
+  .ui-reuse-overlay .ui-reuse-marker.ui-reuse-marker-muted, .ui-reuse-overlay .ui-reuse-marker.ui-reuse-marker-filtered { background: #c9ced7; }
+  .ui-reuse-overlay .ui-reuse-marker:focus-visible { outline: 2px solid #0052d9; outline-offset: 3px; }
   .ui-reuse-missing { margin: 12px; padding: 12px; background: #fff6df; font: 13px/1.6 system-ui,sans-serif; color: #68480c; }
   </style>`;
   const script = `<script nonce="${nonce}">

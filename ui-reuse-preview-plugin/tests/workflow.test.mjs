@@ -73,6 +73,33 @@ test('generation verifies paths and selectors and rejects stale revisions', asyn
   assert.match(ready.exportHtml, /sandbox="allow-scripts"/);
 });
 
+test('reset invalidates an in-flight generation and keeps the bound workspace', async t => {
+  const { root } = await fixture(t);
+  const sessions = new Sessions();
+  const session = sessions.create();
+  await sessions.bind(session.id, root);
+  sessions.setSource(session.id, source);
+  const started = sessions.begin(session.id);
+  const cleared = sessions.reset(session.id);
+  assert.equal(cleared.source, null);
+  assert.equal(cleared.status, 'idle');
+  assert.ok(cleared.workspaceName);
+  await assert.rejects(sessions.publish(session.id, started.revision, source.content, [mapping]), /过期/);
+  assert.throws(() => sessions.fail(session.id, started.revision, 'old failure'), /过期/);
+});
+
+test('recommendation is distinct from provenance and unresolved items cannot be direct reuse', async t => {
+  const { root } = await fixture(t);
+  const sessions = new Sessions();
+  const session = sessions.create();
+  await sessions.bind(session.id, root);
+  sessions.setSource(session.id, source);
+  const started = sessions.begin(session.id);
+  await assert.rejects(sessions.publish(session.id, started.revision, source.content, [{ ...mapping, kind: 'unresolved', recommendation: 'reuse' }]), /建议新建/);
+  await sessions.publish(session.id, started.revision, source.content, [{ ...mapping, recommendation: 'adapt' }]);
+  assert.equal(sessions.snapshot(session.id).annotations[0].recommendation, 'adapt');
+});
+
 test('built MCP server exposes app resource and completes a real tool round trip', async t => {
   const { root } = await fixture(t);
   const transport = new StdioClientTransport({ command: process.execPath, args: [path.resolve('dist/server.mjs')], cwd: process.cwd(), stderr: 'pipe' });

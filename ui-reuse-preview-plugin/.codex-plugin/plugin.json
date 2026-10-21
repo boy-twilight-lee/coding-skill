@@ -1,6 +1,6 @@
 {
   "name": "ui-use-preview",
-  "version": "0.1.1",
+  "version": "0.2.0",
   "description": "当前工作区 UI 复用标注与 HTML 内嵌预览",
   "skills": "./skills/",
   "mcpServers": "./.mcp.json",

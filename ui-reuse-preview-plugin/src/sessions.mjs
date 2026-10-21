@@ -49,7 +49,19 @@ export class Sessions {
     session.previewHtml = '';
     session.exportHtml = '';
     session.status = 'idle';
-    session.message = '文件已就绪，点击生成标注。';
+    session.message = '文件已读取，准备自动生成标注。';
+    return this.snapshot(id);
+  }
+
+  reset(id) {
+    const session = this.get(id);
+    session.revision += 1;
+    session.source = null;
+    session.annotations = [];
+    session.previewHtml = '';
+    session.exportHtml = '';
+    session.status = session.root ? 'idle' : 'binding';
+    session.message = session.root ? '请选择 HTML 或设计图片。' : '等待当前 agent 关联工作区。';
     return this.snapshot(id);
   }
 
@@ -101,12 +113,15 @@ export class Sessions {
       catch { throw new Error(`${annotation.id} 的选择器语法无效。`); }
       if (targets.length !== 1) throw new Error(`${annotation.id} 必须精确定位一个 HTML 元素，实际为 ${targets.length} 个。`);
       const item = { ...annotation };
+      item.recommendation = item.recommendation || (item.kind === 'unresolved' ? 'new' : 'reuse');
+      if (!['reuse', 'adapt', 'new'].includes(item.recommendation)) throw new Error('复用建议类型无效。');
+      if (item.kind === 'unresolved' && item.recommendation !== 'new') throw new Error('未匹配区域应标为建议新建共享封装。');
       if (item.kind === 'project' && !item.sourcePath) throw new Error('项目组件必须提供真实定义路径。');
       if (item.kind === 'library' && (!item.packageName || !scan.packageVersions[item.packageName])) throw new Error('组件库必须在工作区包清单中存在。');
       for (const key of ['sourcePath', 'evidencePath', 'themePath']) if (item[key]) item[key] = await verifyProjectPath(session.root, item[key]);
       verified.push(item);
     }
-    if (revision !== session.revision) throw new Error('生成期间文件已更换，结果未发布。');
+    if (revision !== session.revision || session.status !== 'processing') throw new Error('生成期间状态已更换，结果未发布。');
     const nonce = randomBytes(16).toString('hex');
     session.annotations = verified;
     session.previewHtml = renderPreview(html, verified, nonce);

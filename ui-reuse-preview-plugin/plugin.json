@@ -1,7 +1,7 @@
 {
   "$schema": "https://agent-plugins.org/schemas/1.0.0/plugin.schema.json",
   "name": "ui-use-preview",
-  "version": "0.1.1",
+  "version": "0.2.0",
   "description": "Inspect UI reuse in the current Codex workspace and preview annotated HTML inside the plugin.",
   "extensions": {
     "com.openai": {
