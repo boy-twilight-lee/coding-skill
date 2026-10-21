@@ -14,7 +14,7 @@
   <strong>面向 Codex 的命令执行、TypeScript、Vue 3、CSS 与设计稿组件复用工程规则。</strong>
 </p>
 
-这组 Skill 帮助 Codex 在执行命令、编写和审查代码，以及将 Figma 或 HTML 转换为 Vue 时，遵循一致且可验证的工程约束。每个 Skill 独立负责一个领域，可以按任务自动加载或显式指定。顶层 `SKILL.md` 保留必须遵守的核心规则；reference 提供完整的适用边界和复核清单，只在具体对比能帮助决策时保留示例。命中路由时必须实际读取对应 reference，不能只加载顶层文件。
+这组 Skill 帮助 Codex 在执行命令、编写和审查代码，以及将桌面端 Figma 或 HTML 转换为 Vue 时，遵循一致且可验证的工程约束。移动端是否采用设计系统复用规则由 Agent 根据项目情况自行判断。每个 Skill 独立负责一个领域，可以按任务自动加载或显式指定。顶层 `SKILL.md` 保留必须遵守的核心规则；reference 提供完整的适用边界和复核清单，只在具体对比能帮助决策时保留示例。命中路由时必须实际读取对应 reference，不能只加载顶层文件。
 
 ## 🧰 包含的 Skill
 
@@ -24,7 +24,7 @@
 | `ts-code-rules`           | TypeScript、TSX、Vue TypeScript          | 修改范围、类型、导入、异步流程、错误处理和运行时兼容性       |
 | `vue-code-rules`          | Vue 3 SFC、组件、页面、布局和 composable | 模板规范、编译器宏、响应式逻辑、组件职责和架构边界           |
 | `css-code-rules`          | CSS、Less、Sass、SCSS、Vue style         | 作用域、命名、嵌套、布局、设计令牌和浏览器兼容性             |
-| `vue-design-system-reuse` | Figma 或 HTML 转 Vue 的组件选择          | 二开组件优先、组件库复用、主题适配和通用控件复核             |
+| `vue-design-system-reuse` | 桌面端 Figma 或 HTML 转 Vue 的组件选择   | 二开组件优先、组件库复用、主题适配和通用控件复核             |
 
 ## 📦 安装
 
@@ -64,7 +64,7 @@ For every task that writes, modifies, refactors, reviews, debugs, or completes C
 
 # Vue Design System Reuse Skill Routing
 
-For every task that converts Figma or HTML interfaces into Vue, always use the vue-design-system-reuse skill, inspect the project's shared components and configured UI library before implementing common controls, read every reference required by its Required Reference Loading section in full, and apply its component-priority and theme-adaptation rules unless higher-priority instructions conflict.
+For every task that converts desktop (PC) Figma or HTML interfaces into Vue, always use the vue-design-system-reuse skill, inspect the project's shared components and configured UI library before implementing common controls, read every reference required by its Required Reference Loading section in full, and apply its component-priority and theme-adaptation rules unless higher-priority instructions conflict. For mobile interfaces, let the agent decide whether to use this skill based on the project's components, interaction model, and implementation context.
 
 5. 使用 skill-creator 的 quick_validate.py 校验五个安装后的 Skill；如果该校验器不可用，就检查目录名、frontmatter name、引用文件和 agents/openai.yaml 是否完整一致。
 6. 比较五个 Skill 源目录与安装后的文件，确认运行内容一致；仓库根目录 `translation` 不参与比较。最后报告安装目录、AGENTS.md 路径、校验结果以及是否需要重启 Codex。不要提交、推送或修改本仓库中的其他文件。

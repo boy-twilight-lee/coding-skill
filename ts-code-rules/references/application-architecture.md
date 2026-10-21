@@ -25,7 +25,7 @@ src/
 `-- utils/                 Stateless helpers shared across ownership boundaries
 ```
 
-Optional target-specific UI trees such as `pages-pc/` and `components-pc/` are governed by `vue-code-rules`. Preserve the repository's established singular or plural names, such as `api/` versus `apis/`; do not introduce a competing directory merely to match this map.
+Optional target-specific UI trees such as `pages-pc/` and `components-pc/` follow the repository's established structure. Preserve the repository's established singular or plural names, such as `api/` versus `apis/`; do not introduce a competing directory merely to match this map.
 
 ## Mandatory Rules
 

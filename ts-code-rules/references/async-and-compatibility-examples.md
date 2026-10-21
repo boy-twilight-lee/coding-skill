@@ -123,7 +123,7 @@ Before formatting, retain the current file content so existing user edits can be
 After formatting, manually re-check rules Prettier cannot enforce:
 
 - Change scope and absence of drive-by cleanup.
-- Comments justified by the code-quality rules, without narration of self-explanatory declarations or functions.
+- Responsibility comments for business declarations and functions, plus comments for key processing stages, as required by the code-quality rules; clear names do not waive coverage, and mechanical statements need no narration.
 - Meaningful blank lines.
 - Import grouping and source-layer ownership.
 - Awaited promises and intentional error paths.

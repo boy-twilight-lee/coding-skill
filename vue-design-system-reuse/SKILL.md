@@ -1,6 +1,6 @@
 ---
 name: vue-design-system-reuse
-description: "Reuse existing project components and UI-library controls when converting Figma or HTML interfaces into Vue. Use for design-to-code work involving forms, buttons, dialogs, tables, navigation, or other common controls; do not use for Vue work unrelated to visual reconstruction."
+description: "Reuse existing project components and UI-library controls when converting desktop (PC) Figma or HTML interfaces into Vue. For mobile interfaces, apply this skill only when the agent determines that project-level reuse is appropriate; do not use it for Vue work unrelated to visual reconstruction."
 ---
 
 # Vue Design System Reuse
@@ -8,6 +8,10 @@ description: "Reuse existing project components and UI-library controls when con
 Translate the design into the project's existing UI language before translating it into DOM. Preserve the project's component APIs, behavior, accessibility, validation, and theming instead of creating a parallel set of page-local controls.
 
 This skill complements the project's Vue, TypeScript, and CSS rules. Load and follow those skills whenever their routing conditions apply.
+
+## Scope
+
+Apply this skill by default to desktop (PC) Figma-to-Vue and HTML-to-Vue work. For mobile interfaces, component reuse is not mandatory under this skill: the agent should decide case by case whether the project's shared components and UI-library controls fit the mobile interaction model, platform conventions, and implementation context.
 
 ## Mandatory Component Priority
 

@@ -2,34 +2,49 @@
 
 ## Ownership
 
-For `<script lang="ts">` and `<script setup lang="ts">`, `ts-code-rules` is the canonical source for generic declaration comments, function and callback comments, internal comments, redundant wrappers, intermediate values, and guards. This reference adds only Vue-specific placement and compiler-macro exceptions.
+For `<script lang="ts">` and `<script setup lang="ts">`, `ts-code-rules` is the canonical source for generic declaration comments, function and callback comments, internal comments, redundant wrappers, intermediate values, and guards. This reference adds Vue-specific coverage and placement for contracts, reactivity, lifecycle work, compiler macros, and template regions.
 
-For JavaScript Vue scripts, apply the same baseline directly: comment only non-obvious business meaning, contracts, side effects, sequencing, or error behavior; keep one-use callbacks at their registration site unless extraction has an independent responsibility; and never preserve redundant structure merely to create a comment target.
+For JavaScript Vue scripts, apply the same broad coverage directly: document major business state and configuration, computed values, functions, event handlers, contracts, watcher and lifecycle responsibilities, and key processing stages with concise Chinese comments. Clear names and simple syntax do not waive this business documentation. Small cohesive declaration groups may share one comment; imports, temporary locals, and mechanical callbacks need no narration. Keep one-use callbacks at their registration site unless extraction has an independent responsibility, and never preserve redundant structure merely to create a comment target.
 
 ## Mandatory Rules
 
-1. Apply the source-language comment-decision baseline to ordinary runtime declarations. Never place a generic declaration comment above a Vue compiler macro, including a variable or destructuring declaration that receives the result of `defineProps`, `withDefaults`, `defineEmits`, `defineExpose`, `defineOptions`, `defineSlots`, or another compiler macro. Document non-obvious prop, event, slot, or model semantics in the corresponding contract instead.
+1. Apply the source-language coverage rules to runtime declarations. Document major refs, reactive records, computed values, configuration, actions, and handlers by their business role, owner, usage, source, reset timing, or dependencies as relevant. Clear English names alone do not replace these comments. Never place a generic declaration comment above a Vue compiler macro, including a variable or destructuring declaration receiving `defineProps`, `withDefaults`, `defineEmits`, `defineExpose`, `defineOptions`, `defineSlots`, or another macro. Document business prop, event, model, exposed-action, and slot semantics on the corresponding contract members instead; the macro exception does not exempt those contracts.
 
-2. A watcher, lifecycle hook, or inline callback does not need a comment when the source, API name, callback body, and surrounding context already make its behavior clear. When a non-obvious reason, timing constraint, side effect, or error contract needs explanation, place one comment immediately above the containing API call or object property. Do not duplicate it inside the callback.
+2. Add a responsibility comment immediately above each business watcher, lifecycle hook, or callback registration, even for a short reload or initialization. Explain what triggers the work and what it initializes, synchronizes, invalidates, or releases. Include DOM timing, cross-state dependencies, ownership, and error contracts when relevant. Do not repeat that comment inside the callback; comment distinct internal stages or rules separately. A mechanical callback passed to map/filter needs no separate label.
+
+3. Comment key interaction and transformation stages independently from compatibility handling. Range boundaries, selection anchors, normalization, ordering, merging, fallback, deduplication, validation, request sequencing, state commits, and important branches need concise rule or purpose comments above their smallest cohesive block, even when the statements are easy to read. A single-stage action can be covered by its responsibility comment; do not repeat it line by line or invent product reasons unsupported by the implementation.
+
+4. In a template with multiple business regions, add concise Chinese HTML comments above major regions such as filters, results, pagination, detail, and actions. Explain significant conditional-rendering, permission, slot, or interaction rules where they occur. Keep one small single-purpose template free of redundant region labels, and do not label every DOM node or repeat visible text. Place a branch-group comment above the initial `v-if`; keep `v-if`/`v-else-if`/`v-else` chains contiguous.
 
 ## Scenario 1: Apply the Compiler-Macro Exception
 
 **Positive example:**
 
-Compiler macros do not receive generic declaration comments. Ordinary runtime state follows the same non-obviousness test as other source declarations:
+Compiler macros do not receive generic declaration comments. Document business contract members, runtime state, and actions directly:
 
 ```ts
 const props = defineProps<{
+  /** 当前详情及保存操作关联的候选人标识。 */
   candidateId: string
 }>()
 const emit = defineEmits<{
+  /** 保存成功后通知父组件刷新该候选人的展示数据。 */
   saved: [candidateId: string]
 }>()
 
-const loading = ref(false)
+// 候选人保存状态，供提交按钮展示处理中反馈。
+const saving = ref(false)
+// 保存当前候选人，成功后通知父组件；失败交由调用方处理。
 const submitCandidate = async () => {
-  await saveCandidate(props.candidateId)
-  emit('saved', props.candidateId)
+  saving.value = true
+  try {
+    // 服务端确认保存后才通知父组件更新展示。
+    await saveCandidate(props.candidateId)
+    emit('saved', props.candidateId)
+  } finally {
+    // 请求结束后恢复提交状态，失败时同样允许重试。
+    saving.value = false
+  }
 }
 ```
 
@@ -44,25 +59,38 @@ const props = defineProps<{
 }>()
 ```
 
-Its name and type argument already identify the declaration role. Document non-obvious business meaning in the prop contract instead.
+The macro already identifies its declaration role. Put the candidate association on the prop contract, as in the positive example, rather than adding a generic macro label.
 
-## Scenario 2: Decide Whether Watchers and Lifecycle Hooks Need Comments
+## Scenario 2: Document Watcher and Lifecycle Responsibilities
 
 **Positive example:**
 
-Clear registrations may remain uncommented:
+Even short registrations document their business responsibility above the API call:
 
 ```ts
+// 筛选条件变化后重新加载候选人，保持结果与当前条件一致。
 watch(filters, async () => {
   await loadCandidates()
 })
 
+// 页面挂载后加载首屏候选人列表。
 onMounted(async () => {
   await loadCandidates()
 })
 ```
 
-Add a comment above the containing call when it explains a non-obvious constraint:
+Document interaction rules even when their code is syntactically straightforward:
+
+```ts
+// <zh: keep the drag anchor fixed after crossing it so the selected range does not jump.>
+if (nextValue < anchorValue) {
+  range.value = [nextValue, anchorValue]
+} else {
+  range.value = [anchorValue, nextValue]
+}
+```
+
+Include timing constraints when they apply:
 
 ```ts
 // <zh: delay the initial request until mount because the API reads dimensions from the rendered table.>
@@ -71,11 +99,11 @@ onMounted(async () => {
 })
 ```
 
-Do not insert another copy inside the callback.
+Do not insert another copy inside the callback. The ordinary mount example documents when the owner starts loading; a DOM-based delay must be justified by a real dependency, as in the dimensions example.
 
 **Negative example:**
 
-Do not narrate an otherwise clear registration from inside its callback:
+Do not leave the registration undocumented and add a mechanical label inside the callback instead:
 
 ```ts
 watch(filters, async () => {
@@ -89,9 +117,65 @@ onMounted(async () => {
 })
 ```
 
+## Scenario 3: Document State and Computed Business Meaning
+
+**Positive example:**
+
+```ts
+// 当前页面的筛选条件，职位为空表示不限制职位。
+const filters = reactive<{ keyword: string; roleCode: number | null }>({
+  keyword: '',
+  roleCode: null
+})
+// 用户选中的候选人，供当前页面的详情和后续操作使用。
+const selectedCandidateId = ref('')
+// 任一筛选项生效时展示清空筛选入口。
+const hasActiveFilters = computed(() => {
+  return Boolean(filters.keyword || filters.roleCode !== null)
+})
+```
+
+One comment can cover a small cohesive state record; separate comments explain state with different owners or uses. Do not replace these with labels such as “define reactive data” or “computed property.” Temporary request destructuring and simple map callbacks do not need extra comments.
+
+## Scenario 4: Annotate Major Template Regions and Rendering Rules
+
+**Positive example:**
+
+This template excerpt documents region responsibilities and the initial-load branch group without inserting comments between conditional siblings:
+
+```vue
+<template>
+  <div class="candidate-page">
+    <!-- 筛选区：维护当前查询条件，并触发列表刷新。 -->
+    <candidate-filters v-model="filters" />
+    <!-- 结果区：加载中展示占位，完成后展示列表或空态。 -->
+    <candidate-list-skeleton v-if="loading" />
+    <candidate-list v-else-if="candidates.length" :candidates="candidates" />
+    <candidate-empty v-else />
+    <!-- 分页区：只在存在查询结果时展示。 -->
+    <candidate-pagination v-if="total > 0" v-model="pageNumber" :total="total" />
+  </div>
+</template>
+```
+
+**Negative example:**
+
+Do not label each node with syntax or visible text:
+
+```vue
+<!-- div 容器 -->
+<div class="candidate-name">
+  <!-- 姓名文本 -->
+  <span>{{ candidate.name }}</span>
+</div>
+```
+
 ## Review Checklist
 
-- TypeScript SFCs use `ts-code-rules` as the generic script-quality source; this reference supplies only Vue-specific placement and exceptions.
-- JavaScript SFCs apply the same non-obviousness, placement, internal-comment, and redundancy baseline.
-- Compiler macros have no declaration comments above them.
-- Clear watchers, lifecycle hooks, and inline callbacks remain uncommented; justified comments sit immediately above their containing call or property.
+- TypeScript SFCs use `ts-code-rules` as the generic script-quality source; this reference supplies Vue-specific coverage, placement, and macro exceptions.
+- Major business state, computed values, functions, handlers, and configuration have concise responsibility comments in both JavaScript and TypeScript SFCs.
+- Compiler macros have no generic declaration labels, while business prop/event/model/slot/exposed-action contracts are documented at their members.
+- Business watchers, lifecycle hooks, and callback registrations have comments above their containing call or property, including simple reload and initialization work.
+- Key internal stages, interaction rules, branches, side effects, and error policy are documented without duplicating the registration comment.
+- Multi-region templates document major business regions and significant rendering rules; small single-purpose templates and individual DOM nodes need no repeated labels.
+- Comments preserve conditional-chain adjacency, remain attached to their target, and explain only behavior supported by code or verified contracts.

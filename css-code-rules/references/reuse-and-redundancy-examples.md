@@ -59,17 +59,6 @@ Keep only declarations that produce the intended card typography:
 }
 ```
 
-Keep an otherwise common declaration when it enables an observable layout result. A flexible text region often needs `min-width: 0` to shrink below its intrinsic content width:
-
-```less
-.talent-row {
-  .talent-row-content {
-    min-width: 0;
-    flex: 1;
-  }
-}
-```
-
 **Negative example:**
 
 Do not repeat the global reset on that same card:
