@@ -2,11 +2,11 @@
 
 ## Mandatory Rules
 
-1. Give every component a meaningful business root class and keep all of its owned selectors beneath that root. Teleported content may use a separate fully qualified business root because it is rendered outside the component tree.
-2. Follow the project's single-hyphen BEM-like convention: write complete names in the form `block-element-modifier`, using one hyphen as the separator and never `__` or `--` in project-owned class names. Because the same delimiter also appears inside multiword business terms, choose the shortest unambiguous complete name and rely on the owning selector hierarchy—not punctuation alone—to communicate the relationship. Library-owned selectors retain their library naming.
+1. Give every component a concise, business-qualified root class and keep its owned selectors beneath that root. Teleported content may use a separate concise, business-qualified root because it is rendered outside the component tree.
+2. Follow the project's single-hyphen BEM-like convention in the form `block-element-modifier`, using concise business abbreviations and one hyphen as the separator, never `__` or `--` in project-owned names. Keep enough qualified meaning to identify the owner, element, or state, and use selector ownership to express hierarchy rather than repeating every ancestor in the name. Library-owned selectors retain their library naming.
 3. Describe a component, element, state, or business meaning in every class. Avoid ambiguous names and arbitrary suffix chains.
-4. Prohibit overly long class names. First remove redundant ownership words, duplicated business terms, visual descriptions, and unnecessary suffixes while retaining enough meaning to identify the component, element, or state. Do not preserve a verbose name merely because it mirrors every DOM ancestor.
-5. When a class name cannot be kept reasonably short after removing redundant wording, shorten repeated business segments with consistent, comprehensible character abbreviations. Prefer abbreviations already established by the repository or feature glossary, and use the same abbreviation for the same term throughout the ownership subtree. Never create ambiguous, opaque, concatenated, or arbitrary letter sequences merely to reduce character count.
+4. Concise naming and class-length control are mandatory. Remove redundant ownership words, duplicated business terms, visual descriptions, and unnecessary suffixes, and shorten multiword or repeated business segments using the agreed abbreviations. Do not retain verbose full names merely because they mirror every DOM ancestor.
+5. Use consistent, recognizable business abbreviations as the default naming requirement, not a last resort after names become long. Prefer the repository or feature glossary; establish a clear local mapping when none exists and use it consistently throughout the ownership subtree. Keep already short structural or state words readable. Never create ambiguous, opaque, concatenated, or arbitrary letter sequences merely to reduce character count.
 
 Use these scenarios to choose business-qualified component, element, state, and teleported-root names.
 
@@ -19,24 +19,21 @@ Situation: a candidate card has a header, title, action, selected state, and dis
 Use a meaningful business root and complete single-hyphen BEM names:
 
 ```less
-.talent-card {
-  .talent-card-header {
-    .talent-card-title {
-      color: var(--text-color-primary);
+.cand-card {
+  .cand-card-header {
+    .cand-card-title {
+      color: #303133;
     }
   }
-
-  .talent-card-action {
+  .cand-card-action {
     cursor: pointer;
   }
-
-  &.talent-card-selected {
-    border-color: var(--color-primary);
+  &.cand-card-selected {
+    border-color: #409eff;
   }
-
-  &.talent-card-disabled {
+  &.cand-card-disabled {
     cursor: not-allowed;
-    .talent-card-action {
+    .cand-card-action {
       pointer-events: none;
     }
   }
@@ -46,9 +43,9 @@ Use a meaningful business root and complete single-hyphen BEM names:
 For the table header named in the negative example below, use a business-qualified class without a visual suffix:
 
 ```less
-.candidate-table {
-  .candidate-table-header {
-    color: var(--text-color-danger);
+.cand-table {
+  .cand-table-header {
+    color: #f56c6c;
   }
 }
 ```
@@ -61,10 +58,10 @@ Avoid generic roots, double-underscore/double-hyphen BEM, visual-only names, and
 .card {
 }
 
-.talent-card__header {
+.cand-card__header {
 }
 
-.talent-card--selected {
+.cand-card--selected {
 }
 
 .table-box-header-red {
@@ -73,73 +70,72 @@ Avoid generic roots, double-underscore/double-hyphen BEM, visual-only names, and
 
 The class should still describe the business role when color, position, or implementation changes.
 
-## Scenario 2: Prevent Overlong Names and Apply Character Abbreviations
+## Scenario 2: Enforce Concise Abbreviated Class Names
 
 Situation: a human-resources recruitment feature contains a candidate-evaluation panel. Repeating every domain, page, component, element, and visual role would make each class progressively longer.
 
-Apply this order:
+Apply all of these mandatory steps:
 
 1. Remove words already implied by the owning business root.
 2. Remove visual or implementation-only suffixes that do not describe business meaning.
-3. Keep the shortest complete name that remains unambiguous in the feature.
-4. Only when the remaining name is still unavoidably long, abbreviate repeated business segments consistently.
+3. Apply the agreed business abbreviations while preserving clear ownership and meaning.
+4. Keep the final name as short as its business meaning permits; do not wait for an overlong name before abbreviating.
 
 **Positive example:**
 
-Prefer a naturally concise full name when it identifies the owner without collision:
+Use the concise business form `cand-eval` consistently for candidate evaluation, instead of repeating the full words in every class:
 
 ```vue
-<div class="candidate-evaluation">
-  <div class="candidate-evaluation-header">
-    <span class="candidate-evaluation-title">Candidate evaluation</span>
+<div class="cand-eval">
+  <div class="cand-eval-header">
+    <span class="cand-eval-title">Candidate evaluation</span>
   </div>
 </div>
 ```
 
 ```less
-.candidate-evaluation {
-  .candidate-evaluation-header {
+.cand-eval {
+  .cand-eval-header {
     display: flex;
-    .candidate-evaluation-title {
-      color: var(--text-color-primary);
+    .cand-eval-title {
+      color: #303133;
     }
   }
 }
 ```
 
-If the broader HR and recruitment context is required to distinguish this component, use recognizable character abbreviations from the repository or feature glossary:
+When HR and recruitment context is also needed to distinguish the owner, retain only the necessary qualifiers and apply one explicit abbreviation mapping:
 
 | Business term | Illustrative abbreviation | Readability condition |
 | --- | --- | --- |
 | human resources | `hr` | The repository consistently uses HR terminology. |
-| recruitment | `recruit` | The shortened word is already used across the feature. |
+| recruitment | `rec` | The feature glossary defines `rec` as recruitment and uses it consistently. |
 | candidate | `cand` | The feature glossary makes the meaning unambiguous. |
 | evaluation | `eval` | The abbreviation is consistently used for evaluation. |
 
 Complete abbreviated application:
 
 ```vue
-<div class="hr-recruit-cand-eval">
-  <div class="hr-recruit-cand-eval-header">
-    <span class="hr-recruit-cand-eval-title">Candidate evaluation</span>
-    <div class="hr-recruit-cand-eval-actions">
-      <button class="hr-recruit-cand-eval-submit">Submit</button>
+<div class="hr-rec-cand-eval">
+  <div class="hr-rec-cand-eval-header">
+    <span class="hr-rec-cand-eval-title">Candidate evaluation</span>
+    <div class="hr-rec-cand-eval-actions">
+      <button class="hr-rec-cand-eval-submit">Submit</button>
     </div>
   </div>
 </div>
 ```
 
 ```less
-.hr-recruit-cand-eval {
-  .hr-recruit-cand-eval-header {
+.hr-rec-cand-eval {
+  .hr-rec-cand-eval-header {
     display: flex;
-    .hr-recruit-cand-eval-title {
-      color: var(--text-color-primary);
+    .hr-rec-cand-eval-title {
+      color: #303133;
     }
-
-    .hr-recruit-cand-eval-actions {
+    .hr-rec-cand-eval-actions {
       display: flex;
-      .hr-recruit-cand-eval-submit {
+      .hr-rec-cand-eval-submit {
         cursor: pointer;
       }
     }
@@ -180,7 +176,7 @@ Do not shorten the same structure into arbitrary single letters or an undecipher
 Do not mix abbreviations for the same business term:
 
 ```less
-.hr-recruit-cand-eval {
+.hr-rec-cand-eval {
   .hr-recruit-candidate-eval-header {
     .hr-rec-cand-evaluation-title {
     }
@@ -188,7 +184,7 @@ Do not mix abbreviations for the same business term:
 }
 ```
 
-Abbreviations are a controlled fallback for unavoidable length, not permission to sacrifice meaning. When no shared abbreviation exists, establish one consistently within the feature instead of inventing a different shorthand in each selector.
+Concise abbreviated naming is mandatory. Establish and apply a clear feature-level mapping from the first declaration; do not retain verbose full names or alternate shorthand across selectors. Length control must preserve understandable business meaning.
 
 ## Scenario 3: Name a Teleported Root
 
@@ -199,11 +195,11 @@ Situation: a filter panel renders a popper outside the component root.
 Two top-level roots are valid because they belong to separate rendered trees:
 
 ```less
-.talent-filter {
+.cand-filter {
 }
 
-.talent-filter-popper {
-  .talent-filter-popper-option {
+.cand-filter-popper {
+  .cand-filter-popper-option {
   }
 }
 ```
@@ -226,5 +222,5 @@ Do not rename that same teleported tree with generic global selectors:
 - Every top-level component selector names a business root or justified teleported root.
 - Project-owned classes use complete single-hyphen BEM names.
 - Names describe meaning rather than color, position, or incidental markup.
-- Overlong names are simplified before abbreviations are introduced.
-- Unavoidable long names use consistent, recognizable character abbreviations rather than opaque letter strings.
+- All project-owned names use concise forms and the agreed business abbreviations from the start.
+- Class length is controlled by removing redundant segments and abbreviating consistently, without opaque letter strings or repeated ancestor chains.

@@ -1,9 +1,0 @@
-{
-  "mcpServers": {
-    "ui-use-preview": {
-      "command": "node",
-      "args": ["${CLAUDE_PLUGIN_ROOT}/dist/server.mjs"],
-      "cwd": "${CLAUDE_PLUGIN_ROOT}"
-    }
-  }
-}

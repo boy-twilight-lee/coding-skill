@@ -1,5 +1,5 @@
 interface:
-  display_name: "CSS Code Rules"
-  short_description: "Apply mandatory CSS naming, layout, and style standards."
-  icon_small: "./assets/css3-logo.png"
-  icon_large: "./assets/css3-logo.png"
+  display_name: 'CSS Code Rules'
+  short_description: 'Apply mandatory CSS naming, layout, and style standards.'
+  icon_small: './assets/css3-logo.png'
+  icon_large: './assets/css3-logo.png'

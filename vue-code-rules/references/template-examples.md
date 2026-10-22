@@ -31,7 +31,7 @@ const props = defineProps<{
 
 <style lang="less" scoped>
 .user-card {
-  color: var(--text-color-primary);
+  color: #303133;
 }
 </style>
 ```
@@ -53,7 +53,7 @@ const props = defineProps<{
 
 <style lang="less" scoped>
 .user-card {
-  color: var(--text-color-primary);
+  color: #303133;
 }
 </style>
 ```
