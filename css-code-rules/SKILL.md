@@ -5,15 +5,11 @@ description: "Apply mandatory stylesheet rules when editing or reviewing CSS, Le
 
 # CSS Code Rules
 
-Apply every rule relevant to the CSS, Less, Sass, SCSS, or Vue style code created, changed, or reviewed by the task. These are requirements, not suggestions inferred from nearby code. Existing code is context rather than a waiver. Do not migrate untouched styles solely to normalize them; fix an existing violation when it is in the changed lines, is necessary for the requested behavior, or prevents the changed code from complying.
+These rules are mandatory for changed or reviewed styles; existing code does not waive them. Fix directly affected violations without migrating unrelated styles or markup. Project overrides apply only where a rule permits them; report unavoidable conflicts and keep deviations minimal.
 
-Higher-priority instructions override this skill. Repository configuration or conventions override a rule only where that rule explicitly delegates the decision to project configuration. If a mandatory rule cannot be followed, make the smallest necessary deviation and report the exact conflict instead of silently skipping it.
+Replace example markers such as `<zh: ...>` with concise Chinese comments; never copy the markers into code.
 
-Core rules live in this entrypoint as a safety baseline; this does not make reference loading optional. References add detailed decision boundaries and review checklists, with examples only where concrete contrasts improve the decision.
-
-In examples, `<zh: ...>` marks required Chinese comment content. Replace the marker with a concise Chinese comment expressing the enclosed meaning; never copy the marker into project code.
-
-Use concrete literal values in examples by default. CSS custom properties or `var(...)` are prohibited in examples unless they are necessary to demonstrate the subject, such as an official component-library customization API. State that necessity and the verified library/version or runtime availability assumptions; never imply that an invented variable exists. Example literals illustrate structure and are not project-wide design values.
+Examples use concrete literals. CSS custom properties or `var(...)` require a demonstrated need and verified library/version or runtime availability. Never invent variables or treat sample literals as project-wide design values.
 
 ## Core Rules
 
@@ -34,7 +30,7 @@ Use concrete literal values in examples by default. CSS custom properties or `va
 
 ## Required Reference Loading
 
-Loading this entrypoint is not the complete workflow. After the initial repository inspection and before making implementation or review judgments, map every affected concern to the list below and read each matching reference in full. Every task covered by this skill must open at least one reference. When no route seems to match, read the closest reference instead of proceeding with only this entrypoint. Do not merely mention or summarize a reference without opening it. When uncertain whether a reference applies, read it. References are authoritative requirements, not optional background.
+After repository inspection and before implementation or review decisions, open and fully read every matching reference below, including uncertain matches. Every task must read at least one; if none matches, read the closest. References are mandatory requirements. Mentioning or summarizing a reference does not replace opening and reading it.
 
 - Rule 1: Read [Stylesheet Language Examples](references/stylesheet-language-examples.md) when selecting a preprocessor or preserving an existing component language.
 - Rule 2: Read [Style Scope and Extraction Examples](references/style-scope-and-extraction-examples.md) when choosing scope, extracting styles, or placing component and global styles.
@@ -53,10 +49,8 @@ Loading this entrypoint is not the complete workflow. After the initial reposito
 
 ## Working Process
 
-1. Before changing or reviewing styles, read the repository instructions and inspect the affected markup, owning component, neighboring styles, global resets, preprocessors, PostCSS setup, target-browser configuration, and formatter or lint scripts. Base layout and compatibility decisions on the rendered ownership structure and actual project configuration.
+1. Inspect repository instructions, affected markup and components, neighboring styles, resets, preprocessors/PostCSS, browser targets, and check scripts. Base decisions on the actual DOM and active configuration.
 
-2. Complete the required reference loading before acting. For a Vue style block, also apply `vue-code-rules`; if the same SFC change touches TypeScript, apply `ts-code-rules` as well.
+2. For Vue style blocks, apply `vue-code-rules`; also apply `ts-code-rules` when changing TypeScript.
 
-3. Keep selectors, overrides, extraction, and cleanup within the requested ownership boundary. Do not copy a local violation into new or changed styles merely to preserve visual consistency. When an explicit higher-priority instruction conflicts, follow it and document the smallest necessary exception; do not use a style task to restructure unrelated markup or global styling.
-
-4. After the change, inspect every changed style line against each applicable numbered rule and its reference checklist. Count inline non-blank style lines and record the applicable complexity signals; if a mandatory extraction trigger is met, extraction is part of the change rather than optional cleanup. Verify affected visual states when a preview or existing visual test is available. Run the smallest available targeted formatter, style lint, build, or affected test commands without rewriting unrelated files. If a rule, visual check, or automated check cannot be satisfied, report it explicitly instead of inferring correctness from valid syntax alone.
+3. Review changed lines against applicable rules and checklists. Count inline non-blank style lines, record complexity signals, and perform required extraction. Verify affected visual states when a preview or test exists. Run targeted formatter, lint, build, or tests without rewriting unrelated files. Report unmet rules and unavailable or failed checks; syntax or formatting success alone does not prove correctness.
