@@ -6,32 +6,32 @@ For the runtime import prerequisites in these examples, read Core Rule 6's [Auto
 
 ## Mandatory Rules
 
-1. Keep every Vue compiler macro call in the script scope of `<script setup>`; never call a macro inside a function, callback, conditional, loop, or another nested block. Place every macro except `defineExpose`, including `defineOptions`, `defineProps`, `withDefaults`, `defineModel`, `defineEmits`, and `defineSlots`, in the first declaration group immediately after any required imports and before ordinary runtime state, computed values, watchers, lifecycle calls, and functions. In a script without top-level `await`, place `defineExpose` last, after all declarations and executable statements. If the script contains top-level `await`, initialize the exposed bindings and call `defineExpose` before the first top-level `await`; asynchronous initialization and its dependent statements may follow. An `await` inside a function or callback does not by itself require this placement exception.
+1. Keep every Vue compiler macro call in the script scope of `<script setup>`; never call a macro inside a function, callback, conditional, loop, or another nested block. Place every macro except `defineExpose`, including `defineOptions`, `defineProps`, `withDefaults`, `defineEmits`, `defineSlots`, and `defineModel`, in the first declaration group immediately after any required imports and before ordinary runtime state, computed values, watchers, lifecycle calls, and functions. Within that group, place `defineModel` after `defineSlots` when both are used; do not add an unused macro solely to complete this order. In a script without top-level `await`, place `defineExpose` last, after all declarations and executable statements. If the script contains top-level `await`, initialize the exposed bindings and call `defineExpose` before the first top-level `await`; asynchronous initialization and its dependent statements may follow. An `await` inside a function or callback does not by itself require this placement exception.
+
+2. Receive `defineProps` as `props`, `defineEmits` as `emits`, and `defineSlots` as `slots`. A `withDefaults(defineProps(...), ...)` result is also received as `props`. Do not substitute aliases such as singular `emit` for these receiver names; omit unused macros rather than adding them to complete the list.
 
 ## Scenario 1: Order Macros and Handle Async Exposure
 
 **Positive example without top-level await:**
 
-Macros except defineExpose precede ordinary declarations. The excerpt omits unrelated save/loading workflows; getCandidate belongs to the owning API context. The await inside loadCandidate is not top-level, so defineExpose remains last.
+Macros except defineExpose precede runtime logic, with defineModel after defineSlots. Keep the one-use load inline in onMounted rather than creating a pass-through method. The callback's await is not top-level, so defineExpose remains last. The example assumes Vue/compiler support for the macros used and no verified runtime auto-import coverage.
 
 ```vue
 <script setup lang="ts">
-import { onMounted, ref } from 'vue'
+import { onMounted } from 'vue'
+import { getCandidate } from '@/apis'
 
 defineOptions({ inheritAttrs: false })
 const props = defineProps<{ candidateId: string }>()
-const emit = defineEmits<{ saved: [candidateId: string] }>()
+const emits = defineEmits<{ saved: [candidateId: string] }>()
+const slots = defineSlots<{ default(): unknown }>()
+const visible = defineModel<boolean>('visible', { default: false })
 
-const visible = ref(false)
-const loadCandidate = async () => {
+onMounted(async () => {
   await getCandidate(props.candidateId)
-}
-const openEditor = () => {
-  visible.value = true
-}
-onMounted(loadCandidate)
+})
 
-defineExpose({ openEditor })
+defineExpose({ visible })
 </script>
 ```
 
@@ -57,24 +57,26 @@ The explicit Vue imports assume no verified auto-import coverage. Public binding
 
 **Negative example:**
 
-The same macro-position failures remain distinct: a runtime declaration precedes a contract macro, another macro is nested inside a function, and a lifecycle statement follows defineExpose without top-level await.
+The four macro-position failures are distinct: runtime state precedes contract macros, defineModel precedes defineSlots, a macro is nested in a callback, and a lifecycle statement follows defineExpose without top-level await.
 
 ```vue
 <script setup lang="ts">
 import { onMounted, ref } from 'vue'
+import { getCandidate } from '@/apis'
 
 const loading = ref(false)
 const props = defineProps<{ candidateId: string }>()
+const visible = defineModel<boolean>('visible', { default: false })
+const slots = defineSlots<{ default(): unknown }>()
 
-const createEmitter = () => {
-  return defineEmits<{ saved: [candidateId: string] }>()
-}
+onMounted(() => {
+  const emits = defineEmits<{ saved: [candidateId: string] }>()
+})
 
-const openEditor = () => {
-  visible.value = true
-}
-defineExpose({ openEditor })
-onMounted(loadCandidate)
+defineExpose({ visible })
+onMounted(async () => {
+  await getCandidate(props.candidateId)
+})
 </script>
 ```
 
@@ -82,4 +84,7 @@ onMounted(loadCandidate)
 
 - Every compiler macro call is in `<script setup>` script scope, never inside nested control flow.
 - Every macro except `defineExpose` forms the first declaration group after required imports.
+- When both are used, `defineModel` follows `defineSlots`; unused macros are not added for ordering alone.
+- Macro receiver names are `props`, `emits`, and `slots`; `withDefaults` around `defineProps` also uses `props`.
 - Without top-level `await`, `defineExpose` is the final statement; with top-level `await`, initialized public bindings are exposed before the first suspension.
+- One-use lifecycle work stays inline; macro-order examples do not introduce pass-through helper methods.

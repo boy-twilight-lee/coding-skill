@@ -1,10 +1,12 @@
 # Cross-Module Public Entries
 
+Owns Core Rule 6.
+
 ## Mandatory Rule
 
 Import another module through its configured alias and public entry. Do not climb two or more parent directories or reach into another module's private files.
 
-## Use Public Entries across Module Boundaries
+## Scenario 1: Use Public Entries across Module Boundaries
 
 Situation: a page consumes a shared component and a capability owned by another feature.
 

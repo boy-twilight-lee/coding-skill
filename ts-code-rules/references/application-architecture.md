@@ -1,5 +1,7 @@
 # TypeScript Application Architecture
 
+Owns Core Rule 7.
+
 This reference is a placement decision map, not a directory-generation template. Use the repository's established equivalents, and create a directory only when it has a real responsibility. Directory responsibilities are presented as a source map and placement decision table.
 
 ## Application Source Map

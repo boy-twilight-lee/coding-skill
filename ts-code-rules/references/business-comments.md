@@ -1,38 +1,36 @@
-# Chinese Business Documentation
+# Business Comments
 
-## Mandatory Rule
+Owns Core Rule 3.
 
-Add a Chinese responsibility comment above major runtime declarations: business state, reactive records, refs, computed values, persistent class fields, business configuration, thresholds, mappings, and other values that define the module's behavior. Explain what the value controls, its scope or source, and relevant units, defaults, reset timing, or dependencies. Clear names do not exempt these declarations. One comment may cover a small contiguous group with one responsibility; do not add comments to every destructured result, loop variable, or short-lived intermediate. Use another language only when the project explicitly requires it or exact external terminology needs it. In a Vue SFC, follow the compiler-macro placement rules in `vue-code-rules`.
+## Example Presentation
 
-Add a Chinese responsibility comment above business functions, service methods, composables, and event handlers, including conventionally named load/save/submit/reset handlers. Describe the business action and its result or affected state; include parameter meaning, return meaning, sequencing, side effects, and failure ownership where relevant. Use JSDoc when callers benefit from a public contract, without repeating parameter types already expressed by TypeScript. Business callback registrations follow the same coverage; mechanical map/filter callbacks, obvious getters, and trivial language-level helpers may remain uncommented. Keep one-use callbacks inline and comment their containing registration rather than extracting a function only to create a comment target.
+Keep positive and negative examples free of nonessential comments. Retain comments only when demonstrating a comment rule, spacing/placement, or an essential non-obvious constraint; put ordinary explanations outside code fences. Focused examples do not waive actual project-code comment coverage. Use actual Chinese comments rather than placeholder markers.
 
-Inside a function or method, comment each meaningful business stage and important branch: validation and early exits, payload construction and conversion, request sequencing, response merging and state commits, interaction boundaries, fallback/retry/deduplication rules, side effects, and recovery or cleanup. Explain the stage's purpose, rule, or expected outcome even when the statements are easy to read. A function-level responsibility comment does not replace distinct internal rules, but a single-stage function does not need the same explanation twice. Group cohesive statements under one comment; do not narrate every assignment, call, or return. Derive reasons from code and verified contracts rather than inventing product requirements.
+## Mandatory Rules
 
-Document domain interfaces, type aliases, enums, and exported contracts with a concise Chinese comment describing their business role. Document important fields or members with units, source, allowed states, optional/null meaning, or consumer expectations where applicable. Do not exempt type-only declarations categorically. Mechanical utility types, generated/vendor declarations, and ordinary fields such as an unambiguous `id` or `name` need no repeated labels. Keep field documentation next to the field instead of duplicating it at each parameter or use site.
+1. Add concise Chinese responsibility comments above major business declarations, including state, refs, reactive records, computed values, persistent fields, configuration, thresholds, and mappings. Explain their role, scope/source, and relevant units, defaults, reset timing, or dependencies. Clear names do not waive coverage. A small contiguous group with one responsibility may share a comment.
+2. Document business functions, methods, composables, handlers, and callback registrations by their action and result or affected state. Include parameter meaning, return contract, sequencing, side effects, and failure ownership where relevant. Use JSDoc when public callers benefit; do not repeat TypeScript parameter types. Keep one-use callbacks inline and comment the registration rather than extracting a comment target.
+3. Document each meaningful internal stage or important branch at its smallest cohesive block: validation/early exit, conversion, request sequencing, merging/state commits, interaction boundaries, fallback/retry/deduplication, side effects, recovery, and cleanup. A function comment does not replace distinct internal rules; a single-stage function needs no duplicate explanation. Derive reasons from code and verified contracts.
+4. Document domain interfaces, type aliases, enums, and exported contracts. Important members describe units, source, allowed states, defaults, optional/null meanings, or consumer expectations where relevant. Keep member contracts next to members instead of repeating them at every use.
+5. Keep comments adjacent and accurate. Do not narrate imports, temporary destructuring, loop variables, mechanical map/filter callbacks, obvious accessors, trivial language helpers, mechanical utility types, generated/vendor declarations, or self-evident id/name fields. Use another language only for an explicit project requirement or necessary exact external term. Follow `vue-code-rules` for macro exceptions and Vue-specific placement.
 
-These rules describe the required coverage in code created or changed for the task. Naming and structure complement the comments; they are not a blanket exemption. Focused examples below omit unrelated module context and do not waive coverage elsewhere. Keep directly affected comments accurate, without expanding an ordinary feature change into repository-wide annotation work.
+Never introduce a wrapper, intermediate, or guard only to hold a comment; apply [Abstraction and Cleanup](abstraction-and-cleanup.md). Cover affected code without expanding an ordinary change into repository-wide annotation work.
 
-## Document Business State and Domain Contracts
+## Scenario 1: Explain State and Contract Semantics
 
 **Positive example:**
-
-Document the role of business state even when its English name is clear. Small related declarations may share a responsibility comment:
 
 ```ts
 // 当前详情页的候选人标识，用于关联加载和保存操作。
 const candidateId = route.params.id
 // 详情加载状态，控制页面的加载反馈。
 let loading = false
-```
 
-Document units and conversions at their declaration:
-
-```ts
-// <zh: convert the API timestamp from seconds to the milliseconds expected by Date.>
+// 将接口返回的秒级时间戳转换为 Date 所需的毫秒值。
 const updatedAt = new Date(result.updatedAt * 1000)
 ```
 
-Domain types also need responsibility comments and documentation for important fields:
+Type-only declarations also carry business contracts:
 
 ```ts
 /** 候选人列表查询条件，供列表请求与分页共同使用。 */
@@ -47,53 +45,20 @@ interface CandidateQuery {
 type DraftStatus = 'dirty' | 'saving' | 'synced'
 ```
 
-Do not repeat obvious field labels, annotate imports, or describe every temporary destructured response. Public parameter contracts belong with their function documentation rather than a separate comment on every parameter.
-
-Class-level responsibility, persistent business fields, and service methods follow the same coverage:
-
-```ts
-/** 管理指定候选人的草稿保存流程及提交状态。 */
-export class CandidateDraftService {
-  // 当前服务实例绑定的候选人，保存操作始终使用此标识。
-  private readonly candidateId: string
-  // 草稿请求是否仍在处理中，在请求结束后恢复。
-  private submitting = false
-
-  public constructor(candidateId: string) {
-    this.candidateId = candidateId
-  }
-
-  /** 保存当前候选人的草稿；请求失败时由调用方处理错误。 */
-  public async submit(payload: CandidateDraftPayload) {
-    this.submitting = true
-    try {
-      await saveCandidateDraft(this.candidateId, payload)
-    } finally {
-      // <zh: allow a retry after either a successful save or a rejected request.>
-      this.submitting = false
-    }
-  }
-}
-```
-
 **Negative example:**
 
-Do not add comments that merely translate identifiers or syntax into prose:
+These labels repeat names without documenting ownership or use:
 
 ```ts
-// <zh: store the candidate identifier.>
+// 候选人标识。
 const candidateId = route.params.id
-// <zh: indicate whether loading is active.>
+// 是否正在加载。
 let loading = false
 ```
 
-These labels omit the state owner's responsibility and usage. Prefer the responsibility comments above. Likewise, a loop counter or temporary response destructuring needs no label unless it carries a business rule.
-
-## Document Business Functions and Event Handlers
+## Scenario 2: Describe Business Entry Points and Registrations
 
 **Positive example:**
-
-Document each business entry point, including short handlers and predicates that encode domain policy:
 
 ```ts
 // 将表单转换为候选人保存载荷，并把保存结果交给调用方。
@@ -114,58 +79,37 @@ const handleCandidateSelect = (candidateId: string) => {
 }
 ```
 
-A short inline callback remains at its registration site. Document the business registration; a mechanical callback such as `items.map(item => item.id)` needs no separate narration:
+Keep one-use callbacks at the registration site:
 
 ```ts
-// <zh: exposure reporting is best-effort and must not block navigation.>
+// 导航完成后尽力上报候选人页面曝光，上报失败不阻塞导航。
 router.afterEach(() => {
   reportCandidateExposure().catch(reportTelemetryError)
 })
 ```
 
-Extract an inline callback only when it has an independent responsibility, genuine reuse, focused testing value, or a concrete readability benefit beyond shortening its owner. Keep a one-use continuation inline even when it contains several related branches or side effects that form the same workflow.
+A callback may be extracted for independent responsibility, genuine reuse, focused testing value, or a concrete readability benefit; merely shortening its owner or creating a comment target is insufficient.
 
 **Negative example:**
 
-Do not comment a function by restating its name:
+This comment omits payload responsibility and the return contract:
 
 ```ts
-// <zh: submit candidate data.>
+// 提交候选人数据。
 const submitCandidate = async (): Promise<Candidate> => {
   return await saveCandidate(buildCandidatePayload(form))
 }
 ```
 
-The negative comment merely repeats the name and leaves the payload responsibility and return contract undocumented. Improve the comment rather than using the clear name as a reason to omit business documentation. Also document surprising contracts such as intentionally ignoring a background failure.
-
-## Document Business Stages and Important Branches
+## Scenario 3: Document Distinct Processing Stages
 
 **Positive example:**
-
-```ts
-// <zh: save the candidate while preserving server validation errors for the caller.>
-const submitCandidate = async () => {
-  try {
-    // 将表单转换为接口载荷，保存成功后返回服务端结果。
-    return await saveCandidate(buildCandidatePayload(form))
-  } catch (error) {
-    // <zh: normalize field errors for display by the form layer.>
-    normalizeFieldErrors(error)
-    throw error
-  }
-}
-```
-
-The responsibility comment describes the whole operation; internal comments describe its request and error stages. Cover meaningful stages even when the code reads clearly, without annotating each assignment, call, or return. A single-stage function can be covered by its responsibility comment alone.
-
-For a workflow with validation, a request, state updates, and cleanup, document those stages separately:
 
 ```ts
 // 保存当前候选人并更新页面详情；失败时保留原详情供用户重试。
 const saveCurrentCandidate = async () => {
   // 仅通过表单校验的数据可以进入保存流程。
   if (!(await formRef.value.validate())) return
-  // 标记本次保存开始，供提交按钮展示处理中状态。
   saving.value = true
   try {
     // 使用表单构建接口载荷，等待服务端确认保存结果。
@@ -182,10 +126,10 @@ const saveCurrentCandidate = async () => {
 }
 ```
 
-The same requirement applies to algorithms whose syntax is readable but whose business invariant is not. Explain the invariant once above the cohesive block:
+Explain a non-obvious interaction invariant even when the syntax is simple:
 
 ```ts
-// <zh: keep the drag anchor fixed when the pointer crosses it so the selected range does not jump.>
+// 指针跨越拖动锚点时保持锚点不变，避免选中范围跳变。
 if (nextValue < anchorValue) {
   range.value = [nextValue, anchorValue]
 } else {
@@ -193,24 +137,22 @@ if (nextValue < anchorValue) {
 }
 ```
 
-The comparison and assignments are easy to read, but the anchor rule is not recoverable without product context. A compatibility comment elsewhere in the function would not document this rule.
-
 **Negative example:**
 
-Do not narrate every step in that same submission flow:
+Do not narrate calls and assignments instead of explaining their cohesive business rule:
 
 ```ts
-// <zh: save the candidate while preserving server validation errors for the caller.>
+// 保存候选人，并将服务端校验错误交给调用方继续处理。
 const submitCandidate = async () => {
   try {
-    // <zh: build the candidate payload.>
+    // 构建候选人载荷。
     const payload = buildCandidatePayload(form)
-    // <zh: call the candidate save API.>
+    // 调用候选人保存接口。
     return await saveCandidate(payload)
   } catch (error) {
-    // <zh: call the field-error normalization function.>
+    // 调用字段错误整理函数。
     normalizeFieldErrors(error)
-    // <zh: throw the error.>
+    // 抛出错误。
     throw error
   }
 }
@@ -218,8 +160,7 @@ const submitCandidate = async () => {
 
 ## Review Checklist
 
-- Major business state, configuration, constants, computed values, functions, methods, composables, and handlers have responsibility comments even when their names are clear.
-- Domain types and important members document their role, units, states, defaults, or optional/null semantics without repeating obvious labels.
-- Key validation, conversion, request, state-commit, branch, side-effect, recovery, and cleanup stages have concise comments.
-- Comments are adjacent, written in Chinese unless a defined exception applies, and supported by code or verified contracts.
-- Shared group comments and single-stage responsibility comments avoid duplication; imports, temporary variables, and mechanical callbacks need no narration.
+- Major declarations, business actions, contracts, and important members have responsibility documentation even when names are clear.
+- Key internal stages and branches are explained without mechanical narration or duplicated single-stage comments.
+- Comments are adjacent, Chinese unless a defined exception applies, and supported by verified behavior.
+- Examples contain comments only for the demonstrated rule or an essential non-obvious constraint.

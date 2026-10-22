@@ -1,10 +1,12 @@
 # Formatting and Final Diff Review
 
+Owns Core Rule 12.
+
 ## Mandatory Rule
 
 Use the repository's configured Prettier formatter only on files changed for the task. Compare its output with the pre-format state and restore formatting-only changes outside the task's affected regions, preserving pre-existing user edits. Keep formatting adjustments necessary for the changed syntax. If a whole-file formatter check still fails solely on untouched formatting, report that limitation instead of broadening the edit silently. Re-check the final diff against these rules and the established local convention.
 
-## Format Only Changed Files
+## Scenario 1: Format Only Changed Files
 
 **Positive example:**
 

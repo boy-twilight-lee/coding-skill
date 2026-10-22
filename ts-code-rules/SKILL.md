@@ -5,60 +5,46 @@ description: "Apply mandatory TypeScript rules when editing or reviewing TypeScr
 
 # TypeScript Code Rules
 
-Apply every rule relevant to the TypeScript or TSX created, changed, or reviewed by the task. These are requirements, not suggestions inferred from nearby code. Existing code is context rather than a waiver. Do not migrate untouched code solely to normalize it; fix an existing violation when it is in the changed lines, is necessary for the requested behavior, or prevents the changed code from complying.
+These rules are mandatory for changed or reviewed TypeScript; existing code does not waive them. Fix directly affected violations without migrating unrelated code. Higher-priority instructions prevail; project overrides apply only where a rule permits them. Report unavoidable conflicts and keep deviations minimal.
 
-Higher-priority instructions override this skill. Repository configuration or conventions override a rule only where that rule explicitly delegates the decision to project configuration. If a mandatory rule cannot be followed, make the smallest necessary deviation and report the exact conflict instead of silently skipping it.
-
-Each numbered core rule maps to exactly one reference. Related rules are grouped below for discovery; each reference owns one independently routed concern and may keep closely related subrules together. Core summaries are a safety baseline, not a substitute for loading the matching references.
-
-In examples, `<zh: ...>` marks placeholder content for a Chinese comment. Replace the marker with concise Chinese text when the surrounding rule calls for that comment; never copy the marker into project code. Required business documentation still applies when identifiers are clear; omit only comments that add no responsibility, scope, contract, or rule information.
-
-## Required Reference Loading
-
-After the initial repository inspection and before making implementation or review judgments, map every affected concern to the grouped core rules below and read each matching reference in full. Match all affected concerns, not just the task's primary topic. Every task covered by this skill must open at least one reference; when no specific route seems to match, read Change Scope. Do not merely mention or summarize a reference without opening it. When uncertain whether a reference applies, read it. References are authoritative requirements, not optional background. Group headings organize discovery and do not require loading unrelated references in the same group.
+Keep positive and negative examples free of nonessential comments. Retain comments only to demonstrate a comment rule, spacing/placement, or an essential non-obvious constraint; put other explanations outside code fences. This presentation policy does not waive project-code comment coverage.
 
 ## Core Rules
 
-### Code Quality
+1. Limit changes to the requested behavior and directly affected code. Preserve existing comments, public contracts, and user edits; avoid unrelated cleanup, renaming, formatting, or import reordering.
+2. Keep simple one-use logic inline. Extract for real complexity, reuse, or an independent responsibility. Remove change-owned dead code, debugging, pass-through wrappers, meaningless intermediates, and caller-guaranteed guards.
+3. Add concise Chinese business comments for major state, configuration, constants, functions, handlers, domain contracts, important fields, and key processing stages. Clear names do not waive coverage. Keep comments adjacent and supported by verified behavior; avoid mechanical narration and structures created only to hold comments.
+4. Use blank lines only between genuinely separate logical regions. Never use consecutive, leading, trailing, block-edge, comment-separating, or tightly-coupled blank lines.
+5. Order imports as third-party runtime, types, internal runtime, then UI modules; local types precede shared types. Prefer standard imports when type-only usage is safely erased. Use separate `import type` only when verified tooling or runtime contracts require it; never use inline `type` modifiers.
+6. Use configured aliases and public entries across module boundaries. Do not climb two or more parent directories or reach into another owner's private implementation. Barrels re-export public declarations without business implementation.
+7. Follow established source-layer ownership. Keep private constants, types, helpers, and state with their owner until real cross-owner reuse or an application-wide contract warrants promotion. Follow `vue-code-rules` for Vue owner structure.
+8. Prefer `await` for ordinary sequential flow. Keep dependencies sequential; use `Promise.all` only for independent work with an intended shared failure boundary. Never discard a Promise with unary `void`; intentional background work owns its rejection path.
+9. Catch only where the error can be recovered, translated, enriched, or reported; otherwise propagate it. Read the guaranteed `error.message` directly without narrowing or fallback branches.
+10. Set operation-owned loading before the request and restore it through `finally`. Commit related response state without accidental partial updates; progressive commits require an intentional UI contract.
+11. Verify new runtime APIs against actual TypeScript, runtime, browser, and polyfill targets. Transpilation does not supply missing runtime APIs.
+12. Format only changed files. Restore unrelated formatter churn from the pre-format content, preserve user edits, and review the final diff. Report checks blocked by untouched legacy formatting.
 
-1. **Change scope** — Keep changes limited to the requested feature or defect. Preserve existing comments and avoid unrelated reformatting, renaming, import reordering, or cleanup. Read [Change Scope](references/change-scope.md) when deciding affected lines, cleanup boundaries, or preservation of existing work.
-2. **Abstraction and cleanup** — Keep simple one-off logic inline; extract only for real complexity, reuse, or a clear responsibility boundary. Remove change-owned dead code and redundant wrappers, aliases, intermediates, and guards. Read [Abstraction and Change-Owned Cleanup](references/abstraction-and-cleanup.md) when extracting, simplifying, deleting, or assessing redundant code.
-3. **Chinese business documentation** — Document major state, configuration, constants, business functions, methods, composables, handlers, domain types, important contract fields, and key processing stages or branches. Clear names do not waive coverage. Keep comments concise, adjacent, and supported by verified contracts; related declarations may share one comment, while imports, disposable locals, obvious accessors, and mechanical callbacks need no narration. Read [Chinese Business Documentation](references/business-comments.md) when creating, changing, or reviewing these declarations, callbacks, workflows, or their comments.
-4. **Logical blank lines** — Separate only genuinely distinct logical regions; prohibit consecutive, leading, trailing, block-edge, comment-separating, and tightly-coupled blank lines. Read [Logical Blank Lines](references/blank-lines.md) when arranging declarations, statements, type members, or JSX whitespace.
+## Required Reference Loading
 
-### Imports and Module Boundaries
+After repository inspection and before implementation or review decisions, open and fully read every matching reference, including uncertain matches. Every task must read at least one; if none matches, read the closest. Each rule owns one reference. References are mandatory; mentioning or summarizing them does not replace reading them.
 
-5. **Import order** — Group third-party runtime dependencies, type dependencies, internal runtime modules, then UI or component modules; module-local types precede shared types. Read [Import Order](references/import-order.md) when adding, removing, grouping, or relocating imports.
-6. **Type import syntax** — Prefer standard imports when type-only usage is safely erased; use separate `import type` only when verified tooling or runtime contracts require it, and never use inline `type` modifiers. Read [Type Import Syntax](references/type-imports.md) when selecting or reviewing type-only import syntax.
-7. **Public entries** — Import other modules through configured aliases and public entries; keep private implementation behind its owner boundary. Read [Cross-Module Public Entries](references/public-entries.md) when choosing import paths, exposing exports, or changing module boundaries.
-
-### Application Architecture
-
-8. **Source-layer ownership** — Place bootstrap, API, routing, services, state, constants, ambient types, and shared utilities in their established source layers. Keep private types and stateless helpers with their owner until real cross-owner reuse or an application-wide contract warrants promotion. Read [TypeScript Application Architecture](references/application-architecture.md) when placing or moving source modules or owner-private directories.
-
-### Async Flow and Errors
-
-9. **Await sequential flow** — Prefer `await` for ordinary sequential work. Read [Await Sequential Flow](references/await-flow.md) when adding or changing asynchronous control flow.
-10. **Parallel dependencies** — Keep dependent work sequential; use `Promise.all` only for independent operations with an intended shared failure boundary. Read [Sequential and Parallel Dependencies](references/parallel-work.md) when deciding request ordering or concurrency.
-11. **Error ownership** — Catch only where the error can be recovered, translated, enriched, or reported; otherwise propagate it. Read [Error Handling Ownership](references/error-handling.md) when adding, changing, or reviewing catch boundaries, rejection handling, or cancellation error policy.
-12. **Fire-and-forget work** — Never discard a Promise with unary `void`; intentional background work must handle or report its own rejection. Read [Fire-and-Forget Rejection Ownership](references/fire-and-forget.md) when starting unawaited work or reviewing its completion and failure contract.
-13. **Loading and state commits** — Set operation-owned loading before the request, restore it through `finally`, and commit related state without accidental partial updates. Read [Loading Lifecycle and Related State Commits](references/loading-state.md) when managing request state, loading, cleanup, or response merging.
-14. **Caught error messages** — Read `error.message` directly without narrowing or fallback branches around the guaranteed property. Read [Caught Error Messages](references/error-message.md) when accessing caught error messages.
-
-### Runtime Compatibility
-
-15. **Runtime APIs** — Verify new runtime APIs against the actual TypeScript target, runtime versions, Browserslist, and polyfill strategy; transpilation does not supply missing APIs. Read [Runtime API Compatibility](references/runtime-compatibility.md) when introducing APIs or deciding target support and fallbacks.
-
-### Formatting and Verification
-
-16. **Formatting scope** — Format only changed files, restore unrelated formatter churn, preserve pre-existing user edits, and re-check the final diff. Read [Formatting and Final Diff Review](references/formatting.md) when formatting changed files or performing final verification.
+- Rule 1: Read [Change Scope](references/change-scope.md) for affected lines, public contracts, or preservation of existing work.
+- Rule 2: Read [Abstraction and Cleanup](references/abstraction-and-cleanup.md) for extraction, simplification, dead code, wrappers, intermediates, or guards.
+- Rule 3: Read [Business Comments](references/business-comments.md) for declaration, contract, callback, or processing-stage comments and example-comment policy.
+- Rule 4: Read [Blank Lines](references/blank-lines.md) for declaration, statement, type-member, or JSX whitespace.
+- Rule 5: Read [Imports](references/imports.md) for import order, type syntax, or compiler/bundler import behavior.
+- Rule 6: Read [Public Entries](references/public-entries.md) for cross-module paths, aliases, exports, or barrels.
+- Rule 7: Read [Application Architecture](references/application-architecture.md) for source layers, private helpers/types, services, stores, or shared utilities.
+- Rule 8: Read [Async Flow](references/async-flow.md) for await, dependencies, parallel work, or unawaited operations.
+- Rule 9: Read [Error Handling](references/error-handling.md) for catch ownership, rejection/cancellation policy, or error messages.
+- Rule 10: Read [Loading and State](references/loading-state.md) for loading lifecycle, cleanup, response merging, or related state commits.
+- Rule 11: Read [Runtime Compatibility](references/runtime-compatibility.md) for new APIs, target support, fallbacks, or polyfills.
+- Rule 12: Read [Formatting and Review](references/formatting.md) for targeted formatting, restoration of unrelated changes, or final verification.
 
 ## Working Process
 
-1. Before changing or reviewing TypeScript, read the repository instructions and inspect the affected module, its public callers, nearby types, and the relevant `tsconfig`, package scripts, lint, formatter, and test configuration. Confirm the actual runtime and browser targets before making compatibility decisions.
+1. Inspect repository instructions, affected modules and callers, nearby types, and active TypeScript, build, runtime, lint, formatter, and test configuration.
 
-2. Complete the required reference loading before acting. For TypeScript inside a Vue SFC, also apply `vue-code-rules`; when the same change touches a Vue style block, apply `css-code-rules` as well.
+2. Apply `vue-code-rules` to Vue SFCs and `css-code-rules` when changing their styles.
 
-3. Preserve public contracts and behavior outside the requested change. Do not copy a local violation into new or changed code merely to preserve visual consistency. When an explicit higher-priority instruction conflicts, follow it and document the smallest necessary exception.
-
-4. After the change, inspect every changed TypeScript line against each applicable numbered rule and its reference checklist. Run the smallest available checks that exercise the changed code, such as the repository's targeted formatter, TypeScript check, lint, and affected tests. Avoid commands that rewrite unrelated files. If a rule or check cannot be satisfied, report it explicitly instead of treating compilation or formatting alone as proof of correctness.
+3. Check changed lines against applicable rules and reference checklists. Run targeted formatter, type-check, lint, or tests without rewriting unrelated files. Report unmet rules and unavailable or failed checks; compilation or formatting alone does not prove compliance.

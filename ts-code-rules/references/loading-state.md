@@ -1,10 +1,12 @@
 # Loading Lifecycle and Related State Commits
 
+Owns Core Rule 10.
+
 ## Mandatory Rule
 
 Set operation-owned loading before work begins and restore it in `finally`; commit related state together after the required data has arrived so consumers do not observe a partial update.
 
-## Restore Loading and Commit Related State Together
+## Scenario 1: Restore Loading and Commit Related State Together
 
 **Positive example:**
 

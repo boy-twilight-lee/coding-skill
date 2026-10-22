@@ -32,13 +32,13 @@
 | Skill | 仅加载 `SKILL.md` | 全量加载最大占用（约） |
 | --- | ---: | ---: |
 | `ts-code-rules` | 1.66k | 9.83k |
-| `vue-code-rules` | 2.32k | 16.38k |
-| `css-code-rules` | 1.91k | 15.30k |
-| **三个合计** | **5.89k** | **41.51k** |
+| `vue-code-rules` | 1.35k | 13.26k |
+| `css-code-rules` | 1.91k | 13.26k |
+| **三个合计** | **4.93k** | **36.35k** |
 
-统计口径：使用 `tiktoken 0.14.0` 的 `o200k_base` 编码，逐文件统计 UTF-8 文本（换行统一为 LF），结果保留两位小数。“全量加载最大占用”指每个 Skill 的 `SKILL.md`（含 frontmatter）和 `references/` 下全部 Markdown 文件各加载一次；三个 Skill 分别包含 16、11、14 个 reference。不计图片、`agents/openai.yaml`、其他 Skill、仓库代码、对话和工具消息包装开销，也不计重复读取。
+统计时间：2026-10-22。使用 `tiktoken 0.14.0` 的 `o200k_base` 编码，逐文件统计 UTF-8 文本（换行统一为 LF），结果保留两位小数。“全量加载最大占用”指每个 Skill 的 `SKILL.md`（含 frontmatter）和 `references/` 下全部 Markdown 文件各加载一次；三个 Skill 分别包含 16、11、14 个 reference，全量计数分别为 9,831、13,260、13,262 tokens，合计 36,353 tokens。不计图片、`agents/openai.yaml`、其他 Skill、仓库代码、对话和工具消息包装开销，也不计重复读取。
 
-实际使用时按任务加载匹配的 references，通常低于全量值；仅加载入口的数值用于对比，不代表已满足必读要求。上述最大值是规则文本单次全量加载的估算值，实际上下文占用还取决于所用模型的 tokenizer、工具输出格式和重复加载情况。Vue 任务同时触发 TypeScript 与 CSS 规则时，三者全量合计约 **41.51k**。规则文件更新后需重新统计。
+实际使用时按任务加载匹配的 references，通常低于全量值；仅加载入口的数值用于对比，不代表已满足必读要求。上述最大值是规则文本单次全量加载的估算值，实际上下文占用还取决于所用模型的 tokenizer、工具输出格式和重复加载情况。Vue 任务同时触发 TypeScript 与 CSS 规则时，三者全量合计约 **36.35k**。规则文件更新后需重新统计。
 
 ## 📦 安装
 

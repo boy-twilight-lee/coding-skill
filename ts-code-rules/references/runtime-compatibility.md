@@ -1,10 +1,12 @@
 # Runtime API Compatibility
 
+Owns Core Rule 11.
+
 ## Mandatory Rule
 
 Use APIs supported by the repository's actual TypeScript target, runtime versions, Browserslist, and polyfill strategy. Before introducing an API outside that verified baseline, confirm support in every target environment or use a project-approved fallback or polyfill. Do not assume transpilation supplies runtime APIs.
 
-## Check API Support Against the Configured Baseline
+## Scenario 1: Check API Support Against the Configured Baseline
 
 **Positive example:**
 
@@ -20,7 +22,6 @@ Do not assume transpilation adds runtime APIs. Syntax transformation and API pol
 When `Array.prototype.at` is not supported by the actual targets, use the approved compatible form:
 
 ```ts
-// <zh: read the last item in the candidate list.>
 const lastCandidate = candidates[candidates.length - 1]
 ```
 
@@ -29,7 +30,6 @@ const lastCandidate = candidates[candidates.length - 1]
 Do not use the unsupported API for that same last-item lookup:
 
 ```ts
-// <zh: read the last item in the candidate list.>
 const lastCandidate = candidates.at(-1)
 ```
 

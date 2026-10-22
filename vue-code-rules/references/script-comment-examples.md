@@ -33,7 +33,7 @@ const props = defineProps<{
   /** 当前详情及保存操作关联的候选人标识。 */
   candidateId: string
 }>()
-const emit = defineEmits<{
+const emits = defineEmits<{
   /** 保存成功后通知父组件刷新该候选人的展示数据。 */
   saved: [candidateId: string]
 }>()
@@ -46,7 +46,7 @@ const submitCandidate = async () => {
   try {
     // 服务端确认保存后才通知父组件更新展示。
     await saveCandidate(props.candidateId)
-    emit('saved', props.candidateId)
+    emits('saved', props.candidateId)
   } finally {
     // 请求结束后恢复提交状态，失败时同样允许重试。
     saving.value = false

@@ -1,10 +1,12 @@
 # Change Scope
 
+Owns Core Rule 1.
+
 ## Mandatory Rule
 
 Keep changes limited to the requested feature or defect. Preserve existing comments and do not reformat, rename, reorder imports, or rewrite unrelated code as drive-by cleanup.
 
-## Keep the Change Scoped
+## Scenario 1: Keep the Change Scoped
 
 Situation: a defect fix changes one status branch in a service that also contains unrelated naming and formatting issues.
 
@@ -15,7 +17,6 @@ Change the defective branch and its directly affected imports, comments, tests, 
 If the defect is an inclusive retry boundary, keep the correction local:
 
 ```ts
-// <zh: determine whether the candidate synchronization task may still be retried.>
 export const canRetryCandidateSync = (retryCount: number) => {
   return retryCount <= MAX_CANDIDATE_SYNC_RETRY_COUNT
 }
@@ -26,7 +27,6 @@ export const canRetryCandidateSync = (retryCount: number) => {
 Do not combine the same boundary fix with an unrelated rename and return-shape change:
 
 ```ts
-// <zh: determine whether the candidate synchronization task may still be retried and return a wrapped result.>
 export const evaluateCandidateSyncRetry = (retryCount: number) => {
   return { allowed: retryCount <= MAX_CANDIDATE_SYNC_RETRY_COUNT }
 }

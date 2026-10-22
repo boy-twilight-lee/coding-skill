@@ -1,10 +1,12 @@
 # Logical Blank Lines
 
+Owns Core Rule 4.
+
 ## Mandatory Rule
 
 Do not leave meaningless blank lines in TypeScript or TSX. A blank line is allowed only when one line materially separates distinct logical regions; never use consecutive blank lines, file-leading or file-trailing blank lines, blank lines immediately inside an opening or closing code block, blank lines between a comment and the declaration or statement it documents, or blank lines between tightly coupled imports, declarations, statements, object members, JSX nodes, or type members. Keep at most one intentional blank line between genuinely separate logical groups and remove every blank line that does not improve structural readability.
 
-## Use Blank Lines for Logical Regions
+## Scenario 1: Use Blank Lines for Logical Regions
 
 **Positive example:**
 
@@ -16,7 +18,6 @@ import { loadCandidates } from '@/apis'
 const filters = ref(createDefaultFilters())
 const hasActiveFilters = computed(() => hasFilters(filters.value))
 
-// 使用当前筛选条件刷新候选人列表。
 const refreshCandidates = async () => {
   await loadCandidates(filters.value)
 }
@@ -29,7 +30,7 @@ When a comment is justified, keep it attached to the declaration or statement it
 Do not separate the same comments from their declarations or split tightly coupled statements:
 
 ```ts
-// <zh: retain server-provided defaults so reset restores the original query contract.>
+// 保留服务端默认值，使重置操作恢复原始查询约定。
 
 const filters = ref(createDefaultFilters())
 
