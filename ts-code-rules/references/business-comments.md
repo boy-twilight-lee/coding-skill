@@ -1,6 +1,6 @@
 # Business Comments
 
-Owns Core Rule 3.
+Owns Core Rule 6.
 
 ## Example Presentation
 
@@ -63,7 +63,11 @@ let loading = false
 ```ts
 // 将表单转换为候选人保存载荷，并把保存结果交给调用方。
 const submitCandidate = async (): Promise<Candidate> => {
-  return await saveCandidate(buildCandidatePayload(form))
+  try {
+    return await saveCandidate(buildCandidatePayload(form))
+  } catch (error) {
+    throw error
+  }
 }
 
 // 手机或邮箱任一存在即纳入可联系名单，不要求两者同时填写。
@@ -82,9 +86,11 @@ const handleCandidateSelect = (candidateId: string) => {
 Keep one-use callbacks at the registration site:
 
 ```ts
-// 导航完成后尽力上报候选人页面曝光，上报失败不阻塞导航。
-router.afterEach(() => {
-  reportCandidateExposure().catch(reportTelemetryError)
+// 路由切换完成后刷新候选人列表。
+router.afterEach(async () => {
+  try {
+    await loadCandidates()
+  } catch {}
 })
 ```
 
@@ -97,7 +103,11 @@ This comment omits payload responsibility and the return contract:
 ```ts
 // 提交候选人数据。
 const submitCandidate = async (): Promise<Candidate> => {
-  return await saveCandidate(buildCandidatePayload(form))
+  try {
+    return await saveCandidate(buildCandidatePayload(form))
+  } catch (error) {
+    throw error
+  }
 }
 ```
 
@@ -108,10 +118,10 @@ const submitCandidate = async (): Promise<Candidate> => {
 ```ts
 // 保存当前候选人并更新页面详情；失败时保留原详情供用户重试。
 const saveCurrentCandidate = async () => {
-  // 仅通过表单校验的数据可以进入保存流程。
-  if (!(await formRef.value.validate())) return
-  saving.value = true
   try {
+    // 仅通过表单校验的数据可以进入保存流程。
+    if (!(await formRef.value.validate())) return
+    saving.value = true
     // 使用表单构建接口载荷，等待服务端确认保存结果。
     const candidate = await saveCandidate(buildCandidatePayload(form))
     // 以服务端返回数据更新详情，保证页面展示已保存的内容。

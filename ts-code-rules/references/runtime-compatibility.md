@@ -1,6 +1,6 @@
 # Runtime API Compatibility
 
-Owns Core Rule 11.
+Owns Core Rule 9.
 
 ## Mandatory Rule
 

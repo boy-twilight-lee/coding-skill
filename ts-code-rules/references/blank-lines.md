@@ -1,6 +1,6 @@
 # Logical Blank Lines
 
-Owns Core Rule 4.
+Owns Core Rule 7.
 
 ## Mandatory Rule
 
@@ -19,7 +19,9 @@ const filters = ref(createDefaultFilters())
 const hasActiveFilters = computed(() => hasFilters(filters.value))
 
 const refreshCandidates = async () => {
-  await loadCandidates(filters.value)
+  try {
+    await loadCandidates(filters.value)
+  } catch {}
 }
 ```
 
@@ -36,7 +38,9 @@ const filters = ref(createDefaultFilters())
 
 const refreshCandidates = async () => {
 
-  await loadCandidates(filters.value)
+  try {
+    await loadCandidates(filters.value)
+  } catch {}
 
 }
 ```

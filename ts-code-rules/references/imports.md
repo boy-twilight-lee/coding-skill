@@ -1,18 +1,18 @@
 # Imports
 
-Owns Core Rule 5.
+Owns Core Rule 4.
 
 ## Mandatory Rules
 
-1. Order imports as third-party runtime dependencies, type dependencies, internal runtime modules, then UI or component modules. Within the type group, module-local types precede shared types, regardless of import syntax.
-2. Prefer standard imports when the compiler and bundler safely erase type-only usage. Use separate `import type` declarations only when verified compiler, lint, bundler, or package runtime contracts require them. Never use inline `type` modifiers.
-3. Inspect active configuration rather than copying neighboring syntax. Do not reorder or rewrite unaffected imports solely to normalize them.
+1. Use standard `import { ... } from '...'` declarations by default, including for types. Combine types and runtime values from the same module in one declaration. Do not add separate `import type` lines merely to label type usage or split a shared source into extra declarations. Never use inline `type` modifiers.
+2. Order imports as third-party runtime dependencies, type-only dependencies, internal runtime modules, then UI or component modules. Within the type-only dependency group, module-local types precede shared types. A declaration containing both types and runtime values belongs to its runtime group; do not split it to satisfy grouping.
+3. Avoid `import type` unless a verified, active compiler, lint, bundler, or package runtime constraint makes a standard import invalid. Keep any unavoidable exception minimal and report its concrete reason. Do not change project configuration merely to enforce this preference, and do not reorder or rewrite unaffected imports solely to normalize them.
 
 ## Scenario 1: Group Imports by Responsibility
 
 **Positive example:**
 
-When the verified toolchain safely erases type-only usage:
+Use standard imports for both type-only dependencies and runtime values:
 
 ```ts
 import { ref } from 'vue'
@@ -36,32 +36,43 @@ import { ref } from 'vue'
 
 Grouping does not require separator blank lines; apply [Blank Lines](blank-lines.md).
 
-## Scenario 2: Choose Type Syntax from Configuration
+## Scenario 2: Combine Types and Values from the Same Source
 
 **Positive example:**
 
-When active tooling or runtime contracts require explicit type-only declarations, retain the same grouping:
+Import the payload type and API function together:
 
 ```ts
-import { ref } from 'vue'
-import type { CandidatePayload } from './type'
-import type { CandidateQuery } from '@/type'
-import { loadCandidates } from '@/apis'
-import CandidateCard from '@/components/candidate-card'
+import { CandidatePayload, saveCandidate } from '@/apis'
 ```
 
 **Negative example:**
 
-Inline modifiers remain prohibited even when accepted by the compiler:
+Do not add a separate type-import line when the same ordinary import is valid:
 
 ```ts
-import { loadCandidates, type CandidatePayload } from '@/apis'
+import type { CandidatePayload } from '@/apis'
+import { saveCandidate } from '@/apis'
 ```
 
-Standard imports are preferred only when their type-only usage is safely erased. Inspect the effective `tsconfig`, lint, bundler behavior, and package exports before choosing; do not assume that a type has a runtime export.
+Do not split the same source into separate ordinary import declarations either:
+
+```ts
+import { CandidatePayload } from '@/apis'
+import { saveCandidate } from '@/apis'
+```
+
+Inline type modifiers also remain prohibited:
+
+```ts
+import { saveCandidate, type CandidatePayload } from '@/apis'
+```
+
+The combined declaration stays in the internal runtime group because it imports an API function. Verify active tooling when compatibility is uncertain; an unavoidable explicit type-import requirement is an exception, not the normal example or a reason to add type-only lines proactively.
 
 ## Review Checklist
 
-- Runtime, type, internal, and UI imports follow the required order; local types precede shared types.
-- Type syntax matches verified tooling and runtime contracts; no inline `type` modifiers appear.
+- Standard imports are the default; types and values from the same source share one declaration.
+- No unnecessary `import type` lines or inline `type` modifiers appear; unavoidable exceptions have a verified reason.
+- Runtime, type-only, internal, and UI dependencies follow the required order; mixed declarations stay with their runtime group and local types precede shared types.
 - Unaffected imports are preserved; cross-module paths also follow [Public Entries](public-entries.md).

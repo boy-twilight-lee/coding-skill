@@ -1,6 +1,6 @@
 # Abstraction and Change-Owned Cleanup
 
-Owns Core Rule 2.
+Owns Core Rule 5.
 
 ## Mandatory Rule
 
@@ -18,7 +18,9 @@ Keep a clear one-time transformation at its call site:
 
 ```ts
 const candidateName = form.name.trim()
-await saveCandidate({ ...form, name: candidateName })
+try {
+  await saveCandidate({ ...form, name: candidateName })
+} catch {}
 ```
 
 **Negative example:**
@@ -32,7 +34,9 @@ const getCandidateName = (name: string) => {
 ```
 
 ```ts
-await saveCandidate({ ...form, name: getCandidateName(form.name) })
+try {
+  await saveCandidate({ ...form, name: getCandidateName(form.name) })
+} catch {}
 ```
 
 Extract when logic is reused, independently testable, genuinely complex, or forms a clear responsibility boundary.
@@ -49,7 +53,9 @@ After cleanup, keep only the imports and behavior required by the new path:
 import { saveCandidate } from '@/apis'
 
 const candidatePayload = buildCandidatePayload(form)
-await saveCandidate(candidatePayload)
+try {
+  await saveCandidate(candidatePayload)
+} catch {}
 ```
 
 **Negative example:**
@@ -64,7 +70,9 @@ const submitCandidateRequest = (payload: CandidatePayload) => {
 }
 const candidatePayload = buildCandidatePayload(form)
 console.log(debugCandidate(candidatePayload))
-await submitCandidateRequest(candidatePayload)
+try {
+  await submitCandidateRequest(candidatePayload)
+} catch {}
 ```
 
 Do not remove unrelated legacy code merely because it appears unused unless the task includes that cleanup and project tooling confirms it is safe. Cleanup follows ownership of the current change, not a file-wide desire for tidiness.
@@ -105,6 +113,8 @@ watch(phone, (currentPhone, previousPhone) => {
 ```
 
 An intermediate value is still useful when it names a real business concept, is reused, enables type narrowing, or makes a complex expression materially clearer. A guard remains necessary when the caller, framework, or API can deliver the guarded state; verify that contract before simplifying it.
+
+The try/catch required around await by [Async and Try/Catch](async-and-try-catch.md) must not be removed as redundant, even when catch is empty or only rethrows.
 
 ## Review Checklist
 

@@ -12,34 +12,28 @@ Keep positive and negative examples free of nonessential comments. Retain commen
 ## Core Rules
 
 1. Limit changes to the requested behavior and directly affected code. Preserve existing comments, public contracts, and user edits; avoid unrelated cleanup, renaming, formatting, or import reordering.
-2. Keep simple one-use logic inline. Extract for real complexity, reuse, or an independent responsibility. Remove change-owned dead code, debugging, pass-through wrappers, meaningless intermediates, and caller-guaranteed guards.
-3. Add concise Chinese business comments for major state, configuration, constants, functions, handlers, domain contracts, important fields, and key processing stages. Clear names do not waive coverage. Keep comments adjacent and supported by verified behavior; avoid mechanical narration and structures created only to hold comments.
-4. Use blank lines only between genuinely separate logical regions. Never use consecutive, leading, trailing, block-edge, comment-separating, or tightly-coupled blank lines.
-5. Order imports as third-party runtime, types, internal runtime, then UI modules; local types precede shared types. Prefer standard imports when type-only usage is safely erased. Use separate `import type` only when verified tooling or runtime contracts require it; never use inline `type` modifiers.
-6. Use configured aliases and public entries across module boundaries. Do not climb two or more parent directories or reach into another owner's private implementation. Barrels re-export public declarations without business implementation.
-7. Follow established source-layer ownership. Keep private constants, types, helpers, and state with their owner until real cross-owner reuse or an application-wide contract warrants promotion. Follow `vue-code-rules` for Vue owner structure.
-8. Prefer `await` for ordinary sequential flow. Keep dependencies sequential; use `Promise.all` only for independent work with an intended shared failure boundary. Never discard a Promise with unary `void`; intentional background work owns its rejection path.
-9. Catch only where the error can be recovered, translated, enriched, or reported; otherwise propagate it. Read the guaranteed `error.message` directly without narrowing or fallback branches.
-10. Set operation-owned loading before the request and restore it through `finally`. Commit related response state without accidental partial updates; progressive commits require an intentional UI contract.
-11. Verify new runtime APIs against actual TypeScript, runtime, browser, and polyfill targets. Transpilation does not supply missing runtime APIs.
-12. Format only changed files. Restore unrelated formatter churn from the pre-format content, preserve user edits, and review the final diff. Report checks blocked by untouched legacy formatting.
+2. Follow established source-layer ownership. Module directories except `assets`, `layout`, `pages` (or `views`), and `styles` require `index.ts` to expose their submodules; `styles/index.less` aggregates all child styles. Keep private capabilities with their owner until real cross-owner reuse or an application-wide contract warrants promotion. Follow `vue-code-rules` for Vue owner structure.
+3. Use configured aliases and public entries across module boundaries. Do not climb two or more parent directories or reach into another owner's private implementation. Barrels re-export public declarations without business implementation.
+4. Use standard imports by default and combine types and values from the same module in one declaration. Avoid separate `import type` lines and never use inline `type` modifiers; allow only the smallest unavoidable tooling/runtime exception. Order imports as third-party runtime, type-only dependencies, internal runtime, then UI modules; local types precede shared types. Place mixed declarations with their runtime group instead of splitting them.
+5. Keep simple one-use logic inline. Extract for real complexity, reuse, or an independent responsibility. Remove change-owned dead code, debugging, pass-through wrappers, meaningless intermediates, and caller-guaranteed guards.
+6. Add concise Chinese business comments for major state, configuration, constants, functions, handlers, domain contracts, important fields, and key processing stages. Clear names do not waive coverage. Keep comments adjacent and supported by verified behavior; avoid mechanical narration and structures created only to hold comments.
+7. Use blank lines only between genuinely separate logical regions. Never use consecutive, leading, trailing, block-edge, comment-separating, or tightly-coupled blank lines.
+8. Prefer `await` for ordinary asynchronous flow. Every await requires try/catch in its current function or top-level module, even with an empty catch; caller handling or try/finally alone is insufficient. Related awaits may share one try/catch. Rethrow when the caller must receive failure, and read the guaranteed `error.message` directly without narrowing or fallbacks.
+9. Verify new runtime APIs against actual TypeScript, runtime, browser, and polyfill targets. Transpilation does not supply missing runtime APIs.
 
 ## Required Reference Loading
 
 After repository inspection and before implementation or review decisions, open and fully read every matching reference, including uncertain matches. Every task must read at least one; if none matches, read the closest. Each rule owns one reference. References are mandatory; mentioning or summarizing them does not replace reading them.
 
 - Rule 1: Read [Change Scope](references/change-scope.md) for affected lines, public contracts, or preservation of existing work.
-- Rule 2: Read [Abstraction and Cleanup](references/abstraction-and-cleanup.md) for extraction, simplification, dead code, wrappers, intermediates, or guards.
-- Rule 3: Read [Business Comments](references/business-comments.md) for declaration, contract, callback, or processing-stage comments and example-comment policy.
-- Rule 4: Read [Blank Lines](references/blank-lines.md) for declaration, statement, type-member, or JSX whitespace.
-- Rule 5: Read [Imports](references/imports.md) for import order, type syntax, or compiler/bundler import behavior.
-- Rule 6: Read [Public Entries](references/public-entries.md) for cross-module paths, aliases, exports, or barrels.
-- Rule 7: Read [Application Architecture](references/application-architecture.md) for source layers, private helpers/types, services, stores, or shared utilities.
-- Rule 8: Read [Async Flow](references/async-flow.md) for await, dependencies, parallel work, or unawaited operations.
-- Rule 9: Read [Error Handling](references/error-handling.md) for catch ownership, rejection/cancellation policy, or error messages.
-- Rule 10: Read [Loading and State](references/loading-state.md) for loading lifecycle, cleanup, response merging, or related state commits.
-- Rule 11: Read [Runtime Compatibility](references/runtime-compatibility.md) for new APIs, target support, fallbacks, or polyfills.
-- Rule 12: Read [Formatting and Review](references/formatting.md) for targeted formatting, restoration of unrelated changes, or final verification.
+- Rule 2: Read [Application Architecture](references/application-architecture.md) for source layers, required module/style entries, private helpers/types, stores, or shared utilities.
+- Rule 3: Read [Public Entries](references/public-entries.md) for cross-module paths, aliases, exports, or barrels.
+- Rule 4: Read [Imports](references/imports.md) for import order, type syntax, or compiler/bundler import behavior.
+- Rule 5: Read [Abstraction and Cleanup](references/abstraction-and-cleanup.md) for extraction, simplification, dead code, wrappers, intermediates, or guards.
+- Rule 6: Read [Business Comments](references/business-comments.md) for declaration, contract, callback, or processing-stage comments and example-comment policy.
+- Rule 7: Read [Blank Lines](references/blank-lines.md) for declaration, statement, type-member, or JSX whitespace.
+- Rule 8: Read [Async and Try/Catch](references/async-and-try-catch.md) for await usage, mandatory catch coverage, empty catches, rejection propagation, or error messages.
+- Rule 9: Read [Runtime Compatibility](references/runtime-compatibility.md) for new APIs, target support, fallbacks, or polyfills.
 
 ## Working Process
 
