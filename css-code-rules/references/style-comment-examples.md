@@ -6,8 +6,6 @@ Owns Core Rule 9.
 
 1. Avoid comments in CSS, Less, Sass, SCSS, and Vue `<style>` blocks. Do not add routine section labels, selector descriptions, declaration explanations, commented-out code, or comments that merely restate the stylesheet. Add a comment only when a non-obvious compatibility workaround, external-library constraint, or temporary exception cannot be expressed clearly through naming or structure; keep that exceptional comment concise, explain why it is necessary, and write it in Chinese unless another language is strictly necessary for an exact external term or project-mandated convention.
 
-2. Positive and negative examples must follow the same comment restraint. Keep file paths, scenario context, and explanations outside code blocks. Comments may remain only when essential to demonstrate this comment rule itself or a necessary non-obvious constraint; write concrete text instead of placeholder markers.
-
 ## Scenario 1: Decide Whether a Comment Is Justified
 
 Situation: a selector contains an obvious color declaration.
@@ -48,4 +46,3 @@ The comment must explain why the unusual declaration exists. Remove commented-ou
 ## Review Checklist
 
 - Comments exist only for non-obvious constraints and explain why.
-- Positive and negative examples omit comments unless the demonstration requires them; file paths and explanations stay outside code blocks.

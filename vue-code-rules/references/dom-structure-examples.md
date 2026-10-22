@@ -22,8 +22,6 @@ Use the existing target element directly when it can implement the required beha
 
 **Negative example:**
 
-Do not introduce extra nodes or nesting when they are unnecessary for the required functionality:
-
 ```vue
 <div class="user-card-name-wrapper">
   <span class="user-card-name-inner">
@@ -32,13 +30,11 @@ Do not introduce extra nodes or nesting when they are unnecessary for the requir
 </div>
 ```
 
-A wrapper is allowed only when the required behavior or layout cannot be implemented directly with existing elements. Give each necessary wrapper a clear purpose and keep the number of nodes and nesting levels to the minimum needed.
-
 ## Scenario 2: Use Common Tags and Native Controls
 
 **Positive example:**
 
-Use common tags for business layout. With no explicit user request for accessibility compatibility, do not add accessibility-only attributes to the decorative icon:
+Use common elements for business and page layout. Without an explicit accessibility request, leave unrelated accessibility attributes off the decorative icon:
 
 ```vue
 <div class="user-card">
@@ -47,25 +43,9 @@ Use common tags for business layout. With no explicit user request for accessibi
 </div>
 ```
 
-Use native interactive elements when their behavior applies; do not attach button behavior to a `div` merely to keep the DOM generic:
-
-```vue
-<button class="user-card-action" type="button" @click="openUserDetail">
-  View details
-</button>
-```
-
-Use the same common-tag approach for page containers and title display:
-
-```vue
-<div class="article-page">
-  <span class="article-page-title">{{ article.title }}</span>
-</div>
-```
-
 **Negative example:**
 
-Do not replace the common native button with a clickable `div`, or introduce prohibited landmark/sectioning containers for the same page layout:
+A clickable div does not replace the required native button behavior; prohibited landmark/sectioning containers are not a layout alternative. The native button is shown in Scenario 3.
 
 ```vue
 <div class="user-card-action" @click="openUserDetail">View details</div>
@@ -76,13 +56,11 @@ Do not replace the common native button with a clickable `div`, or introduce pro
 </main>
 ```
 
-Use common tags and business classes for layout and styling. Preserve the behavior and keyboard interaction of common native controls, and do not use uncommon or invented tags to replace them. The minimal-DOM rule still applies when selecting common tags.
-
 ## Scenario 3: Keep Accessibility Attributes Within the User's Request
 
 **Positive example:**
 
-For an ordinary request to add a detail button, keep the native button and its functional attributes without adding unrelated accessibility metadata:
+An ordinary detail-button request needs the native control and functional attributes:
 
 ```vue
 <button type="button" class="user-card-action" @click="openUserDetail">
@@ -92,7 +70,7 @@ For an ordinary request to add a detail button, keep the native button and its f
 
 **Negative example:**
 
-When the user has not requested accessibility compatibility, do not mechanically add an explicit button role, a repeated accessible label, or an accessibility-only tab stop:
+Do not proactively add a button role, repeated accessible label, or accessibility-only tab stop when the user has not requested accessibility compatibility:
 
 ```vue
 <button
@@ -109,7 +87,7 @@ When the user has not requested accessibility compatibility, do not mechanically
 
 **Explicit accessibility request:**
 
-If the user explicitly asks for screen-reader compatibility for an icon-only detail button, add the relevant accessible name and hide its decorative icon from assistive technology:
+For a user-requested screen-reader-compatible icon-only button, add its accessible name and hide only the decorative icon from assistive technology:
 
 ```vue
 <button
@@ -121,8 +99,6 @@ If the user explicitly asks for screen-reader compatibility for an icon-only det
   <i class="user-card-detail-icon" aria-hidden="true" />
 </button>
 ```
-
-The explicit request supplies the scope for these attributes. Keep additions limited to that behavior rather than applying them to unrelated nodes, and retain native button behavior in both cases.
 
 ## Review Checklist
 

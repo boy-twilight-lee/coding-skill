@@ -4,7 +4,7 @@ Owns Core Rule 2.
 
 ## Mandatory Rules
 
-1. Scope ordinary Vue component styles through the project's configured mechanism. When Less is selected under [Stylesheet Language Examples](stylesheet-language-examples.md) and its build support is ready, use `<style lang="less" scoped>` in that attribute order unless the configured scoping mechanism requires another valid form. For existing CSS, Sass, SCSS, CSS Modules, or other configured styles, preserve the original language and mechanism. Select the language for a new component through [Stylesheet Language Examples](stylesheet-language-examples.md) rather than treating an existing plain-CSS file as a reason to reject Less in a project without a preprocessor. Use an unscoped style block only for true global rules or content rendered outside the component root.
+1. Scope ordinary Vue component styles through the project's configured mechanism and preserve existing scoping. Select or preserve the language through [Stylesheet Language Examples](stylesheet-language-examples.md). When Less is selected and its build support is ready, use `<style lang="less" scoped>` in that attribute order unless the configured scoping mechanism requires another valid form. Use an unscoped style block only for true global rules or content rendered outside the component root.
 
 2. Keep a component's extracted styles beside its entry point. Use the repository's matching extension, such as `index.less` beside `index.vue`, for one style file; introduce a `style/` directory only when scoped and unscoped styles genuinely must be isolated. Extract the whole inline component style block when either mandatory trigger applies:
 
@@ -13,7 +13,7 @@ Owns Core Rule 2.
 
    Count one owned selector group for each block that owns a distinct descendant, component modifier or state, pseudo branch, deep override, or at-rule branch; a comma-separated selector list is one group. These thresholds are enforceable upper bounds for inline styles, not subjective review hints. Extract shorter styles as well when close coupling with a large template or another concrete maintenance problem justifies it. Move the whole owned stylesheet to the sibling file and include it through the component's scoped style block; do not split the file by visual region. When a named private child must gain a sibling stylesheet, convert it from `component/child-name.vue` to the directory-managed `component/child-name/index.vue`, `index.ts`, and matching `index.<ext>` form required by `vue-code-rules`.
 
-3. Keep all styles for one component in one stylesheet. Do not split files by visual region or feature. Separate stylesheets are justified only when CSS scope itself requires it.
+3. Keep all styles for one component in one stylesheet, never split by visual region or feature. Separate stylesheets are justified only when CSS scope itself requires it.
 
 4. Keep application-wide resets, theme tokens, library overrides, and utilities in the repository's established `src/styles` files. Keep a component-specific Element Plus or Vant override within the owning component's root through `:deep`.
 
@@ -68,7 +68,7 @@ Do not use a generic teleported root such as `.popper` or `.dropdown`. A global 
 
 ## Scenario 2: Extract a Complex Component Style
 
-Situation: the inline component style block in `index.vue` reaches 80 non-blank lines, or contains at least four owned selector groups plus two listed complexity signals. Keeping those rules inline is prohibited even if the component is used only once.
+Situation: the inline style block meets either mandatory extraction trigger above. Extraction is required even if the component is used only once.
 
 **Positive example:**
 
@@ -80,7 +80,7 @@ talent-card/
 `-- index.less
 ```
 
-Move the whole owned stylesheet rather than splitting it by visual region. Import the extracted stylesheet through the scoped block so Vue continues to apply scope attributes:
+Import the whole extracted stylesheet through the scoped block so Vue continues to apply scope attributes:
 
 ```vue
 <style lang="less" scoped>
@@ -122,8 +122,6 @@ talent-card/
 |-- actions.less
 `-- states.less
 ```
-
-That split makes selector ownership harder to follow and encourages duplicate parent or state blocks. Keep component-owned rules together unless scope itself requires separation.
 
 ## Scenario 3: Place Global and Component-Owned Rules
 

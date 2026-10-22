@@ -6,9 +6,9 @@ Owns Core Rule 10.
 
 1. Keep the complete body of each component selector contiguous: no blank lines between ordinary declarations, nested children or siblings, pseudo-classes/elements, state or deep branches, or local mixin definitions and calls. Do not use blank lines as logical grouping within a component; indentation and braces provide the hierarchy. Never leave file-leading, file-trailing, consecutive, or block-edge blank lines. At most one optional blank line may separate genuinely independent top-level stylesheet roots. A normal final newline is retained.
 
-## Scenario 1: Keep Component Styles Contiguous Like the Supplied Examples
+## Scenario 1: Keep Component Styles Contiguous
 
-The supplied exam-statistics component styles keep their component bodies compact. Preserve that convention: no blank lines inside one component selector, including between declarations, DOM siblings, states, deep branches, mixin definitions, or calls. Only genuinely independent top-level stylesheet roots may be separated by at most one optional blank line. Keep one normal final newline without extra blank lines. These self-contained examples capture spacing only.
+The examples below demonstrate contiguous component bodies across ordinary nesting, states, deep branches, and mixins.
 
 ### Positive example 1: Contiguous declarations and DOM branches
 

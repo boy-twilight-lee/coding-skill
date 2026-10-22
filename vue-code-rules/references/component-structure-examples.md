@@ -43,126 +43,50 @@ The two style forms are mutually exclusive. The scoped/global filenames illustra
 5. Cohesive owner-specific functional helpers may be grouped into one focused utility hook such as `hooks/useDetailTools.ts`. Do not create one scattered file or hook per tiny function, invent reactive state merely to call a utility a hook, or extract simple one-off expressions without a real responsibility boundary. Put genuinely shared stateless functions under the project's established `utils` structure and public entry; extend an existing matching utility module before adding another. Shared reactive composables continue to use the project's established hook layer rather than being treated as stateless utilities.
 6. Choose exactly one extracted-style form by actual file count: one stylesheet uses `index.less` beside `index.vue`; multiple genuinely needed stylesheets all live in `style/`, without a simultaneous owner-root `index.less`. Use the matching extension when preserving an existing CSS/Sass/SCSS component. Do not create a one-file `style/` directory, mix the two forms, or split one stylesheet artificially to justify a directory. CSS extraction thresholds and scope boundaries still apply; if no extracted styles are needed, use neither form.
 
-## Scenario 1: Apply Naming Conventions
+## Scenario 1: Apply Naming and Choose Component Form
 
-**Positive example:**
+| Situation | Required form |
+| --- | --- |
+| First-level pages/views/components unit, even when simple | unit-name/index.vue + index.ts |
+| First-level unit under an existing target tree such as components-pc/ | The same directory and two entries |
+| Simple private child inside an owner's component/ | component/child-name.vue, without an unnecessary extra directory |
+| Private child needs extracted logic, styles, children, or hooks | component/child-name/index.vue + index.ts and only needed supporting entries |
+| Simple private child promoted to a shared first-level component | Convert to the shared component directory and two entries |
+
+**Positive naming examples:**
+
+These are illustrative paths/tag spellings within the complete allowed structures above. Component files/directories/tags use kebab-case; hook files inside hooks/ use camelCase. Preserve the project's existing pages/views tree rather than creating both.
 
 ```text
-components/
-|-- user-avatar/
-|   |-- index.vue
-|   `-- index.ts
-`-- user-card/
-    |-- index.vue
-    |-- index.ts
-    |-- component/
-    |   `-- user-card-label.vue
-    `-- hooks/
-        `-- useUserCard.ts
-
-candidate-page/
-|-- index.vue
-|-- index.ts
-`-- hooks/
-    `-- useCandidateList.ts
-```
-
-```vue
+src/components/user-avatar/index.vue
+src/components/user-avatar/index.ts
+src/components/user-card/component/user-card-label.vue
+src/components/user-card/hooks/useUserCard.ts
 <user-card />
 ```
 
-Component directories, private single-file children, custom tags, and ordinary composable files use kebab-case. Hook files inside `hooks/` use camelCase. Every directory-managed component has both `index.vue` and `index.ts`; `index.less` remains optional. First-level `user-avatar` uses a directory even when simple. Only the simple private child `user-card-label.vue` uses the named single-file form inside `component/`.
+A script block, props, derived display text, or small local styles alone do not make a simple private child complex. Convert it only when supporting files or shared-component ownership warrant directory form; update consumers and automatic discovery after the move.
 
-**Negative example:**
-
-Do not use mixed casing or omit the required entries for those same components:
+**Negative naming examples:**
 
 ```text
-components/
-|-- UserAvatar.vue
-`-- user_card/
-    |-- UserCard.vue
-    `-- hooks/
-        `-- use-user-card.ts
+components/UserAvatar.vue
+components/user_card/UserCard.vue
+components/user-card/hooks/use-user-card.ts
+<UserCard />
 ```
 
-## Scenario 2: Choose Directory or Single-File Form
-
-**Positive example:**
-
-First-level pages, views, and shared components always use directories, even if they need no hooks, children, or separate styles:
+Do not create this directory for a private child that still needs no supporting entries:
 
 ```text
-src/pages/candidate-list/index.vue
-src/pages/candidate-list/index.ts
-src/views/workbench/index.vue
-src/views/workbench/index.ts
-src/components/user-avatar/index.vue
-src/components/user-avatar/index.ts
-```
-
-The `pages` and `views` paths above illustrate alternative project conventions; use the tree the project already has.
-
-Only simple children inside an owner's private `component/` directory use named `.vue` files:
-
-```text
-src/pages/candidate-list/component/empty-hint.vue
-src/views/workbench/component/workbench-toolbar.vue
-src/components/user-card/component/user-card-label.vue
-```
-
-For example, `user-card-label.vue` can keep its props, derived display text, and local styles in one file. Having a script or a style block does not require separate files.
-
-Choose the form from the actual responsibility and supporting files:
-
-| Situation | Form |
-| --- | --- |
-| First-level unit under `pages/`, `views/`, or `components/`, even when simple | `unit-name/index.vue` + `unit-name/index.ts` |
-| First-level unit under an existing target-specific tree such as `components-pc/` | The same required directory and two entries |
-| Simple private child in an owner's `component/` directory | `component/child-name.vue` |
-| Private child needs extracted logic, styles, children, or hooks, including a stylesheet required by `css-code-rules` | `component/child-name/index.vue` + `index.ts`, with only the needed supporting files |
-| Simple private child is promoted to a first-level shared component | Convert to `src/components/child-name/` with `index.vue` and `index.ts` |
-
-**Negative example:**
-
-Avoid wrapping that same simple private child in an otherwise unnecessary directory:
-
-```text
-src/components/user-card/component/user-card-label/
+component/user-card-label/
 |-- index.vue
 `-- index.ts
 ```
 
-## Scenario 3: Organize a Component That Needs Supporting Files
+## Scenario 2: Forward the Actual Public Contract
 
-**Positive example:**
-
-A candidate picker owns search state, a results child, and substantial styling that benefits from a separate Less file in a project already configured for Less:
-
-```text
-src/components/candidate-picker/
-|-- index.vue
-|-- index.ts
-|-- index.less
-|-- component/
-|   `-- candidate-option.vue
-`-- hooks/
-    `-- useCandidateSearch.ts
-```
-
-`index.vue` coordinates the picker UI and connects its hook. `useCandidateSearch.ts` owns the cohesive search behavior. `candidate-option.vue` remains a simple file inside its parent's private `component/`. The entry references `index.less` through the project's supported style mechanism; preserve its intended scope.
-
-Beyond the required `index.vue` and `index.ts`, each supporting entry needs a real owner-specific purpose. Omit unused child, hook, and style entries; do not move ordinary setup into `index.ts` just to produce extra files. Apply Core Rule 10 when deciding whether extraction is needed, then use this rule's allowed destinations.
-
-Every directory-managed component, including a private child, must have this minimal `index.ts`:
-
-```ts
-export { default } from './index.vue'
-```
-
-This forwards the component's default export; `export * from './index.vue'` alone does not forward a default export. Export public types when consumers need them. Keep business behavior in the SFC or a focused owner hook under `hooks/`.
-
-When external consumers also need specific components, hooks/functions, or constants owned by this feature, explicitly forward only those public declarations. The following `index.ts` excerpt assumes each named declaration exists and is part of the intended public contract:
+The first line is the minimal index.ts. Add other named exports only when external consumers need the existing declarations; directory-managed children are forwarded through their own entries:
 
 ```ts
 export { default } from './index.vue'
@@ -171,39 +95,32 @@ export { useDetailActions } from './hooks/useDetailActions'
 export { STATISTICS_TAB } from './constants'
 ```
 
-The directory-managed statistics summary is forwarded through its own entry. Keep ordinary private children and implementation hooks private; do not re-export entire subdirectory trees merely for convenience. An instance method exposed by the SFC is called through the component instance, while module functions/hooks use the explicit named exports above. The barrel forwards declarations and does not implement either kind of method.
+Keep business behavior in the SFC or its focused hooks. Do not expose whole private trees, implement workflows in the barrel, or move ordinary setup into index.ts to create extra files. Instance methods remain exposed by the SFC and called through its instance, separately from named module exports.
 
-Import a directory-managed table through its `index.ts` and a simple private filter directly:
+Consumers within this owner may import the directory-managed child through its entry and the simple private child directly. Cross-owner paths follow ts-code-rules:
 
 ```ts
 import CandidateTable from './component/candidate-table'
 import CandidateFilter from './component/candidate-filter.vue'
 ```
 
-Apply `ts-code-rules` for cross-module import-path selection. Do not bypass a component directory's export entry with a consumer import ending in `/index.vue`.
+**Negative examples:**
 
-When `component/user-card-label.vue` later needs several private files, convert it to `component/user-card-label/index.vue`, add `component/user-card-label/index.ts`, and place each supporting file under the allowed directory for its responsibility. If it instead becomes a first-level shared component, move it to `src/components/user-card-label/` with both entries even if its implementation is still simple. Update consumers and check automatic component discovery so the registered name and imports still resolve. Do not convert unrelated components during that change.
+This export does not forward the component's default export:
 
-**Negative example:**
-
-Do not create unused supporting directories or bypass the same component's public entry:
-
-```text
-src/components/candidate-picker/
-|-- index.vue
-|-- component/
-|-- hooks/
-|-- constants/
-`-- type/
+```ts
+export * from './index.vue'
 ```
+
+This consumer bypasses the component entry:
 
 ```ts
 import CandidatePicker from '@/components/candidate-picker/index.vue'
 ```
 
-## Scenario 4: Export a Component Instance Type
+## Scenario 3: Export a Needed Component Instance Type
 
-When another component holds a ref to a drawer or calls its exposed actions, export the instance type from the drawer's `index.ts`:
+When another component holds the drawer instance or calls its exposed actions, the drawer entry exports a named instance type:
 
 ```ts
 import Drawer from './index.vue'
@@ -212,7 +129,7 @@ export default Drawer
 export type DrawerInstance = InstanceType<typeof Drawer>
 ```
 
-The consumer imports the component and its instance type through the public entry:
+The consumer uses that public entry:
 
 ```ts
 import { DrawerInstance } from '@/components/drawer'
@@ -221,31 +138,21 @@ import Drawer from '@/components/drawer'
 const drawerRef = ref<DrawerInstance | null>(null)
 ```
 
-The consumer example assumes the active auto-import configuration covers `ref`; otherwise import it explicitly. Use a separate `import type` if verified tooling requires it. No instance-type export is required when no external component needs it.
+The ref import is omitted only with verified auto-import coverage; use separate import type when verified tooling requires it. No external instance consumer means no required instance-type export.
 
-## Scenario 5: Keep Functional Helpers and Styles Within the Allowed Structure
+## Scenario 4: Keep Helpers and Styles with Their Owners
 
-**Positive example:**
-
-Group related detail-page transformations into one utility hook. Share genuinely cross-owner stateless functions through the established project utility layer; the utility entry re-exports public functions rather than implementing them:
+A focused private utility hook and genuinely shared stateless utility use separate ownership layers. Utility barrels re-export public functions:
 
 ```text
-src/
-|-- pages/teacher-exam-detail/
-|   |-- hooks/
-|   |   `-- useDetailTools.ts
-|   |-- index.ts
-|   `-- index.vue
-`-- utils/
-    |-- exam-statistics.ts
-    `-- index.ts
+src/pages/teacher-exam-detail/hooks/useDetailTools.ts
+src/utils/exam-statistics.ts
+src/utils/index.ts
 ```
 
-Keep simple one-off logic in `index.vue` when extraction adds no real responsibility. A utility hook need not introduce refs, watchers, or side effects merely to group cohesive functions.
+Keep simple one-off logic in index.vue. Utility hooks need no invented refs/watchers/effects, and unused supporting directories are omitted. Extracted styles are referenced through the owner's supported SFC style mechanism to preserve scope; Rule 10 governs when to extract them.
 
-**Negative example:**
-
-Do not scatter the same page's private functions, types, or context across unapproved directories and loose root files:
+**Negative example: unrelated directories and loose files:**
 
 ```text
 teacher-exam-detail/
@@ -261,7 +168,7 @@ teacher-exam-detail/
 `-- index.vue
 ```
 
-Also do not retain both extracted-style forms for one owner:
+**Negative example: both style forms for one owner:**
 
 ```text
 teacher-exam-detail/
@@ -272,8 +179,6 @@ teacher-exam-detail/
 |-- index.ts
 `-- index.vue
 ```
-
-With one extracted stylesheet, keep only `index.less`; with multiple justified stylesheets, put all of them in `style/` and omit the owner-root stylesheet. Do not add unused files or directories from the complete structure map.
 
 ## Review Checklist
 

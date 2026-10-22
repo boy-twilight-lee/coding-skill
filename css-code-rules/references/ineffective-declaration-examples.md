@@ -158,4 +158,3 @@ The offsets and z-index do not apply to this static non-flex/grid item; flex/gri
 - Browser defaults are checked for the actual element and states rather than assumed globally.
 - Inapplicable and unconditionally overwritten declarations are removed.
 - Every retained declaration has a distinct required effect; deliberate fallbacks and effective constraints are preserved.
-- This reference contains no mixin, variable, utility, or loop extraction policy.

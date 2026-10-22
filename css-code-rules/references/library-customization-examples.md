@@ -8,11 +8,11 @@ Owns Core Rule 7.
 
 ## Scenario 1: Customize a Library Locally
 
-Situation: customize an Element Plus dialog. This example assumes the installed library version documents and consumes `--el-dialog-border-radius`. Verify that support and the rendered owning element before using it. The custom property is necessary here to demonstrate the library's official customization API; ordinary business-style examples use concrete literals.
+Situation: customize an Element Plus dialog. Verify that the installed library version documents and consumes `--el-dialog-border-radius`, and that the variable is set on the rendered owning element.
 
 **Positive example:**
 
-For this component-library case only, set the documented variable on the owning component root:
+Set the documented variable on the owning component root:
 
 ```less
 .talent-dialog {
@@ -30,9 +30,9 @@ Do not escalate specificity or add `!important` when the variable handles the sa
 }
 ```
 
-Within component-library customization, if no supported documented variable exists, use the smallest ordinary nested or deep selector that reliably reaches the target. Confirm the installed library version, documentation, and rendered DOM before overriding internals. This example does not prescribe CSS variables for ordinary business styles.
+If no supported documented variable exists, use the smallest ordinary nested or deep selector that reliably reaches the target. Confirm the installed library version, documentation, and rendered DOM before overriding internals.
 
 ## Review Checklist
 
 - The customization rule is applied only to component-library overrides.
-- Any retained custom property demonstrates a necessary official library API whose installed-version support and target element are checked; other examples use concrete literals.
+- Library custom properties have verified installed-version support and are set on the owning element.

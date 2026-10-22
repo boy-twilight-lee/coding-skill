@@ -8,93 +8,9 @@ Owns Core Rule 4.
 
 ## Scenario 1: Compose Multiple Classes with One Array Binding
 
-Situation: a candidate card always needs its business root class, receives a reusable density class, and conditionally applies active and disabled states.
-
 **Positive example:**
 
-Use one `:class` array containing every class source:
-
-The explicit Vue import in this example assumes the active Vite auto-import configuration does not cover `computed`. Omit the runtime import after verifying that it is covered; otherwise keep it explicit.
-
-```vue
-<template>
-  <div
-    :class="[
-      'candidate-card',
-      densityClass,
-      {
-        'candidate-card-active': props.active,
-        'candidate-card-disabled': props.disabled
-      }
-    ]"
-  >
-    <span class="candidate-card-name">{{ props.name }}</span>
-  </div>
-</template>
-
-<script setup lang="ts">
-import { computed } from 'vue'
-import { CandidateCardProps } from './type'
-
-const props = defineProps<CandidateCardProps>()
-const densityClass = computed(() => `candidate-card-${props.density}`)
-</script>
-```
-
-Keep the non-trivial private prop contract in the component's sibling type module:
-
-```ts
-export interface CandidateCardProps {
-  active: boolean
-  density: 'compact' | 'normal'
-  disabled: boolean
-  name: string
-}
-```
-
-The array keeps the permanent class, reusable class value, and conditional states in one readable source of truth. Vue flattens the entries and ignores inactive object keys.
-
-For one permanent class plus one conditional state, use the same structure even when it fits on one line:
-
-```vue
-<div :class="['candidate-card', { 'candidate-card-active': active }]" />
-```
-
-Use the simplest form when only one class source exists:
-
-```vue
-<div class="candidate-card" />
-
-<div :class="{ 'candidate-card-active': active }" />
-```
-
-For the three exact negative cases below, keep the same class sources in readable arrays:
-
-```vue
-<div
-  :class="[
-    'candidate-card',
-    'candidate-card-compact',
-    {
-      'candidate-card-active': active,
-      'candidate-card-disabled': disabled
-    }
-  ]"
-/>
-```
-
-```vue
-<div
-  :class="[
-    'candidate-card',
-    `candidate-card-${density}`,
-    {
-      'candidate-card-active': active,
-      'candidate-card-disabled': disabled
-    }
-  ]"
-/>
-```
+Combine the permanent root, reusable density value, and conditional states. The owner supplies these bindings; their script and prop-type declarations are unrelated to class composition.
 
 ```vue
 <div
@@ -110,9 +26,23 @@ For the three exact negative cases below, keep the same class sources in readabl
 />
 ```
 
-**Negative example:**
+The density entry may instead be a fixed string or an interpolated value such as `candidate-card-${density}`. Vue flattens the array and ignores inactive conditional keys. Even a root plus one condition uses an array:
 
-Do not split those same classes between a static attribute and a dynamic binding:
+```vue
+<div :class="['candidate-card', { 'candidate-card-active': active }]" />
+```
+
+A single class source needs no array wrapper:
+
+```vue
+<div class="candidate-card" />
+
+<div :class="{ 'candidate-card-active': active }" />
+```
+
+**Negative examples:**
+
+Do not split the same element's sources across attributes:
 
 ```vue
 <div
@@ -124,7 +54,7 @@ Do not split those same classes between a static attribute and a dynamic binding
 />
 ```
 
-Do not construct a long interpolated or concatenated class string:
+Do not concatenate them into a long string:
 
 ```vue
 <div
@@ -132,13 +62,11 @@ Do not construct a long interpolated or concatenated class string:
 />
 ```
 
-Do not place every class into one long array line when multiple sources make the attribute difficult to scan:
+An array must also stay readable; expand a long attribute instead of keeping every source on one line:
 
 ```vue
 <div :class="['candidate-card', densityClass, { 'candidate-card-active': active, 'candidate-card-disabled': disabled, 'candidate-card-loading': loading }]" />
 ```
-
-The array requirement begins when an element combines multiple sources. It is not a reason to wrap every single class binding mechanically.
 
 ## Review Checklist
 

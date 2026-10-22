@@ -8,8 +8,6 @@
 4. Concise naming and class-length control are mandatory. Remove redundant ownership words, duplicated business terms, visual descriptions, and unnecessary suffixes, and shorten multiword or repeated business segments using the agreed abbreviations. Do not retain verbose full names merely because they mirror every DOM ancestor.
 5. Use consistent, recognizable business abbreviations as the default naming requirement, not a last resort after names become long. Prefer the repository or feature glossary; establish a clear local mapping when none exists and use it consistently throughout the ownership subtree. Keep already short structural or state words readable. Never create ambiguous, opaque, concatenated, or arbitrary letter sequences merely to reduce character count.
 
-Use these scenarios to choose business-qualified component, element, state, and teleported-root names.
-
 ## Scenario 1: Name a Component Root, Elements, and States
 
 Situation: a candidate card has a header, title, action, selected state, and disabled state.
@@ -74,13 +72,6 @@ The class should still describe the business role when color, position, or imple
 
 Situation: a human-resources recruitment feature contains a candidate-evaluation panel. Repeating every domain, page, component, element, and visual role would make each class progressively longer.
 
-Apply all of these mandatory steps:
-
-1. Remove words already implied by the owning business root.
-2. Remove visual or implementation-only suffixes that do not describe business meaning.
-3. Apply the agreed business abbreviations while preserving clear ownership and meaning.
-4. Keep the final name as short as its business meaning permits; do not wait for an overlong name before abbreviating.
-
 **Positive example:**
 
 Use the concise business form `cand-eval` consistently for candidate evaluation, instead of repeating the full words in every class:
@@ -113,37 +104,7 @@ When HR and recruitment context is also needed to distinguish the owner, retain 
 | candidate | `cand` | The feature glossary makes the meaning unambiguous. |
 | evaluation | `eval` | The abbreviation is consistently used for evaluation. |
 
-Complete abbreviated application:
-
-```vue
-<div class="hr-rec-cand-eval">
-  <div class="hr-rec-cand-eval-header">
-    <span class="hr-rec-cand-eval-title">Candidate evaluation</span>
-    <div class="hr-rec-cand-eval-actions">
-      <button class="hr-rec-cand-eval-submit">Submit</button>
-    </div>
-  </div>
-</div>
-```
-
-```less
-.hr-rec-cand-eval {
-  .hr-rec-cand-eval-header {
-    display: flex;
-    .hr-rec-cand-eval-title {
-      color: #303133;
-    }
-    .hr-rec-cand-eval-actions {
-      display: flex;
-      .hr-rec-cand-eval-submit {
-        cursor: pointer;
-      }
-    }
-  }
-}
-```
-
-The abbreviation is acceptable because every shortened segment has a stable meaning and remains readable in isolation. The same term must not alternate between full and shortened forms within the subtree.
+With those qualifiers required, use `hr-rec-cand-eval`, `hr-rec-cand-eval-header`, and `hr-rec-cand-eval-title` in the same DOM ownership structure shown above. Do not alternate full and abbreviated forms of the same term within the subtree.
 
 **Negative example:**
 
@@ -183,8 +144,6 @@ Do not mix abbreviations for the same business term:
   }
 }
 ```
-
-Concise abbreviated naming is mandatory. Establish and apply a clear feature-level mapping from the first declaration; do not retain verbose full names or alternate shorthand across selectors. Length control must preserve understandable business meaning.
 
 ## Scenario 3: Name a Teleported Root
 

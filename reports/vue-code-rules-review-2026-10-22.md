@@ -1642,24 +1642,44 @@ const { page, loading, initPage } = useWorkbenchContext().provide()
 
 ## 六、完整性核对与文件快照
 
-正文覆盖全部 11 条核心规则、11 个独立 reference 的强制要求、各场景主题及检查清单，共包含 80 个代码围栏块。当前引用共包含 77 个源代码围栏块；本轮按 CSS 入口的结构精简 Vue SKILL.md，将重复范围说明、长路由枚举和引用中已有的细节压缩为核心约束，并把示例注释说明移入 Vue 8 引用。入口由 12,162 字符缩短为 6,822 字符，减少约 43.9%；规则要求、编号及全部示例保留。
+正文覆盖全部 11 条核心规则及其独立 reference，保留 80 个展开版代码示例供审阅对照。精简后的引用包含 66 个代码围栏块（原 77 个），减少的是重复或与目标规则无关的示例上下文；本报告的原有示例未删改。
 
-本轮仅精简 Vue 技能入口，在注释引用中承接示例说明，并更新本审阅报告的来源快照；其他技能及其报告未修改。入口仍采用 Core Rules、Required Reference Loading、Working Process 三部分，保留 11 条规则与 11 个独立 reference 的对应关系。核对对象为工作区的 SKILL.md、11 个 reference 和 UI 元数据，共 13 个 Vue 来源文件；下表按实际文件字节计算 SHA-256，便于后续判断报告与源文件是否仍对应。图标不属于规则正文快照。
+本轮在不改动技能入口、强制规则、目录/排序规范表及最终检查清单原文的前提下，精简 6 个引用的场景说明和等价示例。引用总字符数由 66,171 降为 56,129，减少 10,042 字符（15.2%）。第 1、5、8、10、11 条引用完整保留，包括业务注释覆盖、组件拆分边界和完整 provide/inject 固定模式。
 
-文档校验覆盖核心规则编号、11 个独立引用的覆盖、内部锚点、本地文件链接、代码围栏配对、中文占位标记替换，以及来源快照一致性。本仓库未提供可运行的 Vue 应用及对应构建配置；报告中的示例未编译或执行，不能据此宣称应用类型检查、lint 或运行时行为已经通过。
+已获用户确认的调整：第 3 条 reference 的完整统计页面模板缩成属性顺序片段。本报告第 3 条保留了完整模板原例，便于核对业务上下文。
+
+### 本轮精简与覆盖核对
+
+| 规则 | 引用字符数：前 → 后 | 示例数：前 → 后 | 保留的独立判断与反例 |
+| --- | --- | --- | --- |
+| Vue 1 | 3,155 → 3,155 | 6 → 6 | 完整保留，未压缩 |
+| Vue 2 | 6,036 → 4,743 | 9 → 7 | 最少 DOM、常见标签与原生控件、禁用容器、普通/冗余/用户明确要求无障碍三种情况 |
+| Vue 3 | 8,231 → 6,788 | 5 → 5 | 全部属性分组、v-if/v-show 同级、v-model 与绑定、动态布尔、文本 class/style、事件及展开覆盖顺序 |
+| Vue 4 | 4,118 → 2,418 | 10 → 6 | 多来源数组、两个来源也须数组、单来源例外、拆开 class/:class、长字符串和不可读单行数组反例 |
+| Vue 5 | 3,906 → 3,906 | 6 → 6 | 完整保留，未压缩 |
+| Vue 6 | 3,265 → 2,437 | 6 → 6 | 生效全覆盖、部分覆盖、未验证/目标不生效时显式导入；声明文件不等于运行时覆盖 |
+| Vue 7 | 4,377 → 3,729 | 3 → 3 | 普通宏顺序、函数内 await 与顶层 await 的区别、初始化后提前暴露、嵌套宏及 expose 后语句反例 |
+| Vue 8 | 9,085 → 9,085 | 9 → 9 | 完整保留，未压缩 |
+| Vue 9 | 15,141 → 11,011 | 19 → 14 | 首层/私有/复杂/提升共享等目录决策、完整允许目录、命名、公共转发、实例类型、工具归属和样式互斥 |
+| Vue 10 | 4,060 → 4,060 | 1 → 1 | 完整保留，未压缩 |
+| Vue 11 | 4,797 → 4,797 | 3 → 3 | 完整保留，未压缩 |
+
+核对方式：逐文件比较强制规则、规范表和最终检查清单；逐项检查独立场景覆盖；确认 11 条加载路由与引用归属；比较全部 80 个报告示例，核对本地链接及来源 SHA-256。源码片段未在实际 Vue 应用中编译运行；文档校验不等同于模型识别率的实测。
+
+下表仅记录 Vue 技能的 SKILL.md、11 个 reference 和 UI 元数据，共 13 个来源文件。其他技能及其报告不在本轮修改范围内。
 
 | 文件 | 字节数 | SHA-256 |
 | --- | --- | --- |
 | vue-code-rules/SKILL.md | 6822 | `8df26c6df66e8763e1e0a46dd8fd4d69f40fd9b06ae284dcb86fe4deea937732` |
-| vue-code-rules/references/auto-import-examples.md | 3265 | `3d851147c01b7eff5f14bdaf91b5f6af847948dd78024e47587e887352fa93b2` |
+| vue-code-rules/references/auto-import-examples.md | 2437 | `3b412b0fc07c05c6c3ae5e89c5ab578ff0fb4127f42abae3a288e2b6b7f61ddd` |
 | vue-code-rules/references/blank-line-examples.md | 3906 | `f3e6c08d81a7b9fd79be5d0e2ea09bc268b23a181efa0cd621538b224c547fdf` |
-| vue-code-rules/references/class-binding-examples.md | 4118 | `995748dde1288a530cef87e3d7c7b2cb1e23101447d1e49fb991de67b07a21f5` |
-| vue-code-rules/references/compiler-macro-examples.md | 4377 | `94a9e53b6bca685977b187ea9d443d9f119323cf72a0cc0553331f00839116a0` |
+| vue-code-rules/references/class-binding-examples.md | 2418 | `a7284765dd57a8003a1cd09f923431f85d2c4742dfb165674ffbc0c651faace2` |
+| vue-code-rules/references/compiler-macro-examples.md | 3729 | `1ce69f5514ce91f71d59da761a5996b69fcdcffcf6b5eb4f88079e7691d8fa0d` |
 | vue-code-rules/references/complex-component-context-examples.md | 4797 | `4b7047f2161f6b00d8c8695be011e7db47307b5600367f3a542ae457edba20ab` |
 | vue-code-rules/references/component-decomposition-examples.md | 4060 | `bc30591a4ef8bfba8515b49d63816f664826c57531c191f29d09c239f9023867` |
-| vue-code-rules/references/component-structure-examples.md | 15141 | `2de22ef77eeca313ef7038c86736e81c6f11d5d7f732a5ec4785a46c0a62af73` |
-| vue-code-rules/references/dom-structure-examples.md | 6068 | `dfc112b5d125ba4111b24c72b4397874425521e23ee3115726518caec0800a59` |
+| vue-code-rules/references/component-structure-examples.md | 11011 | `fd7c40b79c817245d4097bdbf8fb028437abddb18ee912121dc9f44dab52ea0a` |
+| vue-code-rules/references/dom-structure-examples.md | 4775 | `51571d587a81fef9777c995d22ae1d5e0ee19f8903af3e392d56414d77e12bbe` |
 | vue-code-rules/references/script-comment-examples.md | 9695 | `b0e1297513feb26db0fcf0b7baad63d5a90d13c744947799f73436ca4fdd1cc5` |
-| vue-code-rules/references/template-attribute-order-examples.md | 8281 | `7117d9e05a83e43c48f45ce0fe4e03d6829d3c69a220941d786d8774c9a94362` |
+| vue-code-rules/references/template-attribute-order-examples.md | 6826 | `3e430204bab6e25352dcbd86532e2cefda95f4af3efd2c8dcc3dea95ab8d5df1` |
 | vue-code-rules/references/template-examples.md | 3155 | `117bb62f30ce763ab317f7184aa1dbfedc5304c79d6776f49072ac497a36564a` |
 | vue-code-rules/agents/openai.yaml | 210 | `a429e2e6494f2e8f75cdbc0caea54da9d27d09c9b4b17edd3063a5adf01ef519` |

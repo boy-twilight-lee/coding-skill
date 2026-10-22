@@ -50,77 +50,7 @@ Retain the supplied order. Assume the button needs its padding, background, and 
 }
 ```
 
-## Scenario 2: Floating toolbar
-
-Keep positioning and stacking together, followed by contiguous sizing, visual, transition, and row-layout groups.
-
-**Positive example:**
-
-```less
-.map-tools {
-  position: absolute;
-  right: 16px;
-  top: 16px;
-  z-index: 20;
-  user-select: none;
-  height: 40px;
-  padding: 4px;
-  background: #fff;
-  border: 1px solid #dcdfe6;
-  border-radius: 8px;
-  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.12);
-  transition: box-shadow 160ms ease;
-  display: flex;
-  align-items: center;
-  gap: 8px;
-}
-```
-
-## Scenario 3: Bounded scrollable list
-
-Height and overflow form a sizing group; flex direction and gap stay in the final layout group.
-
-**Positive example:**
-
-```less
-.cand-list {
-  height: 320px;
-  overflow-y: auto;
-  padding: 12px;
-  background: #fff;
-  border: 1px solid #dcdfe6;
-  border-radius: 8px;
-  display: flex;
-  flex-direction: column;
-  gap: 8px;
-}
-```
-
-## Scenario 4: Input and focus state
-
-Keep border and radius together before typography, with transition after typography. The focus branch follows its own applicable categories.
-
-**Positive example:**
-
-```less
-.cand-input {
-  height: 36px;
-  width: 240px;
-  padding: 0 12px;
-  background: #fff;
-  border: 1px solid #dcdfe6;
-  border-radius: 6px;
-  font-size: 16px;
-  line-height: 24px;
-  transition: border-color 160ms ease, box-shadow 160ms ease;
-  &:focus {
-    border-color: #409eff;
-    box-shadow: 0 0 0 2px rgba(64, 158, 255, 0.2);
-  }
-}
-```
-
-## Scenario 5: Button with interaction states
+## Scenario 2: Button with interaction states
 
 Group each owner and state branch independently: transform precedes background on hover; cursor precedes opacity in the disabled branch.
 
@@ -153,93 +83,7 @@ Group each owner and state branch independently: transform precedes background o
 }
 ```
 
-## Scenario 6: Centered empty state
-
-Keep text properties together and flex alignment last; text-align controls alignment within multiline text.
-
-**Positive example:**
-
-```less
-.cand-empty {
-  height: 160px;
-  padding: 24px;
-  background: #f5f7fa;
-  border: 1px dashed #dcdfe6;
-  font-size: 16px;
-  line-height: 24px;
-  color: #909399;
-  text-align: center;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  gap: 12px;
-}
-```
-
-## Scenario 7: Card with shadow and movement
-
-Background, border, radius, and shadow form one visual group; motion precedes layout.
-
-**Positive example:**
-
-```less
-.cand-card {
-  overflow: hidden;
-  padding: 16px;
-  background: #fff;
-  border: 1px solid #dcdfe6;
-  border-radius: 8px;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
-  transition: transform 200ms ease, box-shadow 200ms ease;
-  display: flex;
-  flex-direction: column;
-  gap: 12px;
-  &:hover {
-    transform: translateY(-2px);
-    box-shadow: 0 6px 20px rgba(0, 0, 0, 0.14);
-  }
-}
-```
-
-## Scenario 8: Full-screen overlay
-
-Fixed positioning, inset, and z-index remain adjacent, followed by background and centering layout.
-
-**Positive example:**
-
-```less
-.map-mask {
-  position: fixed;
-  inset: 0;
-  z-index: 1000;
-  background: rgba(0, 0, 0, 0.4);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-}
-```
-
-## Scenario 9: Two-dimensional grid panel
-
-For a real two-dimensional layout, display, row/column tracks, and gap stay together in the layout group.
-
-**Positive example:**
-
-```less
-.map-grid {
-  height: 360px;
-  padding: 16px;
-  border: 1px solid #dcdfe6;
-  border-radius: 8px;
-  display: grid;
-  grid-template-columns: repeat(3, 1fr);
-  grid-template-rows: repeat(2, 1fr);
-  gap: 12px;
-}
-```
-
-## Scenario 10: Single-line text truncation
+## Scenario 3: Single-line text truncation
 
 Overflow belongs with sizing and clipping; text-overflow and white-space stay with typography.
 
@@ -257,7 +101,7 @@ Overflow belongs with sizing and clipping; text-overflow and white-space stay wi
 }
 ```
 
-## Scenario 11: Image fitting
+## Scenario 4: Image fitting
 
 For a replaced element such as img, group dimensions with object fitting before radius.
 
@@ -273,33 +117,7 @@ For a replaced element such as img, group dimensions with object fitting before 
 }
 ```
 
-## Scenario 12: Draggable resizable panel
-
-Cursor and resize form the interaction group; dimensions and the overflow needed for resizing form the sizing group.
-
-**Positive example:**
-
-```less
-.map-panel {
-  position: absolute;
-  left: 16px;
-  bottom: 16px;
-  cursor: grab;
-  resize: both;
-  height: 200px;
-  width: 320px;
-  overflow: auto;
-  padding: 16px;
-  background: #fff;
-  border: 1px solid #dcdfe6;
-  border-radius: 8px;
-  &:active {
-    cursor: grabbing;
-  }
-}
-```
-
-## Scenario 13: Mixin definition and call placement
+## Scenario 5: Mixin definition and call placement
 
 Assume header and body are direct DOM children of cx-container. Define the common mixin at the owner top; because it emits only layout properties, place calls in the consumer layout group without skipping parents.
 
@@ -327,7 +145,7 @@ Assume header and body are direct DOM children of cx-container. Define the commo
 }
 ```
 
-## Scenario 14: Do Not Interleave Presentation Categories
+## Scenario 6: Do Not Interleave Presentation Categories
 
 **Negative example:**
 

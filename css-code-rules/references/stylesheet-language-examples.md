@@ -4,13 +4,11 @@ Owns Core Rule 1.
 
 ## Mandatory Rules
 
-1. Prioritize the project's unified stylesheet-preprocessor convention. When modifying an existing component, preserve its original language, including CSS, Less, Sass, or SCSS; do not migrate it merely to match a different project default. For new components, first follow the unified project convention. If no unified convention determines the choice, select Less when the project supports Less or has no installed stylesheet preprocessor. If another preprocessor is installed and Less is unsupported, use the existing supported preference instead of introducing Less by personal preference. In a project without any preprocessor, select Less and establish its dependency and build support before compiling the new styles.
+1. Inspect the project convention, installed preprocessors, and active build configuration, then choose through the priority table below. Preserve the existing scoping mechanism, shared variables, and valid preprocessor syntax.
 
 ## Scenario 1: Select a Preprocessor and Preserve Existing Styles
 
-Situation: select the style language for a new component or modify an existing component. Inspect the project convention, installed preprocessors, and active build configuration before choosing.
-
-Apply this priority table:
+Apply this priority table when adding or modifying a component:
 
 | Situation | Required choice |
 | --- | --- |
@@ -38,19 +36,9 @@ For a new component without a unified convention, choose Less if it is already s
 </style>
 ```
 
-Preserve the existing scoping mechanism, shared variables, and valid preprocessor syntax. A project-wide SCSS convention takes priority over the mere presence of an installed Less dependency when creating a new component.
-
 **Negative example:**
 
-Do not convert an existing SCSS component to Less just because Less is preferred for a new component in another situation:
-
-```vue
-<style lang="less" scoped>
-@import './index.less';
-</style>
-```
-
-Do not choose Less for a new component solely because a dependency is installed when the project is unified on another preprocessor. Do not emit Less syntax before the required compiler support is available in a project without a preprocessor.
+The Less block above is wrong when it replaces an existing SCSS component merely by preference, overrides a unified convention for another preprocessor, or is emitted before the required compiler support is available.
 
 ## Review Checklist
 

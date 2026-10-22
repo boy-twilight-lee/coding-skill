@@ -2,9 +2,9 @@
 
 审阅日期：2026-10-22（Asia/Shanghai）。
 
-本报告同步整理当前工作区 CSS 规则，第一条的预编译语言选择、第三条的简洁缩写命名，以及第四条的 DOM 嵌套与混合复用已按最新要求更新，并核对来源文件指纹。正文按现行 14 条核心规则排列，每条下方直接放置完整中文示例、正反写法及适用边界。跨条款相关的示例在相应位置重复展示，便于就地审阅。
+本报告依据当前工作区的 `SKILL.md`、14 个 reference 和 UI 元数据重新生成。正文按现行 14 条核心规则排列，保留当前 reference 的全部代码示例，并以中文说明适用条件、例外和正反写法。
 
-示例标题、解释、注释和界面文案均使用中文，普通样式直接采用明确示例值；命名示例采用第三条的简洁缩写，嵌套示例采用第四条的 DOM 层级及用户提供的伪类、伪元素结构。反例代表应避免的写法；局部片段不能视为可直接运行的完整应用。本报告反映本轮已更新的样式语言、命名和嵌套规则。
+审阅重点是本轮精简是否保留规则完整性。报告中的规则以来源文件为准；代码块仅翻译界面文案，注释与现行示例一致。反例用于展示违规写法，局部片段不等同于可运行应用。
 
 ## 一、适用范围与执行要求
 
@@ -16,7 +16,7 @@
 
 这些是强制要求。只处理本次新增、修改、审查涉及的样式及必要的直接关联修复，不为统一风格迁移无关样式。旧代码写法不能自动成为复制违规写法的依据。
 
-高优先级指令优先；项目惯例仅在规则明确授权由配置决定时覆盖相应要求。不能满足某条规则时，采用最小必要偏离，并说明具体冲突。
+高优先级指令优先；项目惯例仅在规则明确授权由配置决定时覆盖相应要求。不能满足某条规则时，采用最小必要偏离，并说明具体冲突。引入 CSS 自定义属性或 `var(...)` 必须有实际需要，并核实所引用属性确实存在且受实际库版本或运行环境支持。
 
 ### 3. 修改前的检查
 
@@ -59,8 +59,6 @@
 
 新增组件时，先遵循项目统一约定；没有统一约定决定选择时，只有项目已经支持 Less，或者项目尚未安装任何样式预处理器，才选择 Less。仅支持其他预处理器且不支持 Less 时，沿用项目已支持的偏好。没有安装预处理器而选择 Less 时，应先补齐依赖和构建支持，再编译 Less 样式。
 
-
-
 **对应示例与适用边界：**
 
 #### 场景 1：选择预处理器并保留原有样式
@@ -97,15 +95,7 @@
 
 **反例：**
 
-不要因为其他场景中的新增组件偏好 Less，就将已有 SCSS 组件转换为 Less：
-
-```vue
-<style lang="less" scoped>
-@import './index.less';
-</style>
-```
-
-项目统一使用其他预处理器时，不得仅因安装了 Less 就为新增组件改选 Less。项目尚未安装预处理器时，也不能在编译支持就绪前直接输出无法构建的 Less 样式。
+上方 Less 写法在以下情况下属于反例：仅凭个人偏好替换已有 SCSS；违背项目对其他预处理器的统一约定；或者在编译支持就绪前直接输出 Less。
 
 <a id="css-2"></a>
 
@@ -129,7 +119,6 @@
 整体提取为入口旁的 index.less/index.scss 等匹配扩展名文件，通过组件 scoped style 引入，不移到脚本或全局入口。私有单文件子组件因此需要独立样式时，转为含 index.vue、index.ts 和样式文件的目录。
 
 一个组件通常一个完整样式文件，不按 header/content/actions 等视觉区域拆分。只有作用域确实需要隔离时才拆 scoped/global 文件。全局 reset、token、工具类和全局库覆盖放既有全局样式区域；一次性组件库覆盖留在组件。
-
 
 **对应示例与适用边界：**
 
@@ -182,10 +171,9 @@
 
 Teleport 根不能使用 popper 或 dropdown 等通用类名。全局选择器仍需标识业务组件，避免影响无关浮层。
 
-
 #### 场景 2：提取复杂组件样式
 
-场景：index.vue 内联样式达到 80 非空行，或至少四个自有选择器组且具备两类复杂度信号。即使组件仅使用一次，也不能继续保留内联规则。
+场景：内联样式满足上方任一强制提取条件。即使组件仅使用一次，也必须提取。
 
 **正例：**
 
@@ -242,8 +230,6 @@ talent-card/
 
 这样会使选择器归属难以跟踪，并容易重复父节点或状态块。除非作用域本身要求隔离，否则组件所属规则应集中管理。
 
-
-
 #### 场景 3：放置全局与组件自有规则
 
 场景：项目需要 reset、主题 token、共享工具样式及一次性的 Element Plus 输入框调整。
@@ -273,10 +259,9 @@ src/components/talent-form/index.less
 
 **反例：**
 
-不要把相同的一次性表单覆盖移到全局样式入口：
+不要把相同的一次性表单覆盖移到全局样式入口 `src/styles/element-plus.less`：
 
 ```less
-/* src/styles/element-plus.less */
 .el-input__wrapper {
   border-radius: 8px;
 }
@@ -293,7 +278,6 @@ src/components/talent-form/index.less
 项目自有类名强制采用简洁命名和统一、清晰的业务缩写，控制类名长度；使用 block-element-modifier 的单连字符结构，不使用双下划线或双连字符。第三方库类名保持原样。命名仍需标识组件、元素或状态，不用纯视觉名、任意后缀链或祖先路径堆叠。
 
 从命名开始就使用仓库或功能词汇表中的约定缩写，不再把缩写作为类名过长后的可选补救。没有既有映射时，先在功能内明确缩写并统一使用。删除冗余所有权词、重复业务词和无意义后缀；简短的结构词、状态词保持可读，不用含糊字母串换取长度。
-
 
 **对应示例与适用边界：**
 
@@ -357,18 +341,9 @@ src/components/talent-form/index.less
 
 即使颜色、位置或实现改变，类名仍应表达业务角色。
 
-
-
 #### 场景 2：强制简洁缩写命名
 
 场景：人力资源招聘功能包含候选人评估面板。反复拼接全部领域、页面、组件、元素及视觉角色，会使类名越来越长。
-
-以下步骤均为强制要求：
-
-1. 移除业务根已隐含的词语。
-2. 移除不表达业务含义的视觉或实现后缀。
-3. 使用约定业务缩写，保留明确归属和含义。
-4. 在业务含义清楚的前提下尽量缩短，不等类名过长后才启用缩写。
 
 **正例：**
 
@@ -402,37 +377,7 @@ src/components/talent-form/index.less
 | 候选人（candidate） | cand | 功能词汇表使含义明确 |
 | 评估（evaluation） | eval | 对评估统一使用该缩写 |
 
-完整缩写应用示例：
-
-```vue
-<div class="hr-rec-cand-eval">
-  <div class="hr-rec-cand-eval-header">
-    <span class="hr-rec-cand-eval-title">候选人评估</span>
-    <div class="hr-rec-cand-eval-actions">
-      <button class="hr-rec-cand-eval-submit">提交</button>
-    </div>
-  </div>
-</div>
-```
-
-```less
-.hr-rec-cand-eval {
-  .hr-rec-cand-eval-header {
-    display: flex;
-    .hr-rec-cand-eval-title {
-      color: #303133;
-    }
-    .hr-rec-cand-eval-actions {
-      display: flex;
-      .hr-rec-cand-eval-submit {
-        cursor: pointer;
-      }
-    }
-  }
-}
-```
-
-每个缩写片段含义稳定、单独阅读也可理解时才成立。同一子树内同一个词不能在全称和不同缩写间切换。
+确需上述限定时，采用 `hr-rec-cand-eval`、`hr-rec-cand-eval-header`、`hr-rec-cand-eval-title`，沿用上方的 DOM 所有权结构。同一子树内同一业务词不能混用全称与缩写。
 
 **反例：**
 
@@ -473,10 +418,6 @@ src/components/talent-form/index.less
 }
 ```
 
-简洁和缩写命名是强制要求。第一次命名时就建立并使用明确映射，不保留冗长全称，也不在不同选择器间切换简写。控制长度的同时必须让业务含义可理解。
-
-
-
 #### 场景 3：命名 Teleport 根节点
 
 场景：筛选面板将浮层渲染到组件根节点之外。
@@ -515,7 +456,7 @@ Teleport 根仍需完整业务限定。popper、option 或 dropdown-item 等通�
 **独立 reference：** [dom-nesting-examples.md](/D:/desktop/coding-skill/css-code-rules/references/dom-nesting-examples.md)
 
 1. 嵌套层级和子分支排列顺序必须跟随实际 DOM。子选择器不得漂浮到其父级之外；不得为了减少嵌套深度跳过中间父级 DOM，牺牲结构可读性。
-2. 组件内部存在真实复用时，优先在最近共同 DOM 祖先对应的选择器作用域顶部定义聚焦的 mixin，再在各消费者原有嵌套位置调用。不得为了复用把消费者提升到父级之外或扁平化选择器。
+2. 组件内部存在真实复用时，先在最近共同 DOM 祖先对应的选择器作用域顶部定义聚焦、不直接输出 CSS 的 mixin，再在各消费者原有嵌套位置调用。不得为了复用把消费者提升到父级之外或扁平化选择器。
 3. 先声明所属元素，再在内部通过 & 展开伪元素和伪类。共享条件单独成分支，再在内部嵌套交互状态，严格采用下方提供的错误/正确写法。业务状态影响的后代也保留完整 DOM 父级链。
 4. 直接子选择器仅在稳定边界确实用于避免误匹配时使用 & >，不能以裸 > 开头。
 5. 下方示例展示预编译语言写法。原生 CSS 的具体实现由 agent 按项目配置与浏览器支持自行判断，不规定固定回退模板。
@@ -578,7 +519,6 @@ Teleport 根仍需完整业务限定。popper、option 或 dropdown-item 等通�
 
 样式嵌套由实际 DOM 层级决定，不能因为父级看似没有职责或层级较深而跳过。DOM 本身存在无意义层级时，只能在授权修改范围内处理 DOM，不得通过扁平化选择器隐藏实际结构。
 
-
 #### 场景 2：判断直接子选择器是否必要
 
 场景：菜单只给自身条目加分隔线，嵌套子菜单也包含相同 menu-item 类。
@@ -618,8 +558,9 @@ Teleport 根仍需完整业务限定。popper、option 或 dropdown-item 等通�
 
 不要仅因当前结构恰好是一层父子关系就添加 & >。只有直接子范围是稳定组件契约时才使用。
 
+#### 场景 3：嵌套伪元素、伪类和条件
 
-采用你提供的固定结构：先声明所属元素，再用 & 嵌套伪元素和伪类。共享条件先形成分支，再在内部展开交互状态。空块只用于展示结构要求。
+先声明所属元素，再用 & 嵌套伪元素和伪类。共享条件先形成分支，再在内部展开交互状态。空块只用于展示结构要求。
 
 **错误写法：**
 
@@ -670,7 +611,6 @@ Teleport 根仍需完整业务限定。popper、option 或 dropdown-item 等通�
   }
 }
 ```
-
 
 #### 场景 4：在共同 DOM 祖先作用域顶部定义混合
 
@@ -728,7 +668,6 @@ Teleport 根仍需完整业务限定。popper、option 或 dropdown-item 等通�
 只有不存在业务根以下合适的库内部共同祖先时，才使用多个并列 deep 块；不扁平化散落或用逗号拼散覆盖。
 
 原生 CSS 的实现方式交由 agent 根据项目配置和浏览器支持自行判断，本条不提供原生 CSS 示例或指定回退模板。
-
 
 **对应示例与适用边界：**
 
@@ -868,16 +807,15 @@ Teleport 根仍需完整业务限定。popper、option 或 dropdown-item 等通�
 
 本条只针对第三方组件库的样式定制，不对其他普通业务样式增加此类要求。定制组件库时，优先采用已确认受所用版本支持的正式变量接口，或普通 scoped/deep 选择器，避免无必要地增加优先级和 important。
 
-
 **对应示例与适用边界：**
 
 #### 场景 1：局部定制组件库
 
-场景：定制 Element Plus 弹窗。本例以所用版本的文档明确支持并实际消费 --el-dialog-border-radius 为前提，使用前需核实版本和渲染节点。这里保留自定义属性，仅为演示组件库的正式定制接口；普通业务样式示例使用明确数值。
+场景：定制 Element Plus 弹窗。确认所用版本的文档明确支持并实际消费 `--el-dialog-border-radius`，且变量设置在实际渲染的所属元素上。
 
 **正例：**
 
-仅在此组件库定制场景中，在正确的组件根设置正式变量：
+在正确的组件根设置正式变量：
 
 ```less
 .talent-dialog {
@@ -895,7 +833,7 @@ Teleport 根仍需完整业务限定。popper、option 或 dropdown-item 等通�
 }
 ```
 
-组件库没有可用的正式变量接口时，再使用能可靠命中目标的最小普通嵌套或 deep 选择器。覆盖前核实所用库版本、文档和渲染 DOM。本例不要求普通业务样式采用 CSS 变量。
+组件库没有可用的正式变量接口时，再使用能可靠命中目标的最小普通嵌套或 deep 选择器。覆盖前核实所用库版本、文档和渲染 DOM。
 
 <a id="css-8"></a>
 
@@ -1064,7 +1002,6 @@ body {
 
 只有非显然兼容性 workaround、库约束或临时例外无法通过命名和结构表达时，才添加简短中文注释解释必要原因；项目明确要求其他语言或精确外部术语需要时除外。
 
-
 **对应示例与适用边界：**
 
 #### 场景 1：判断注释是否必要
@@ -1081,11 +1018,11 @@ body {
 }
 ```
 
-非显然的外部约束无法由结构和命名表达时，可以添加简洁中文说明：
+非显然的外部约束无法由结构和命名表达时，可以添加简洁中文说明。本场景的受支持旧版 iOS WebView 需要该前缀属性才能提供惯性滚动：
 
 ```less
 .legacy-dialog {
-  /* 说明旧版 WebView 滚动回弹处理的原因。 */
+  /* 兼容旧版 iOS WebView 的惯性滚动。 */
   -webkit-overflow-scrolling: touch;
 }
 ```
@@ -1095,9 +1032,9 @@ body {
 不要添加区域标签或复述相同声明的注释：
 
 ```less
-/* 卡片标题样式。 */
+/* 卡片样式。 */
 .talent-card {
-  /* 设置主要文字颜色。 */
+  /* 设置正文颜色。 */
   color: #303133;
 }
 ```
@@ -1110,11 +1047,9 @@ body {
 
 **独立 reference：** [blank-line-examples.md](/D:/desktop/coding-skill/css-code-rules/references/blank-line-examples.md)
 
-参考你提供目录下的 8 个 index.less：组件样式正文均连续书写，没有空白行。声明、子节点、兄弟节点、伪类、状态、deep 以及混合定义和调用之间都不插空行，层级通过缩进和大括号表达。
+组件样式正文连续书写：声明、子节点、兄弟节点、伪类、状态、deep 以及混合定义和调用之间都不插空行，层级通过缩进和大括号表达。
 
 组件根内部不因“逻辑分组”或文件较长而留空行；文件开头、结尾和块内边缘也不添加空白行。只在真正独立的顶层样式根之间，按需要保留最多一个分隔空行。文件末尾保留正常换行即可。
-
-参考文件：[class-score-statistics/index.less](/D:/desktop/precision-teaching-front/src/pages/teacher-exam-detail/component/exam-detail-statistics/component/class-score-statistics/index.less)、[class-answer-statistics/index.less](/D:/desktop/precision-teaching-front/src/pages/teacher-exam-detail/component/exam-detail-statistics/component/class-answer-statistics/index.less)。这里只提取空行习惯，未修改这些项目文件。
 
 **对应示例：**
 
@@ -1261,7 +1196,7 @@ body {
 | 8 | 布局 | display，Flex 组、Grid 组，对齐组，gap 组 |
 | 声明之后 | 嵌套选择器 | DOM 子节点、所属元素的伪元素/伪类及状态分支 |
 
-以下展示 13 个正例和 1 个乱序反例，均使用 Less。具体属性以目标元素确有实际作用为前提，不是每个元素都要写全，也不改变原生 CSS 由 agent 按项目判断的约定。
+以下保留 5 个正例和 1 个乱序反例，覆盖整体排序、状态分支、文本截断、图片适配及 mixin 调用位置。所有示例使用 Less；具体属性必须对目标元素有实际作用，不要求补齐全部分类。原生 CSS 的实现仍按项目配置判断。
 
 #### 正例 1：用户提供的返回按钮
 
@@ -1286,71 +1221,7 @@ body {
 }
 ```
 
-#### 正例 2：浮动工具栏
-
-定位与层叠连续放置，尺寸、视觉、过渡和行布局各自连续。
-
-```less
-.map-tools {
-  position: absolute;
-  right: 16px;
-  top: 16px;
-  z-index: 20;
-  user-select: none;
-  height: 40px;
-  padding: 4px;
-  background: #fff;
-  border: 1px solid #dcdfe6;
-  border-radius: 8px;
-  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.12);
-  transition: box-shadow 160ms ease;
-  display: flex;
-  align-items: center;
-  gap: 8px;
-}
-```
-
-#### 正例 3：有界滚动列表
-
-高度和溢出组成尺寸组；Flex 方向和 gap 留在最后的布局组。
-
-```less
-.cand-list {
-  height: 320px;
-  overflow-y: auto;
-  padding: 12px;
-  background: #fff;
-  border: 1px solid #dcdfe6;
-  border-radius: 8px;
-  display: flex;
-  flex-direction: column;
-  gap: 8px;
-}
-```
-
-#### 正例 4：输入框及聚焦状态
-
-边框、圆角等视觉属性不被字体属性打断；过渡位于文字之后。焦点分支也按自身属性类别排列。
-
-```less
-.cand-input {
-  height: 36px;
-  width: 240px;
-  padding: 0 12px;
-  background: #fff;
-  border: 1px solid #dcdfe6;
-  border-radius: 6px;
-  font-size: 16px;
-  line-height: 24px;
-  transition: border-color 160ms ease, box-shadow 160ms ease;
-  &:focus {
-    border-color: #409eff;
-    box-shadow: 0 0 0 2px rgba(64, 158, 255, 0.2);
-  }
-}
-```
-
-#### 正例 5：带交互状态的按钮
+#### 正例 2：带交互状态的按钮
 
 根声明和 hover/禁用分支分别保持同类相邻；hover 中 transform 在背景之前，禁用分支中 cursor 在 opacity 之前。
 
@@ -1381,85 +1252,7 @@ body {
 }
 ```
 
-#### 正例 6：居中空态
-
-文本排版集中在一起，Flex 容器对齐集中在最后；text-align 负责多行文字自身的对齐。
-
-```less
-.cand-empty {
-  height: 160px;
-  padding: 24px;
-  background: #f5f7fa;
-  border: 1px dashed #dcdfe6;
-  font-size: 16px;
-  line-height: 24px;
-  color: #909399;
-  text-align: center;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  gap: 12px;
-}
-```
-
-#### 正例 7：带阴影与位移反馈的卡片
-
-背景、边框、圆角、阴影为连续视觉组；动效在布局之前。
-
-```less
-.cand-card {
-  overflow: hidden;
-  padding: 16px;
-  background: #fff;
-  border: 1px solid #dcdfe6;
-  border-radius: 8px;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
-  transition: transform 200ms ease, box-shadow 200ms ease;
-  display: flex;
-  flex-direction: column;
-  gap: 12px;
-  &:hover {
-    transform: translateY(-2px);
-    box-shadow: 0 6px 20px rgba(0, 0, 0, 0.14);
-  }
-}
-```
-
-#### 正例 8：全屏遮罩
-
-固定定位、inset 与 z-index 相邻，背景之后才放居中布局。
-
-```less
-.map-mask {
-  position: fixed;
-  inset: 0;
-  z-index: 1000;
-  background: rgba(0, 0, 0, 0.4);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-}
-```
-
-#### 正例 9：二维网格面板
-
-明确需要行列协调的二维布局中，display、行列轨道和 gap 集中为布局组。
-
-```less
-.map-grid {
-  height: 360px;
-  padding: 16px;
-  border: 1px solid #dcdfe6;
-  border-radius: 8px;
-  display: grid;
-  grid-template-columns: repeat(3, 1fr);
-  grid-template-rows: repeat(2, 1fr);
-  gap: 12px;
-}
-```
-
-#### 正例 10：单行文本省略
+#### 正例 3：单行文本省略
 
 overflow 属于尺寸与裁剪组；text-overflow、white-space 与文字排版属性放在一起。
 
@@ -1475,7 +1268,7 @@ overflow 属于尺寸与裁剪组；text-overflow、white-space 与文字排版�
 }
 ```
 
-#### 正例 11：图片裁剪
+#### 正例 4：图片裁剪
 
 针对 img 等替换元素，尺寸与内容适配放在一起，再设置圆角。
 
@@ -1489,31 +1282,7 @@ overflow 属于尺寸与裁剪组；text-overflow、white-space 与文字排版�
 }
 ```
 
-#### 正例 12：可拖拽、可调整尺寸的面板
-
-cursor 与 resize 同属交互组；height、width 与支持调整尺寸的 overflow 放在尺寸组。
-
-```less
-.map-panel {
-  position: absolute;
-  left: 16px;
-  bottom: 16px;
-  cursor: grab;
-  resize: both;
-  height: 200px;
-  width: 320px;
-  overflow: auto;
-  padding: 16px;
-  background: #fff;
-  border: 1px solid #dcdfe6;
-  border-radius: 8px;
-  &:active {
-    cursor: grabbing;
-  }
-}
-```
-
-#### 正例 13：mixin 定义与调用的位置
+#### 正例 5：mixin 定义与调用的位置
 
 假设 DOM 中 header、body 是 cx-container 的直接子节点。共同父级顶部定义混合；这个混合只输出布局属性，因此调用放在各消费者声明的布局位置，不跳过父级。
 
@@ -1694,19 +1463,21 @@ prettier --write src/components/talent-card/index.less
 prettier --write "src/**/*.less"
 ```
 
-## 三、此前调整后的边界
+## 三、本轮精简与保留决策
 
-- 原生 CSS 的具体行为由 agent 依据项目配置和浏览器支持自行判断；报告不提供原生 CSS 专用示例或固定回退模板。
-- 示例默认使用明确的颜色、尺寸、圆角和阴影值，除非演示主题确实需要，否则不使用 CSS 变量；保留组件库变量接口时必须说明必要性及所用版本支持的前提。全局 token 文件的放置归属不构成示例使用变量的理由。
-- 当前没有 min-width: 0 或 min-height: 0 的专门要求与示例。其他非零最小尺寸示例用于讨论实际尺寸和冗余声明。
-- 一维布局使用 Flexbox；只有二维行列协同对齐时，才考虑 Grid。
-- 必要的 scoped/unscoped 分离与 Teleport 业务根仍保留；不因此把普通组件样式变为全局。
-- 80 个非空行，或至少四个选择器组加至少两类复杂度信号，均为强制提取条件。
-- 新 CSS 特性是否支持，以实际浏览器和构建配置为准；示例中的回退不是对某项特性的全局禁用。
+本轮仅调整 9 个 reference，相对本轮修改前版本净减少 243 行、约 8,526 个字符。按英文和样式代码的字符密度估算，约减少 2,100—2,600 tokens；这是估算值，未使用目标模型 tokenizer 精确计数，按需加载时的实际节省取决于读取哪些文件。
+
+- 属性排序从 14 个场景缩为 6 个；完整属性分类表、排序规则、状态分支、文本与 overflow 的归属、图片 fitting、mixin 定义/调用位置和乱序反例均保留。
+- 命名保留一套完整 HTML/Less 对照、缩写映射表及必要名称举例，删除重复的完整限定名称实现；禁止通用根、双分隔符、不透明缩写、混用缩写和冗长祖先链的反例仍保留。
+- 语言选择以完整优先级表表达全部分支，不重复同一 Less 代码块；作用域引用语言选择规则，提取阈值、复杂度计数、私有子组件目录转换和 scoped 导入方式均保留。
+- 合并格式化恢复流程及重复说明，移除面向示例维护者的要求和不影响决策的历史说明；注释示例仅保留规则演示所需的具体中文注释。
+- 用户已确认：保留空行 reference 的普通嵌套、状态、deep、mixin 四个正例；保留无效声明 reference 的三组现有反例，不缩减同类属性覆盖。
+
+静态对照未发现本轮精简删除独立规则、适用条件或例外。此结论来自来源文件和差异核对，未进行独立 agent 行为测试。
 
 ## 四、14 条规则与 14 个独立 reference
 
-每条核心规则只对应一个主 reference，文件各自包含该规则的要求、完整示例与检查清单。按编号选择并完整读取涉及的文件，不再共用混合主题的引用文件。
+14 条核心规则分别路由到 14 个主 reference。按任务完整读取全部相关文件，不确定时也读取；每个适用任务至少读取一个，没有精确匹配时读取最接近的文件。相关文件可共同适用于同一项修改。
 
 | 规则 | 独立 reference |
 | --- | --- |
@@ -1735,25 +1506,50 @@ prettier --write "src/**/*.less"
 
 ## 六、完整性核对与文件快照
 
-本报告包含全部 14 条 CSS 核心规则及对应中文示例，共 83 个代码围栏块。14 条规则分别对应 14 个独立 reference；原有 83 个源代码围栏块在拆分前后逐字保留，没有丢失或新增示例代码。第 12、13、14 条分别负责选择器合并、兼容性、格式化与最终检查。
+核对范围为 16 个来源文件：入口、14 个 reference 和 UI 元数据。14 条规则编号与路由完整，全部来源文件可读取。下表统计当前 reference 的代码围栏块；合计 72 个，与本报告逐条示例的数量及内容对应。仅界面文案按中文展示，不改变类名、属性、值及结构。
 
-核对了 16 个来源文件（SKILL.md、14 个 reference 和 UI 元数据）、规则编号、引用链接和代码示例迁移。示例没有在实际应用中编译运行。
+| 规则 | 代码围栏块数 | 对照结果 |
+| --- | --- | --- |
+| CSS 1 | 2 | 与当前 reference 一致 |
+| CSS 2 | 11 | 与当前 reference 一致 |
+| CSS 3 | 10 | 与当前 reference 一致 |
+| CSS 4 | 12 | 与当前 reference 一致 |
+| CSS 5 | 5 | 与当前 reference 一致 |
+| CSS 6 | 3 | 与当前 reference 一致 |
+| CSS 7 | 2 | 与当前 reference 一致 |
+| CSS 8 | 7 | 与当前 reference 一致 |
+| CSS 9 | 3 | 与当前 reference 一致 |
+| CSS 10 | 5 | 与当前 reference 一致 |
+| CSS 11 | 6 | 与当前 reference 一致 |
+| CSS 12 | 2 | 与当前 reference 一致 |
+| CSS 13 | 2 | 与当前 reference 一致 |
+| CSS 14 | 2 | 与当前 reference 一致 |
+
+检查结果：
+
+- Skill 结构校验通过（`quick_validate.py`）。
+- 42 个本地文件链接与内部锚点检查通过；`git diff --check` 通过。
+- 本报告 14 个章节的代码围栏块与对应来源逐条核对通过；空行四个正例和无效声明三组反例均保留。
+- 逐条核对规则适用范围、提取阈值、命名限制、DOM 与 mixin 层级、deep 例外、属性顺序、有效声明判断、兼容性和格式化边界，未发现本轮精简导致的独立规则丢失。
+- 示例未在实际 Vue/预处理器工程中编译，未验证真实组件库 DOM 或浏览器表现；库版本、reset、DOM 和浏览器目标需在应用该 skill 时按实际项目核验。
+
+以下指纹对应本次生成时的来源文件原始字节，用于识别报告是否落后于来源；它们不是规则正确性的证明。
 
 | 文件 | 字节数 | SHA-256 |
 | --- | --- | --- |
-| css-code-rules/SKILL.md | 12661 | `cfc9f3a255c93a4e554b1e8e434c882ca395735162e7d0d18d56142f186310d4` |
-| css-code-rules/references/stylesheet-language-examples.md | 3396 | `4cbf6ff09c1829697aaf32d8b5b52bf476a8c862bbcc3d760fc84a214ee16904` |
-| css-code-rules/references/style-scope-and-extraction-examples.md | 7327 | `5ce2b46d566b6371cd71bbd4f351789d9a80853d097f79a9fb42043ef4a2a8f6` |
-| css-code-rules/references/naming-examples.md | 7465 | `e98fa1b2cdfdc2af080adaf3860d5f2251cfc2fa9eb2ed22f63e49ad27f22934` |
+| css-code-rules/SKILL.md | 10393 | `53ff4ba1c2999d453727067f1e1fdaa1a300cfb7f51c0f988c2e1dc9ab0ccf93` |
+| css-code-rules/references/stylesheet-language-examples.md | 2295 | `9041d31f8c2caccf5728d98e0c4a6e20f295eac6dda086bb153419692e21a18b` |
+| css-code-rules/references/style-scope-and-extraction-examples.md | 6685 | `0a018afd45f59ac43f5e2bfcb295a6f5becf9f13126889e4c81c80b2e41875c8` |
+| css-code-rules/references/naming-examples.md | 6158 | `794aff8fabf0b9dbe746fa7451a81fea70983d29d27ac566fe60af462f25541f` |
 | css-code-rules/references/dom-nesting-examples.md | 7064 | `10c28b85b998816ae110eafd2835d85aafbb5e277069a571dd83f3bb4052982c` |
 | css-code-rules/references/deep-selector-examples.md | 2729 | `b736942cc2802042b56a59ebfb24b02f35da9a9a77647ca4631ef10575a0106d` |
 | css-code-rules/references/layout-examples.md | 1208 | `602bcd45c2f7518d46e836db4e3fea78bcdd79fa26ffd9877d903fc011ec64c9` |
-| css-code-rules/references/library-customization-examples.md | 1809 | `09b56d6d9b2ac912d8e20d24473186b6759455c962e6b3ee054fdc552f4c5532` |
-| css-code-rules/references/ineffective-declaration-examples.md | 8758 | `385eda204e4aab43d70323d8a4eb902ee9abc20c9484b46f80fda904318a5e42` |
-| css-code-rules/references/style-comment-examples.md | 1613 | `a26af9259489b802101f29f6ee22bbfd1c7ca93703d3605c88b42bee12536ae3` |
-| css-code-rules/references/blank-line-examples.md | 3419 | `6f8f470978b868d3802a1ec934426b8f0af994382da2105012fe7acdddb06c0e` |
-| css-code-rules/references/property-order-examples.md | 10115 | `7afa10d4140dfef461512ed18691e4e1788df1ee812849cad903ec847c16461b` |
+| css-code-rules/references/library-customization-examples.md | 1411 | `f3c3658306fc86d6efdc9530b43c7e4f8ec4a0a46683d5acc6eaf47b7c77d7a5` |
+| css-code-rules/references/ineffective-declaration-examples.md | 8676 | `77c12c425b30da0959a1dbcd5102ffb10af807f6cd4363cfd26ec08eb27d2374` |
+| css-code-rules/references/style-comment-examples.md | 1724 | `3eaffb362a4e68659bcceee04b97ba3a62dde093d2fc24377a9fe857290395d4` |
+| css-code-rules/references/blank-line-examples.md | 3042 | `9220a0048985d6dfb98cee198ae612422db3bf25e17febc2a60cbc73764a3c5f` |
+| css-code-rules/references/property-order-examples.md | 6446 | `0607c3153ce0f60335e5f53bd56791873de839c404af22ef2d73ce521ce865ae` |
 | css-code-rules/references/selector-consolidation-examples.md | 1256 | `544441ab50d7ac7da322524d2be9b010a6b6c277ae46506fdeb049916d2b9260` |
 | css-code-rules/references/compatibility-examples.md | 1461 | `94a4005976e267db997c559fee13c4139f1f88847f72bb4ecbb571d531402f4b` |
-| css-code-rules/references/formatting-and-review-examples.md | 2250 | `0ea9b58b2433a8926c92ceec513dc297d92c688a5a2109287deeb3fc9af40ce7` |
+| css-code-rules/references/formatting-and-review-examples.md | 1756 | `d601f5a2e680a88096e728a18f53faa3ed0cfd2b260754f066a46abfdc0898a8` |
 | css-code-rules/agents/openai.yaml | 207 | `2985f6e342a9e6d8598ea32d51280d4cb2a494eb2a632038cea40bd18223ac82` |

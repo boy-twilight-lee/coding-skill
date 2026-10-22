@@ -25,69 +25,36 @@ Owns Core Rule 3.
 | 5 | Plain boolean attributes | `required`, `readonly`, `disabled`; bare Boolean component props verified against their contract |
 | 6 | Events | `@click`, `@change`, `@keydown.enter`, `v-on:blur`, `v-on="listeners"` |
 
-## Scenario 1: Follow the Supplied Statistics Template
+## Scenario 1: Follow the Supplied Statistics Tag Order
 
 **Positive example:**
 
-This excerpt retains the supplied business expressions and slot/child order. The card lists bindings before literal icon and class values; each select puts `v-if` before `v-model`, followed by bound options. Its state, components, and helpers are supplied by the owning component; no script or style changes are implied.
+These independent tag excerpts retain the supplied card's bound style/title, literal icon/class, and select directives. Unrelated child content, repeated selectors, and state declarations are omitted; the owner supplies the referenced values.
 
 ```vue
-<template>
-  <exam-detail-card
-    :empty="!available"
-    :loading="loading"
-    :title="`${curTab === STATISTICS_TAB.single ? '单' : '全'}科概览`"
-    :style="{
-      height: valueToPx(available ? 516 : height)
-    }"
-    icon="icon-exam-detail-card-subject"
-    class="subject-summary-statistics"
-  >
-    <template #extra>
-      <a-select
-        v-if="curTab === STATISTICS_TAB.single"
-        v-model="statisticsContext.subjectId"
-        :options="statisticsContext.subjects"
-        :field-names="{
-          label: 'subjectName',
-          value: 'subjectId'
-        }"
-      >
-        <template #prefix>
-          <form-prefix text="学科" />
-        </template>
-      </a-select>
-      <a-select
-        v-if="available"
-        v-model="classId"
-        :options="classOptions"
-        :field-names="{
-          label: 'className',
-          value: 'classId'
-        }"
-      >
-        <template #prefix>
-          <form-prefix text="统计范围" />
-        </template>
-      </a-select>
-    </template>
-    <template #empty>
-      <statistics-empty :loading="loading" />
-    </template>
-    <statistics-summary />
-    <div class="subject-summary-statistics-main">
-      <satistics-chart />
-      <satistics-rank />
-    </div>
-  </exam-detail-card>
-</template>
+<exam-detail-card
+  :empty="!available"
+  :loading="loading"
+  :title="`${curTab === STATISTICS_TAB.single ? '单' : '全'}科概览`"
+  :style="{
+    height: valueToPx(available ? 516 : height)
+  }"
+  icon="icon-exam-detail-card-subject"
+  class="subject-summary-statistics"
+/>
+
+<a-select
+  v-if="curTab === STATISTICS_TAB.single"
+  v-model="statisticsContext.subjectId"
+  :options="statisticsContext.subjects"
+/>
 ```
 
-This example preserves supplied class names to make ordering review straightforward. Naming and other concerns still follow their own rules; it does not create a class-naming exception.
+Supplied class names are retained for comparison and do not waive CSS naming rules.
 
 **Negative example:**
 
-Do not put text attributes before directives or put `v-if` after other directives and bindings:
+Text must not precede directives, and v-if must not follow v-model or bindings:
 
 ```vue
 <a-select
@@ -102,7 +69,7 @@ Do not put text attributes before directives or put `v-if` after other directive
 
 **Positive example:**
 
-The conditional directive is first, other directives follow, and the final groups are bindings, literal text, the plain required flag, and events. `:disabled` remains a binding even though its result is boolean.
+The bound boolean :disabled belongs to bindings; the plain required flag precedes events.
 
 ```vue
 <input
@@ -120,7 +87,7 @@ The conditional directive is first, other directives follow, and the final group
 
 **Negative example:**
 
-The same attributes are interleaved below: events are not last, text precedes directives, and `:disabled` is separated from the other binding.
+The same attributes are interleaved here:
 
 ```vue
 <input
@@ -138,7 +105,7 @@ The same attributes are interleaved below: events are not last, text precedes di
 
 ## Scenario 3: Preserve Spread Override Order
 
-The bound name intentionally overrides any name supplied by defaults. Keep both in that relative order inside the binding group. Here `v-show` occupies the same highest-priority group as `v-if`:
+The explicit name must retain its position after defaults to override the spread value. v-show has the same leading priority as v-if:
 
 ```vue
 <user-card
@@ -150,7 +117,7 @@ The bound name intentionally overrides any name supplied by defaults. Keep both 
 />
 ```
 
-Do not alphabetically move `:name` before `v-bind="defaults"`, because defaults could then override the explicit name. When a spread also contributes keys or listeners affected by grouping, inspect the actual overlap before moving attributes.
+Moving :name before the spread reverses that override. Inspect overlapping keys and listeners before any order-sensitive movement.
 
 ## Review Checklist
 
