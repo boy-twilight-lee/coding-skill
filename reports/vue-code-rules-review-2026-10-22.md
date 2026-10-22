@@ -1642,15 +1642,15 @@ const { page, loading, initPage } = useWorkbenchContext().provide()
 
 ## 六、完整性核对与文件快照
 
-正文覆盖全部 11 条核心规则、11 个独立 reference 的强制要求、各场景主题及检查清单，共包含 80 个代码围栏块。当前引用共包含 77 个源代码围栏块；本轮只精简示例中的非必要注释，保留全部示例及其非注释代码。Vue 8 的注释演示和 Vue 5 的必要注释间距/位置对照仍保留。
+正文覆盖全部 11 条核心规则、11 个独立 reference 的强制要求、各场景主题及检查清单，共包含 80 个代码围栏块。当前引用共包含 77 个源代码围栏块；本轮按 CSS 入口的结构精简 Vue SKILL.md，将重复范围说明、长路由枚举和引用中已有的细节压缩为核心约束，并把示例注释说明移入 Vue 8 引用。入口由 12,162 字符缩短为 6,822 字符，减少约 43.9%；规则要求、编号及全部示例保留。
 
-本轮仅更新 Vue 技能的示例注释政策、相关引用中的示例及本审阅报告，未修改其他技能或其报告。核对对象为工作区的 SKILL.md、11 个 reference 和 UI 元数据，共 13 个 Vue 来源文件；下表按实际文件字节计算 SHA-256，便于后续判断报告与源文件是否仍对应。图标不属于规则正文快照。
+本轮仅精简 Vue 技能入口，在注释引用中承接示例说明，并更新本审阅报告的来源快照；其他技能及其报告未修改。入口仍采用 Core Rules、Required Reference Loading、Working Process 三部分，保留 11 条规则与 11 个独立 reference 的对应关系。核对对象为工作区的 SKILL.md、11 个 reference 和 UI 元数据，共 13 个 Vue 来源文件；下表按实际文件字节计算 SHA-256，便于后续判断报告与源文件是否仍对应。图标不属于规则正文快照。
 
 文档校验覆盖核心规则编号、11 个独立引用的覆盖、内部锚点、本地文件链接、代码围栏配对、中文占位标记替换，以及来源快照一致性。本仓库未提供可运行的 Vue 应用及对应构建配置；报告中的示例未编译或执行，不能据此宣称应用类型检查、lint 或运行时行为已经通过。
 
 | 文件 | 字节数 | SHA-256 |
 | --- | --- | --- |
-| vue-code-rules/SKILL.md | 12162 | `1810b6e8139b214130974b61fef078d1a90e6d6e21b04ca2db3bb28a978d3032` |
+| vue-code-rules/SKILL.md | 6822 | `8df26c6df66e8763e1e0a46dd8fd4d69f40fd9b06ae284dcb86fe4deea937732` |
 | vue-code-rules/references/auto-import-examples.md | 3265 | `3d851147c01b7eff5f14bdaf91b5f6af847948dd78024e47587e887352fa93b2` |
 | vue-code-rules/references/blank-line-examples.md | 3906 | `f3e6c08d81a7b9fd79be5d0e2ea09bc268b23a181efa0cd621538b224c547fdf` |
 | vue-code-rules/references/class-binding-examples.md | 4118 | `995748dde1288a530cef87e3d7c7b2cb1e23101447d1e49fb991de67b07a21f5` |
@@ -1659,7 +1659,7 @@ const { page, loading, initPage } = useWorkbenchContext().provide()
 | vue-code-rules/references/component-decomposition-examples.md | 4060 | `bc30591a4ef8bfba8515b49d63816f664826c57531c191f29d09c239f9023867` |
 | vue-code-rules/references/component-structure-examples.md | 15141 | `2de22ef77eeca313ef7038c86736e81c6f11d5d7f732a5ec4785a46c0a62af73` |
 | vue-code-rules/references/dom-structure-examples.md | 6068 | `dfc112b5d125ba4111b24c72b4397874425521e23ee3115726518caec0800a59` |
-| vue-code-rules/references/script-comment-examples.md | 9256 | `e7cf1ecc26f72fe1480e6c4b58025436781f7dee4836c3e27a58a2bb12650fcb` |
+| vue-code-rules/references/script-comment-examples.md | 9695 | `b0e1297513feb26db0fcf0b7baad63d5a90d13c744947799f73436ca4fdd1cc5` |
 | vue-code-rules/references/template-attribute-order-examples.md | 8281 | `7117d9e05a83e43c48f45ce0fe4e03d6829d3c69a220941d786d8774c9a94362` |
 | vue-code-rules/references/template-examples.md | 3155 | `117bb62f30ce763ab317f7184aa1dbfedc5304c79d6776f49072ac497a36564a` |
 | vue-code-rules/agents/openai.yaml | 210 | `a429e2e6494f2e8f75cdbc0caea54da9d27d09c9b4b17edd3063a5adf01ef519` |

@@ -2,6 +2,10 @@
 
 Owns Core Rule 8.
 
+## Example Presentation
+
+Keep positive and negative examples free of nonessential comments. Retain comments only to demonstrate a comment rule, spacing/placement, or an essential non-obvious constraint; put ordinary explanations outside code fences. Focused examples do not waive actual project-code comment coverage. Replace `<zh: ...>` placeholders with concise Chinese comments when required; never copy the markers into project code.
+
 ## Ownership
 
 For `<script lang="ts">` and `<script setup lang="ts">`, `ts-code-rules` is the canonical source for generic declaration comments, function and callback comments, internal comments, redundant wrappers, intermediate values, and guards. This reference adds Vue-specific coverage and placement for contracts, reactivity, lifecycle work, compiler macros, and template regions.
