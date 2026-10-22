@@ -51,9 +51,9 @@ Optional target-specific UI trees such as `pages-pc/` and `components-pc/` follo
 
 Owner-private directories such as `component/`, `hooks/`, `constants/`, `type/`, and `utils/` are optional. Add only the directories required by that owner, and keep their public surface no broader than their real consumers require.
 
-## Public Entries
+## Related Boundary Rule
 
-Use configured aliases and public entries across ownership boundaries. Relative imports remain appropriate inside one owner when they do not bypass another module's public contract. Barrel files re-export public declarations; they do not contain business implementation or expose private internals for convenience.
+When selecting cross-owner import paths or exposing declarations, also read [Cross-Module Public Entries](public-entries.md). That reference owns alias selection and barrel behavior; this reference owns source-layer placement.
 
 ## Review Checklist
 
@@ -62,4 +62,3 @@ Use configured aliases and public entries across ownership boundaries. Relative 
 - Private constants, types, helpers, and composables stay with their nearest owner until real cross-owner reuse exists.
 - `src/type` and `src/utils` are focused layers rather than catch-all directories.
 - Optional directories are created only for real contents and are not added as placeholders.
-- Cross-owner consumers use configured aliases and established public entries.

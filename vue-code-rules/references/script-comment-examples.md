@@ -1,5 +1,7 @@
 # Vue Script Comment Examples
 
+Owns Core Rule 7.
+
 ## Ownership
 
 For `<script lang="ts">` and `<script setup lang="ts">`, `ts-code-rules` is the canonical source for generic declaration comments, function and callback comments, internal comments, redundant wrappers, intermediate values, and guards. This reference adds Vue-specific coverage and placement for contracts, reactivity, lifecycle work, compiler macros, and template regions.

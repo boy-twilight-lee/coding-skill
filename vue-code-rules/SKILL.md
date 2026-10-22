@@ -29,13 +29,17 @@ In examples, `<zh: ...>` marks placeholder content for a Chinese comment. Replac
 
 Loading this entrypoint is not the complete workflow. After the initial repository inspection and before making implementation or review judgments, map every affected concern to the list below and read each matching reference in full. Every task covered by this skill must open at least one reference. When no route seems to match, read the closest reference instead of proceeding with only this entrypoint. Do not merely mention or summarize a reference without opening it. When uncertain whether a reference applies, read it. References are authoritative requirements, not optional background.
 
-- Read [Template Examples](references/template-examples.md) when deciding SFC block order, component tags, slots, DOM depth, or semantic elements.
-- Read [Class Binding Examples](references/class-binding-examples.md) when an element combines static, reusable, or conditional class sources.
-- Read [Blank Line Examples](references/blank-line-examples.md) when deciding SFC block spacing, template whitespace, or JavaScript-script whitespace. TypeScript-script whitespace belongs to `ts-code-rules`; style-block whitespace belongs to `css-code-rules`.
-- Read [Script Structure Examples](references/script-structure-examples.md) when ordering Vue imports, compiler macros, runtime declarations, or deciding whether Vue and Vue Router APIs need explicit imports.
-- Read [Script Comment Examples](references/script-comment-examples.md) for business-state, contract, watcher, lifecycle, and template-region comment coverage and placement, and for the generic script baseline in JavaScript SFCs. For TypeScript SFCs, `ts-code-rules` owns the generic declaration, callback, internal-comment, and redundancy rules.
-- Read [Component Structure Examples](references/component-structure-examples.md) when deciding component naming, directory layout, public entries, exported instance types, or private-file organization.
-- Read [Provide/Inject Context Pattern](references/complex-component-context-examples.md) before implementing or reviewing any Vue `provide` or `inject` scenario, including its facade, key, fallback, and consumers. Follow its complete fixed example.
+Each core rule owns one reference below. When a task also touches another rule, load that rule's reference as well.
+
+- Rule 1: Read [Template Examples](references/template-examples.md) when deciding SFC block order, component tags, or slots.
+- Rule 2: Read [DOM Structure Examples](references/dom-structure-examples.md) when deciding DOM minimality, wrapper necessity, or interactive and semantic elements.
+- Rule 3: Read [Class Binding Examples](references/class-binding-examples.md) when an element combines static, reusable, or conditional class sources.
+- Rule 4: Read [Blank Line Examples](references/blank-line-examples.md) when deciding SFC block spacing, template whitespace, or JavaScript-script whitespace. TypeScript-script whitespace belongs to `ts-code-rules`; style-block whitespace belongs to `css-code-rules`.
+- Rule 5: Read [Compiler Macro Examples](references/compiler-macro-examples.md) when placing compiler macros, ordering component contracts and runtime declarations, or exposing initialized bindings around top-level `await`.
+- Rule 6: Read [Auto-Import Examples](references/auto-import-examples.md) when deciding whether Vue or Vue Router APIs need explicit imports based on the active Vite auto-import configuration.
+- Rule 7: Read [Script Comment Examples](references/script-comment-examples.md) for business-state, contract, watcher, lifecycle, and template-region comment coverage and placement, and for the generic script baseline in JavaScript SFCs. For TypeScript SFCs, `ts-code-rules` owns the generic declaration, callback, internal-comment, and redundancy rules.
+- Rule 8: Read [Component Structure Examples](references/component-structure-examples.md) when deciding component naming, directory layout, public entries, exported instance types, or private-file organization.
+- Rule 9: Read [Provide/Inject Context Pattern](references/complex-component-context-examples.md) before implementing or reviewing any Vue `provide` or `inject` scenario, including its facade, key, fallback, and consumers. Follow its complete fixed example.
 
 ## Working Process
 

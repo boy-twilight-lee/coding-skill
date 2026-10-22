@@ -18,12 +18,12 @@
 
 ## 🧰 包含的 Skill
 
-| Skill                     | 适用范围                                 | 主要关注点                                                   |
-| ------------------------- | ---------------------------------------- | ------------------------------------------------------------ |
-| `command-execution-rules` | Shell、系统命令和自动化脚本              | 执行方式、参数安全、工作目录、编码、超时、退出状态和错误报告 |
-| `ts-code-rules`           | TypeScript、TSX、Vue TypeScript          | 修改范围、类型、导入、异步流程、错误处理和运行时兼容性       |
-| `vue-code-rules`          | Vue 3 SFC、组件、页面、布局和 composable | 模板规范、编译器宏、响应式逻辑、组件职责和架构边界           |
-| `css-code-rules`          | CSS、Less、Sass、SCSS、Vue style         | 作用域、命名、嵌套、布局、设计令牌和浏览器兼容性             |
+| Skill | 适用范围 | 主要关注点 |
+| --- | --- | --- |
+| `command-execution-rules` | Shell、系统命令、命令执行封装和自动化脚本 | 直接执行与 Python 编排的选择、参数安全、工作目录、输出编码、超时和失败报告 |
+| `ts-code-rules` | TypeScript、TSX、Vue SFC 中的 TypeScript | 改动范围与冗余清理、中文业务注释、空行与导入规范、源码分层与公共入口、异步及错误处理、运行时兼容性 |
+| `vue-code-rules` | Vue 3 SFC、组件、页面、布局和 composable | SFC 结构与最小 DOM、类绑定、编译器宏与自动导入、中文业务注释、组件目录与实例类型、固定 provide/inject 上下文模式 |
+| `css-code-rules` | CSS、Less、Sass、SCSS、Vue 样式块 | 预处理器与作用域、样式提取、业务类名、DOM 层级嵌套与 mixin、深度选择器、布局与组件库定制、无效声明清理、属性顺序与兼容性 |
 
 ## 📦 安装
 

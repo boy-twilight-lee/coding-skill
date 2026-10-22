@@ -1,5 +1,7 @@
 # Component Structure Examples
 
+Owns Core Rule 8.
+
 ## Mandatory Rules
 
 Use this map for a directory-managed page or component. Omit optional directories and files until they have a real owner-specific purpose.

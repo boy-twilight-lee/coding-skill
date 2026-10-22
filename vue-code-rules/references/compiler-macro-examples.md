@@ -1,10 +1,12 @@
-# Script Structure Examples
+# Compiler Macro Examples
+
+Owns Core Rule 5.
+
+For the runtime import prerequisites in these examples, read Core Rule 6's [Auto-Import Examples](auto-import-examples.md). For compiler-macro comment exceptions and business contract documentation, read Core Rule 7's [Vue Script Comment Examples](script-comment-examples.md).
 
 ## Mandatory Rules
 
 1. Keep every Vue compiler macro call in the script scope of `<script setup>`; never call a macro inside a function, callback, conditional, loop, or another nested block. Place every macro except `defineExpose`, including `defineOptions`, `defineProps`, `withDefaults`, `defineModel`, `defineEmits`, and `defineSlots`, in the first declaration group immediately after any required imports and before ordinary runtime state, computed values, watchers, lifecycle calls, and functions. In a script without top-level `await`, place `defineExpose` last, after all declarations and executable statements. If the script contains top-level `await`, initialize the exposed bindings and call `defineExpose` before the first top-level `await`; asynchronous initialization and its dependent statements may follow. An `await` inside a function or callback does not by itself require this placement exception.
-
-2. Before adding an explicit import from `vue` or `vue-router`, inspect `vite.config.*` and every referenced Vite plugin or shared configuration that controls automatic imports. When the exact API is covered by the active auto-import configuration, use it directly and do not add or retain a redundant explicit import in the changed code. When the API is not covered, the configuration is inactive for the target, or coverage cannot be verified, import it explicitly. Treat the Vite configuration as the source of truth; a dependency entry, generated declaration file, neighboring file, or global type alone does not prove that runtime auto-import is active.
 
 ## Scenario 1: Order Contract Macros and Handle Async Exposure
 
@@ -98,118 +100,8 @@ onMounted(loadCandidate)
 </script>
 ```
 
-## Scenario 2: Omit Imports Covered by Vite Auto-Import
-
-Inspect the active Vite configuration and any imported shared plugin configuration. For example:
-
-```ts
-import AutoImport from 'unplugin-auto-import/vite'
-
-export default defineConfig({
-  plugins: [
-    AutoImport({
-      imports: ['vue', 'vue-router'],
-      dts: 'src/type/auto-imports.d.ts'
-    })
-  ]
-})
-```
-
-**Positive example:**
-
-With that configuration active, use the covered APIs directly:
-
-```vue
-<script setup lang="ts">
-const props = defineProps<{ candidateId: string }>()
-
-// <zh: read route information for the current candidate page.>
-const route = useRoute()
-// <zh: provide navigation for the candidate details page.>
-const router = useRouter()
-// <zh: store the candidate search keyword.>
-const keyword = ref('')
-// <zh: provide the normalized candidate search keyword.>
-const normalizedKeyword = computed(() => keyword.value.trim())
-</script>
-```
-
-**Negative example:**
-
-Do not retain explicit imports for those same APIs:
-
-```vue
-<script setup lang="ts">
-// ❌ These APIs are already supplied by the active Vite auto-import plugin.
-import { computed, ref } from 'vue'
-import { useRoute, useRouter } from 'vue-router'
-
-const props = defineProps<{ candidateId: string }>()
-
-// <zh: read route information for the current candidate page.>
-const route = useRoute()
-// <zh: provide navigation for the candidate details page.>
-const router = useRouter()
-// <zh: store the candidate search keyword.>
-const keyword = ref('')
-// <zh: provide the normalized candidate search keyword.>
-const normalizedKeyword = computed(() => keyword.value.trim())
-</script>
-```
-
-## Scenario 3: Import APIs Not Covered by Auto-Import
-
-Auto-import coverage may be partial. If the active configuration covers only `ref`, do not assume that `computed` or `useRoute` is also available:
-
-```ts
-AutoImport({
-  imports: [{ vue: ['ref'] }]
-})
-```
-
-**Positive example:**
-
-Import the uncovered APIs and continue using the covered API directly:
-
-```vue
-<script setup lang="ts">
-import { computed } from 'vue'
-import { useRoute } from 'vue-router'
-
-const props = defineProps<{ candidateId: string }>()
-
-// <zh: read route information for the current candidate page.>
-const route = useRoute()
-// <zh: store the candidate search keyword.>
-const keyword = ref('')
-// <zh: provide the normalized candidate search keyword.>
-const normalizedKeyword = computed(() => keyword.value.trim())
-</script>
-```
-
-Check configuration branches, modes, shared plugin factories, and target-specific Vite files before deciding coverage. A generated `auto-imports.d.ts` can corroborate the configuration but does not replace checking whether the corresponding plugin is active for the current build.
-
-**Negative example:**
-
-Do not omit imports for the same uncovered `computed` and `useRoute` APIs:
-
-```vue
-<script setup lang="ts">
-const props = defineProps<{ candidateId: string }>()
-
-// <zh: read route information for the current candidate page.>
-const route = useRoute()
-// <zh: store the candidate search keyword.>
-const keyword = ref('')
-// <zh: provide the normalized candidate search keyword.>
-const normalizedKeyword = computed(() => keyword.value.trim())
-</script>
-```
-
 ## Review Checklist
 
 - Every compiler macro call is in `<script setup>` script scope, never inside nested control flow.
 - Every macro except `defineExpose` forms the first declaration group after required imports.
 - Without top-level `await`, `defineExpose` is the final statement; with top-level `await`, initialized public bindings are exposed before the first suspension.
-- Vite and referenced auto-import configuration are checked before adding Vue or Vue Router imports.
-- Covered APIs have no redundant explicit imports; uncovered APIs are imported normally.

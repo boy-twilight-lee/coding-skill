@@ -1,5 +1,7 @@
 # Provide/Inject Context Pattern
 
+Owns Core Rule 9.
+
 ## Mandatory Rules
 
 1. Every scenario involving Vue `provide` or `inject` must use this fixed pattern, regardless of subtree depth or the number of shared values. Implement an owner-scoped composable named `use**Context` as a context facade that returns exactly two methods: `provide()` for the owning component and `inject()` for descendants. Keep it in the owning page or component's `hooks/` directory, and define a module-level, business-qualified context key.

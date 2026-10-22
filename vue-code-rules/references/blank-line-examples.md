@@ -1,5 +1,7 @@
 # Vue Blank Line Examples
 
+Owns Core Rule 4.
+
 ## Ownership
 
 This reference owns whitespace between SFC blocks, inside templates, and inside JavaScript Vue scripts. For TypeScript script blocks, `ts-code-rules` is the canonical source for statement and declaration spacing. For style blocks, `css-code-rules` is the canonical source for selector and declaration spacing.

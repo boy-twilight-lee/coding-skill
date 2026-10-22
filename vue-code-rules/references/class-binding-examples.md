@@ -1,5 +1,7 @@
 # Class Binding Examples
 
+Owns Core Rule 3.
+
 ## Mandatory Rules
 
 1. When an element has multiple class sources, combine them in one bound `:class` array. Put permanent class strings, reusable class values, and conditional class objects in that array, and expand it across lines when needed to prevent an unreadably long attribute. Do not split the same element's classes across `class` and `:class`, or construct a long concatenated class string. A single static class may remain in `class`, and a lone dynamic object or value does not need an array wrapper.
