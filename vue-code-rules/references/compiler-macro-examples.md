@@ -1,8 +1,8 @@
 # Compiler Macro Examples
 
-Owns Core Rule 5.
+Owns Core Rule 7.
 
-For the runtime import prerequisites in these examples, read Core Rule 6's [Auto-Import Examples](auto-import-examples.md). For compiler-macro comment exceptions and business contract documentation, read Core Rule 7's [Vue Script Comment Examples](script-comment-examples.md).
+For the runtime import prerequisites in these examples, read Core Rule 6's [Auto-Import Examples](auto-import-examples.md). For compiler-macro comment exceptions and business contract documentation, read Core Rule 8's [Vue Script Comment Examples](script-comment-examples.md).
 
 ## Mandatory Rules
 
@@ -22,11 +22,8 @@ defineOptions({ inheritAttrs: false })
 const props = defineProps<{ candidateId: string }>()
 const emit = defineEmits<{ saved: [candidateId: string] }>()
 
-// <zh: store the page loading state.>
 const loading = ref(false)
-// <zh: control whether the candidate editor is visible.>
 const visible = ref(false)
-// <zh: load the current candidate details and maintain the loading state.>
 const loadCandidate = async () => {
   loading.value = true
   try {
@@ -35,16 +32,13 @@ const loadCandidate = async () => {
     loading.value = false
   }
 }
-// <zh: submit the current candidate and notify the parent component.>
 const handleSave = async () => {
   await saveCandidate(props.candidateId)
   emit('saved', props.candidateId)
 }
-// <zh: open the candidate editor.>
 const openEditor = () => {
   visible.value = true
 }
-// <zh: load candidate details after the component mounts.>
 onMounted(loadCandidate)
 
 defineExpose({ openEditor })
@@ -61,7 +55,6 @@ import { ref } from 'vue'
 import { loadCandidateName } from '@/apis'
 
 const props = defineProps<{ candidateId: string }>()
-// <zh: store the candidate display name and update it after the details load.>
 const candidateName = ref('')
 
 defineExpose({ candidateName })
@@ -80,22 +73,17 @@ Do not place the same compiler macros after unrelated runtime declarations, insi
 <script setup lang="ts">
 import { onMounted, ref } from 'vue'
 
-// <zh: store the page loading state.>
 const loading = ref(false)
-// ❌ <zh: a regular runtime declaration separates the component contract macros.>
 const props = defineProps<{ candidateId: string }>()
 
-// ❌ <zh: compiler macros cannot appear inside a function or another nested scope.>
 const createEmitter = () => {
   return defineEmits<{ saved: [candidateId: string] }>()
 }
 
-// <zh: open the candidate editor.>
 const openEditor = () => {
   visible.value = true
 }
 defineExpose({ openEditor })
-// ❌ <zh: without top-level await, no declaration or executable statement may follow defineExpose.>
 onMounted(loadCandidate)
 </script>
 ```

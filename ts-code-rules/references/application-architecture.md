@@ -49,7 +49,7 @@ Optional target-specific UI trees such as `pages-pc/` and `components-pc/` follo
 | Store module | State belongs to one page or component subtree | Independent routes or owners require one application-wide state source |
 | Service | Logic belongs to one API call or one feature workflow | A distinct external capability or cross-module orchestration boundary exists |
 
-Owner-private directories such as `component/`, `hooks/`, `constants/`, `type/`, and `utils/` are optional. Add only the directories required by that owner, and keep their public surface no broader than their real consumers require.
+Owner-private directories are optional. For Vue pages and components, follow the fixed owner structure in `vue-code-rules`: use only `component/`, `hooks/`, `constants/`, `type/`, the prescribed style form, and the required component entries. Keep cohesive private functional helpers in focused utility hooks under `hooks/`; do not add a component-private `utils/`, `helpers/`, or loose root helper files. Genuinely shared stateless functions belong in the established project `utils` layer. Other owner types retain their established private layout. Add only entries required by the actual owner, and keep their public surface no broader than their real consumers require.
 
 ## Related Boundary Rule
 

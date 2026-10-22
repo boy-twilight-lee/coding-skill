@@ -2,7 +2,9 @@
 
 Owns Core Rule 1.
 
-For DOM minimality and element semantics, read Core Rule 2's [DOM Structure Examples](dom-structure-examples.md). For template-comment coverage, read Core Rule 7's [Vue Script Comment Examples](script-comment-examples.md).
+For DOM minimality, common tag selection, and prohibited uncommon or landmark elements, read Core Rule 2's [DOM Structure Examples](dom-structure-examples.md). For template-comment coverage, read Core Rule 8's [Vue Script Comment Examples](script-comment-examples.md).
+
+For attribute and directive order on each opening tag, read Core Rule 3's [Template Attribute Order Examples](template-attribute-order-examples.md).
 
 ## Mandatory Rules
 

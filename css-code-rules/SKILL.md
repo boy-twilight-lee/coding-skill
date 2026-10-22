@@ -7,9 +7,7 @@ description: "Apply mandatory stylesheet rules when editing or reviewing CSS, Le
 
 These rules are mandatory for changed or reviewed styles; existing code does not waive them. Fix directly affected violations without migrating unrelated styles or markup. Project overrides apply only where a rule permits them; report unavoidable conflicts and keep deviations minimal.
 
-Replace example markers such as `<zh: ...>` with concise Chinese comments; never copy the markers into code.
-
-Examples use concrete literals. CSS custom properties or `var(...)` require a demonstrated need and verified library/version or runtime availability. Never invent variables or treat sample literals as project-wide design values.
+Introduce CSS custom properties or `var(...)` only for a demonstrated need, and verify that referenced properties exist and are supported by the actual library version or runtime.
 
 ## Core Rules
 

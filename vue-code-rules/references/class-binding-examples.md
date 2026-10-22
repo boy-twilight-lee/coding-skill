@@ -1,6 +1,6 @@
 # Class Binding Examples
 
-Owns Core Rule 3.
+Owns Core Rule 4.
 
 ## Mandatory Rules
 
@@ -37,7 +37,6 @@ import { computed } from 'vue'
 import { CandidateCardProps } from './type'
 
 const props = defineProps<CandidateCardProps>()
-// <zh: provide the class name for the current candidate-card density.>
 const densityClass = computed(() => `candidate-card-${props.density}`)
 </script>
 ```

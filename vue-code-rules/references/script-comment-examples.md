@@ -1,6 +1,6 @@
 # Vue Script Comment Examples
 
-Owns Core Rule 7.
+Owns Core Rule 8.
 
 ## Ownership
 

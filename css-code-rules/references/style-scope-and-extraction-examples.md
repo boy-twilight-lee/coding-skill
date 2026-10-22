@@ -154,10 +154,9 @@ Move an override to the established global library-override file only when it in
 
 **Negative example:**
 
-Do not move that same one-off form override into the global style entry:
+Do not move that same one-off form override into the global style entry `src/styles/element-plus.less`:
 
 ```less
-/* src/styles/element-plus.less */
 .el-input__wrapper {
   border-radius: 8px;
 }

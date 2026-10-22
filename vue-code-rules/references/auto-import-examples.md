@@ -31,13 +31,9 @@ With that configuration active, use the covered APIs directly:
 <script setup lang="ts">
 const props = defineProps<{ candidateId: string }>()
 
-// <zh: read route information for the current candidate page.>
 const route = useRoute()
-// <zh: provide navigation for the candidate details page.>
 const router = useRouter()
-// <zh: store the candidate search keyword.>
 const keyword = ref('')
-// <zh: provide the normalized candidate search keyword.>
 const normalizedKeyword = computed(() => keyword.value.trim())
 </script>
 ```
@@ -48,19 +44,14 @@ Do not retain explicit imports for those same APIs:
 
 ```vue
 <script setup lang="ts">
-// ❌ These APIs are already supplied by the active Vite auto-import plugin.
 import { computed, ref } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 
 const props = defineProps<{ candidateId: string }>()
 
-// <zh: read route information for the current candidate page.>
 const route = useRoute()
-// <zh: provide navigation for the candidate details page.>
 const router = useRouter()
-// <zh: store the candidate search keyword.>
 const keyword = ref('')
-// <zh: provide the normalized candidate search keyword.>
 const normalizedKeyword = computed(() => keyword.value.trim())
 </script>
 ```
@@ -86,11 +77,8 @@ import { useRoute } from 'vue-router'
 
 const props = defineProps<{ candidateId: string }>()
 
-// <zh: read route information for the current candidate page.>
 const route = useRoute()
-// <zh: store the candidate search keyword.>
 const keyword = ref('')
-// <zh: provide the normalized candidate search keyword.>
 const normalizedKeyword = computed(() => keyword.value.trim())
 </script>
 ```
@@ -105,11 +93,8 @@ Do not omit imports for the same uncovered `computed` and `useRoute` APIs:
 <script setup lang="ts">
 const props = defineProps<{ candidateId: string }>()
 
-// <zh: read route information for the current candidate page.>
 const route = useRoute()
-// <zh: store the candidate search keyword.>
 const keyword = ref('')
-// <zh: provide the normalized candidate search keyword.>
 const normalizedKeyword = computed(() => keyword.value.trim())
 </script>
 ```

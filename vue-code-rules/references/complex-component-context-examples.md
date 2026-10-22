@@ -1,6 +1,6 @@
 # Provide/Inject Context Pattern
 
-Owns Core Rule 9.
+Owns Core Rule 11.
 
 ## Mandatory Rules
 
@@ -34,23 +34,16 @@ interface WorkbenchContext {
   initPage: () => Promise<void>
 }
 
-// <zh: create a safe default state for the workbench page.>
 const createDefaultPage = (): Page => {
   return { loading: false, pageNumber: 1 }
 }
-// <zh: identify the context for the workbench component subtree.>
 const WORKBENCH_CONTEXT_KEY: InjectionKey<WorkbenchContext> = Symbol('workbench-context')
 
-// <zh: expose the workbench context provider and injector.>
 export const useWorkbenchContext = () => {
   return {
-    // <zh: create and provide the shared workbench state.>
     provide() {
-      // <zh: store the current workbench page state.>
       const page = ref<Page>(createDefaultPage())
-      // <zh: indicate whether the current page is loading.>
       const loading = computed(() => page.value.loading)
-      // <zh: initialize the page state for the owning component.>
       const initPage = async () => {
         page.value.loading = true
         try {
@@ -59,17 +52,14 @@ export const useWorkbenchContext = () => {
           page.value.loading = false
         }
       }
-      // <zh: define the public context shared by the owner and its descendants.>
       const context: WorkbenchContext = { page, loading, initPage }
       vueProvide(WORKBENCH_CONTEXT_KEY, context)
       return context
     },
-    // <zh: read shared state and provide complete safe defaults outside the owning subtree.>
     inject() {
       return vueInject(WORKBENCH_CONTEXT_KEY, {
         page: ref<Page>(createDefaultPage()),
         loading: ref(false),
-        // <zh: provide a safe no-op initializer outside the owning component subtree.>
         initPage: async () => {}
       })
     }
@@ -84,14 +74,12 @@ The facade returns exactly `provide()` and `inject()`. All owned reactive instan
 Owning component:
 
 ```ts
-// <zh: create the state shared by the workbench owner and its descendants.>
 const { page, loading, initPage } = useWorkbenchContext().provide()
 ```
 
 Descendant component:
 
 ```ts
-// <zh: read the shared state provided by the owning workbench.>
 const { page, loading, initPage } = useWorkbenchContext().inject()
 ```
 

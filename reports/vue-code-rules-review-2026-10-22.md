@@ -2,9 +2,9 @@
 
 审阅日期：2026-10-22（Asia/Shanghai）。
 
-本报告按照同目录 `css-code-rules-review-2026-10-22.md` 的结构，整理当前工作区 `vue-code-rules` 的全部 9 条核心规则及 9 个独立引用文件。正文按核心规则编号排列，每条下方直接放置中文说明、正反写法、适用边界和检查清单，便于逐条审阅。每条规则只列一个主 reference；跨条款问题按对应规则另行读取。
+本报告按照同目录 `css-code-rules-review-2026-10-22.md` 的结构，整理当前工作区 `vue-code-rules` 的全部 11 条核心规则及 11 个独立引用文件。正文按核心规则编号排列，每条下方直接放置中文说明、正反写法、适用边界和检查清单，便于逐条审阅。每条规则只列一个主 reference；跨条款问题按对应规则另行读取。
 
-本报告以工作区源文件为准。示例标题、解释、业务注释和界面文案采用中文；源文件中的中文注释占位标记已替换为实际中文。示例为说明规则而保留必要上下文，部分函数、数据、组件和路径由所属项目提供，不能将局部片段视为可直接运行的完整应用。反例仅演示应避免的写法，不代表 Vue 编译器一定禁止这种语法。
+本报告以工作区源文件为准。所有正反例非必要不出现注释，普通解释放在代码块外；仅在演示注释规则、注释间距/位置，或说明示例不可缺少的隐含约束时保留必要注释。保留的注释、示例标题、解释和界面文案采用中文；中文注释占位标记已替换为实际中文。示例为说明规则而保留必要上下文，部分函数、数据、组件和路径由所属项目提供，不能将局部片段视为可直接运行的完整应用。反例仅演示应避免的写法，不代表 Vue 编译器一定禁止这种语法。示例精简注释不改变实际项目代码的业务注释要求。
 
 ## 一、适用范围与执行要求
 
@@ -33,16 +33,18 @@ TypeScript 脚本同时遵循 `ts-code-rules`；CSS、Less、Sass、SCSS 及 Vue
 ### 5. 条款索引
 
 - [Vue 1：SFC 顺序、组件标签与插槽](#vue-1)
-- [Vue 2：最少必要 DOM 与正确元素语义](#vue-2)
-- [Vue 3：多个类名来源统一使用数组绑定](#vue-3)
-- [Vue 4：空行只用于真实逻辑分区](#vue-4)
-- [Vue 5：编译宏的位置与异步暴露例外](#vue-5)
+- [Vue 2：最少必要 DOM 与常见标签](#vue-2)
+- [Vue 3：模板标签内指令、属性与事件的顺序](#vue-3)
+- [Vue 4：多个类名来源统一使用数组绑定](#vue-4)
+- [Vue 5：空行只用于真实逻辑分区](#vue-5)
 - [Vue 6：核实 Vite 自动导入后决定显式导入](#vue-6)
-- [Vue 7：中文业务注释、契约与模板区域](#vue-7)
-- [Vue 8：组件命名、目录、公共入口与实例类型](#vue-8)
-- [Vue 9：所有 provide/inject 场景使用固定上下文模式](#vue-9)
+- [Vue 7：编译宏的位置与异步暴露例外](#vue-7)
+- [Vue 8：中文业务注释、契约与模板区域](#vue-8)
+- [Vue 9：组件命名、目录、公共入口与实例类型](#vue-9)
+- [Vue 10：组件按职责拆分与文件规模](#vue-10)
+- [Vue 11：所有 provide/inject 场景使用固定上下文模式](#vue-11)
 
-## 二、按顺序审阅 9 条规则
+## 二、按顺序审阅 11 条规则
 
 <a id="vue-1"></a>
 
@@ -60,7 +62,7 @@ TypeScript 脚本同时遵循 `ts-code-rules`；CSS、Less、Sass、SCSS 及 Vue
 
 **正例：**
 
-下例假设项目已支持 Less，且选择 Less 符合项目语言约定。业务 prop 在契约成员处说明。
+下例假设项目已支持 Less，且选择 Less 符合项目语言约定。这里只演示 SFC 块顺序，契约注释的写法见 Vue 8。
 
 ```vue
 <template>
@@ -69,7 +71,6 @@ TypeScript 脚本同时遵循 `ts-code-rules`；CSS、Less、Sass、SCSS 及 Vue
 
 <script setup lang="ts">
 const props = defineProps<{
-  /** 当前用户卡片展示的姓名。 */
   name: string
 }>()
 </script>
@@ -123,11 +124,9 @@ const props = defineProps<{ name: string }>()
 
 <script setup lang="ts">
 const props = defineProps<{
-  /** 用户卡片展示的姓名。 */
   name: string
 }>()
 defineSlots<{
-  /** 在卡片操作区补充当前用户的操作入口。 */
   actions(): unknown
 }>()
 </script>
@@ -160,17 +159,21 @@ defineSlots<{
 - 存在的块依次为 template、script、style，没有空块。
 - 自定义标签为 kebab-case，无内容组件自闭合。
 - 插槽是明确的扩展契约；根节点和层级仍有实际归属。
-- 多区域模板的注释同时按 Vue 7 检查。
+- 多区域模板的注释同时按 Vue 8 检查。
 
 <a id="vue-2"></a>
 
-### Vue 2：最少必要 DOM 与正确元素语义
+### Vue 2：最少必要 DOM 与常见标签
 
 **独立 reference：** [dom-structure-examples.md](/D:/desktop/coding-skill/vue-code-rules/references/dom-structure-examples.md)
 
 在实现所需功能的前提下，尽可能减少 DOM 节点数和嵌套层级。不增加不必要节点或无意义包裹，优先直接使用已有元素实现行为和样式。只有现有元素无法直接实现所需行为或布局时，才增加包裹，并保持最少必要结构。
 
-非交互业务布局优先使用 `div` 做块级分组、`span` 承载行内内容。`i` 仅作装饰图标占位，按可访问性要求处理。行为适用时使用原生 `button`、`a`、`input`、`label`；landmark、标题、列表和表格等元素必须表达真实文档结构、SEO、数据关系或可访问性含义，不能仅用于获得浏览器默认样式。
+所有实现尽量使用 `div`、`span`、`i`、`button`、`input` 等常见 HTML 标签。块级布局用 `div`，行内内容用 `span`，`i` 仅作装饰图标占位。需要原生交互时使用 `button`、`input`、`a`、`label`、`textarea`、`select` 等常见控件；这不是只有五种标签的封闭白名单。
+
+禁用少见标签及 landmark/分区类语义容器，例如 `main`、`nav`、`aside`、`section`、`article`、`header`、`footer`。这些布局使用常见标签配合业务类名实现，不能以文档结构、SEO 或语义分组为理由引入禁用容器。`dataset` 是 DOM 数据属性接口，`landmark` 是可访问性概念，均不是 HTML 标签，禁止生成 `<dataset>`、`<landmark>` 这类元素。
+
+所有 DOM 标签都适用以下属性边界：除非用户明确指定需要兼容无障碍，否则禁止添加与当前需求无关的无障碍属性，包括主动补充 `aria-*`、仅用于无障碍的 `role`、`tabindex` 等。不能以“补全通用无障碍支持”为理由给所有节点添加这些属性。用户明确要求无障碍时，也只添加该需求实际需要的属性。保留原生控件及功能所需的 `type`、`disabled`、`readonly` 等属性，不借此删除任务范围之外的已有属性。
 
 **对应示例与适用边界：**
 
@@ -198,16 +201,16 @@ defineSlots<{
 
 允许新增节点的依据是实际功能需要。即使类名看起来有意义，若现有元素已能完成同样工作，也不能据此保留多余层级。必要包裹应具有明确用途，并控制节点和深度。
 
-#### 场景 2：普通布局、交互与文档结构分别选择元素
+#### 场景 2：统一使用常见标签与原生控件
 
 **正例：**
 
-非交互卡片用通用元素，装饰图标不参与辅助技术朗读：
+非交互卡片用通用元素；用户未明确要求无障碍兼容时，不给装饰图标主动添加无障碍属性：
 
 ```vue
 <div class="user-card">
   <span class="user-card-name">{{ user.name }}</span>
-  <i class="user-card-status-icon" aria-hidden="true" />
+  <i class="user-card-status-icon" />
 </div>
 ```
 
@@ -219,35 +222,253 @@ defineSlots<{
 </button>
 ```
 
-文章页确有主内容区和主标题时，使用真实语义元素：
+页面容器和标题展示同样使用常见标签：
 
 ```vue
-<main class="article-page">
-  <h1 class="article-page-title">{{ article.title }}</h1>
-</main>
+<div class="article-page">
+  <span class="article-page-title">{{ article.title }}</span>
+</div>
 ```
 
 **反例：**
 
-不要用可点击 `div` 替代上述按钮，也不要仅为了字号或粗体样式把普通姓名改成主标题：
+不要用可点击 `div` 替代上述原生按钮，也不要给同一页面布局引入禁用的 landmark/分区容器：
 
 ```vue
 <div class="user-card-action" @click="openUserDetail">查看详情</div>
-<h1 class="user-card-name">{{ user.name }}</h1>
+<main class="article-page">
+  <article>
+    <span>{{ article.title }}</span>
+  </article>
+</main>
 ```
 
-真实链接、表单关联、标题、列表和表格也不能因为偏好通用元素而丢失键盘行为或有用语义。视觉效果交给类名与样式表达。
+布局与视觉效果使用常见标签、业务类名和样式表达。保留常见原生控件所需的交互和键盘行为，不能为了统一使用 `div` 而把按钮或输入框改成普通容器。选择常见标签时仍须遵守最少必要 DOM 规则。
+
+#### 场景 3：无障碍属性以用户明确需求为边界
+
+**正例：**
+
+普通的“增加详情按钮”需求保留原生按钮与功能属性，不额外添加无关的无障碍元数据：
+
+```vue
+<button type="button" class="user-card-action" @click="openUserDetail">
+  查看详情
+</button>
+```
+
+**反例：**
+
+用户未要求无障碍兼容时，不机械添加按钮角色、重复的朗读标签或仅用于无障碍的焦点顺序属性：
+
+```vue
+<button
+  type="button"
+  class="user-card-action"
+  role="button"
+  aria-label="查看详情"
+  tabindex="0"
+  @click="openUserDetail"
+>
+  查看详情
+</button>
+```
+
+**用户明确要求无障碍时：**
+
+用户明确要求纯图标详情按钮兼容屏幕阅读器时，可添加相关可访问名称，并让装饰图标不参与辅助技术朗读：
+
+```vue
+<button
+  type="button"
+  class="user-card-action"
+  aria-label="查看详情"
+  @click="openUserDetail"
+>
+  <i class="user-card-detail-icon" aria-hidden="true" />
+</button>
+```
+
+授权来自用户对无障碍兼容的明确要求，不能将这些属性继续扩展到无关节点。两种情况下都保留原生按钮行为。
 
 **本条检查清单：**
 
 - 所需功能使用最少必要节点和层级。
 - 每个新增包裹都具有现有元素无法直接承担的职责。
-- 通用、交互和语义元素符合真实行为及文档含义。
-- 不仅为默认样式使用语义元素，也不丢弃有用语义。
+- 所有实现优先使用 div、span、i、button、input 等常见标签。
+- 没有少见标签、禁用的 landmark/分区容器或虚构的 dataset/landmark 元素。
+- 常见原生控件保留功能所需的交互和键盘行为。
+- 用户未明确要求无障碍兼容时，没有主动添加无关的 aria-*、role、tabindex 等属性。
+- 用户要求无障碍时，各属性与该需求直接相关；未删除任务范围外的已有属性。
 
 <a id="vue-3"></a>
 
-### Vue 3：多个类名来源统一使用数组绑定
+### Vue 3：模板标签内指令、属性与事件的顺序
+
+**独立 reference：** [template-attribute-order-examples.md](/D:/desktop/coding-skill/vue-code-rules/references/template-attribute-order-examples.md)
+
+每个模板开始标签内，统一按以下顺序排列：**指令 → v-bind 绑定属性 → 文本属性 → 普通布尔属性 → 事件**。`v-if` 与 `v-show` 同属指令的最高级，均放在最前一组，两者之间不再细分优先级；同一标签同时存在时保留组内相对顺序。其他分支上的 `v-else-if` 或 `v-else` 同样归入最前一组。随后放其他指令，再进入属性分组。排序同级不代表渲染行为相同，不能为了排序互换 `v-if` 与 `v-show`。
+
+本条适用于原生元素、自定义组件及 template 标签，规定的是单个标签内部的属性顺序，不重新排列子节点、具名插槽或条件分支。
+
+| 优先级 | 分组 | 示例 |
+| --- | --- | --- |
+| 1 | 条件与显示指令 | v-if、v-show 同级；对应分支上的 v-else-if、v-else |
+| 2 | 其他指令 | v-for、v-model、v-model:open、#extra、自定义 v-focus |
+| 3 | 绑定属性 | :options、:title、:style、:class、:disabled、v-bind="attrs" |
+| 4 | 文本属性 | icon="..."、class="..."、type="text"、placeholder="..."、ref="..." |
+| 5 | 普通布尔属性 | required、readonly、disabled，以及契约明确的无值布尔组件 prop |
+| 6 | 事件 | @click、@change、@keydown.enter、v-on:blur、v-on="listeners" |
+
+分组按语法和属性契约识别：`:disabled="loading"` 虽然结果是布尔值，仍属于绑定组；无值 `required` 属于普通布尔组。原生布尔属性由是否存在决定，不能把 `disabled="false"` 当成关闭禁用。不能为了排序改变属性值、删掉绑定或改变修饰符。
+
+动态 `:class`、`:style` 在绑定组；单一静态 `class`、`style` 在文本组。多个 class 来源仍按 Vue 4 合并成一个 `:class` 数组。没有“class 或 style 永远放到最后”的例外；你提供的 `icon` 后接 `class` 是合法的文本组内部顺序。
+
+同组保留有意义的相对顺序，不强制按字母排序，也不额外规定其他指令之间的细分顺序。各组连续书写，不插装饰性空行。存在展开绑定时，保留覆盖优先级和事件行为；如果重新分组会改变行为，应在授权范围内消除冲突，或报告最小必要偏离。
+
+**对应示例与适用边界：**
+
+#### 场景 1：按你提供的统计模板排列
+
+**正例：**
+
+卡片先放绑定属性，再放 icon、class 文本属性；两个选择器都将 `v-if` 放在 `v-model` 之前，再放选项绑定。以下保留原有业务表达式、插槽和子节点次序，仅展示模板，不要求调整脚本、样式或上下文实现。
+
+```vue
+<template>
+  <exam-detail-card
+    :empty="!available"
+    :loading="loading"
+    :title="`${curTab === STATISTICS_TAB.single ? '单' : '全'}科概览`"
+    :style="{
+      height: valueToPx(available ? 516 : height)
+    }"
+    icon="icon-exam-detail-card-subject"
+    class="subject-summary-statistics"
+  >
+    <template #extra>
+      <a-select
+        v-if="curTab === STATISTICS_TAB.single"
+        v-model="statisticsContext.subjectId"
+        :options="statisticsContext.subjects"
+        :field-names="{
+          label: 'subjectName',
+          value: 'subjectId'
+        }"
+      >
+        <template #prefix>
+          <form-prefix text="学科" />
+        </template>
+      </a-select>
+      <a-select
+        v-if="available"
+        v-model="classId"
+        :options="classOptions"
+        :field-names="{
+          label: 'className',
+          value: 'classId'
+        }"
+      >
+        <template #prefix>
+          <form-prefix text="统计范围" />
+        </template>
+      </a-select>
+    </template>
+    <template #empty>
+      <statistics-empty :loading="loading" />
+    </template>
+    <statistics-summary />
+    <div class="subject-summary-statistics-main">
+      <satistics-chart />
+      <satistics-rank />
+    </div>
+  </exam-detail-card>
+</template>
+```
+
+此处保留你提供的类名以方便对照属性顺序，不构成 CSS 命名规则豁免。组件、状态和函数由所属组件提供，该片段不是独立应用。
+
+**反例：**
+
+不要把文本属性放在指令之前，也不要让 `v-if` 排在其他指令和绑定后面：
+
+```vue
+<a-select
+  class="subject-select"
+  v-model="statisticsContext.subjectId"
+  :options="statisticsContext.subjects"
+  v-if="curTab === STATISTICS_TAB.single"
+/>
+```
+
+#### 场景 2：普通布尔属性在事件之前
+
+**正例：**
+
+条件指令最前，随后是其他指令、绑定、文本、普通布尔属性，最后放所有事件。`:disabled` 保留在绑定组。
+
+```vue
+<input
+  v-if="editable"
+  v-model="keyword"
+  :maxlength="keywordLimit"
+  :disabled="loading"
+  type="text"
+  placeholder="请输入学科名称"
+  required
+  @input="handleKeywordInput"
+  @blur="handleKeywordBlur"
+/>
+```
+
+**反例：**
+
+相同属性穿插在各组中，事件不是最后一组，`v-if` 也不是最前：
+
+```vue
+<input
+  @input="handleKeywordInput"
+  type="text"
+  v-model="keyword"
+  :maxlength="keywordLimit"
+  v-if="editable"
+  required
+  :disabled="loading"
+  placeholder="请输入学科名称"
+  @blur="handleKeywordBlur"
+/>
+```
+
+#### 场景 3：保留展开绑定覆盖关系
+
+以下显式 name 有意覆盖 defaults 中的同名值，两者在绑定组内保持原顺序；v-show 与 v-if 一样处于最前的最高级指令组：
+
+```vue
+<user-card
+  v-show="visible"
+  v-bind="defaults"
+  :name="userName"
+  icon="icon-user"
+  @select="handleSelect"
+/>
+```
+
+不能按字母顺序将 `:name` 移到 `v-bind="defaults"` 前，否则 defaults 可能反过来覆盖显式值。展开对象也可能提供事件或其他键，移动前核实实际重叠关系，不机械排序重复键或跨越展开绑定移动事件。
+
+**本条检查清单：**
+
+- 每个开始标签按指令、绑定、文本、普通布尔属性、事件排列。
+- v-if 与 v-show 同属最高优先级，不细分先后；v-else-if、v-else 也在各自分支标签的最前一组。
+- v-model、插槽简写及其他指令位于绑定之前。
+- 动态布尔值、class、style 属于绑定组，单一静态 class/style 属于文本组。
+- 无值布尔属性位于所有事件之前，包括带修饰符和对象形式的事件。
+- 分组连续，不强制字母排序，不增加装饰性空行。
+- 保留展开覆盖、属性值、表达式、修饰符、事件行为及条件链连续性。
+- 不为属性排序移动子节点、重排插槽或改写无关脚本和样式。
+
+<a id="vue-4"></a>
+
+### Vue 4：多个类名来源统一使用数组绑定
 
 **独立 reference：** [class-binding-examples.md](/D:/desktop/coding-skill/vue-code-rules/references/class-binding-examples.md)
 
@@ -284,7 +505,6 @@ import { computed } from 'vue'
 import { CandidateCardProps } from './type'
 
 const props = defineProps<CandidateCardProps>()
-// 根据当前卡片密度提供对应类名，供根节点复用。
 const densityClass = computed(() => `candidate-card-${props.density}`)
 </script>
 ```
@@ -292,13 +512,9 @@ const densityClass = computed(() => `candidate-card-${props.density}`)
 非简单的私有 prop 契约放在所属组件的 `type` 模块：
 
 ```ts
-/** 候选人卡片的展示内容、密度及交互状态契约。 */
 export interface CandidateCardProps {
-  /** 是否展示当前激活状态。 */
   active: boolean
-  /** compact 为紧凑展示，normal 为常规展示。 */
   density: 'compact' | 'normal'
-  /** 是否应用禁用状态。 */
   disabled: boolean
   name: string
 }
@@ -398,9 +614,9 @@ Vue 会展开数组并忽略条件对象中未生效的键。数组要求在组�
 - 没有 `class` 与 `:class` 拆分或长字符串拼接。
 - 单来源保持简单，复杂数组按需换行。
 
-<a id="vue-4"></a>
+<a id="vue-5"></a>
 
-### Vue 4：空行只用于真实逻辑分区
+### Vue 5：空行只用于真实逻辑分区
 
 **独立 reference：** [blank-line-examples.md](/D:/desktop/coding-skill/vue-code-rules/references/blank-line-examples.md)
 
@@ -427,7 +643,6 @@ Vue 会展开数组并忽略条件对象中未生效的键。数组要求在组�
 
 <script setup lang="ts">
 const props = defineProps<{
-  /** 当前用户卡片展示的姓名。 */
   name: string
 }>()
 </script>
@@ -513,128 +728,6 @@ const clearSelectedUser = () => {
 - JavaScript 注释贴近目标，紧密语句连续。
 - TypeScript 与样式分别按其语言规则审阅。
 
-<a id="vue-5"></a>
-
-### Vue 5：编译宏的位置与异步暴露例外
-
-**独立 reference：** [compiler-macro-examples.md](/D:/desktop/coding-skill/vue-code-rules/references/compiler-macro-examples.md)
-
-所有 Vue 编译宏只能在 `<script setup>` 的脚本作用域调用，不能放在函数、回调、条件、循环或其他嵌套块内。
-
-除 `defineExpose` 外，`defineOptions`、`defineProps`、`withDefaults`、`defineModel`、`defineEmits`、`defineSlots` 等宏应在必要导入之后组成第一个声明组，位于普通状态、computed、watch、生命周期和函数之前。
-
-没有顶层 `await` 时，`defineExpose` 是脚本最后一条语句；存在顶层 `await` 时，必须先初始化公开绑定，并在第一次顶层等待前调用 `defineExpose`，后面再进行异步初始化及依赖操作。仅在函数或回调里使用 `await` 不触发该例外。
-
-**对应示例与适用边界：**
-
-#### 场景 1：普通脚本末尾暴露公开方法
-
-**正例：**
-
-假设 Vue API 未被自动导入，接口函数由项目 API 公共入口提供。编译宏没有泛化声明注释；业务契约说明写在成员处。
-
-```vue
-<script setup lang="ts">
-import { onMounted, ref } from 'vue'
-import { getCandidate, saveCandidate } from '@/apis'
-
-defineOptions({ inheritAttrs: false })
-const props = defineProps<{
-  /** 当前编辑与保存操作关联的候选人标识。 */
-  candidateId: string
-}>()
-const emit = defineEmits<{
-  /** 保存成功后通知父组件更新该候选人的展示数据。 */
-  saved: [candidateId: string]
-}>()
-
-// 当前候选人详情的加载状态，供页面展示加载反馈。
-const loading = ref(false)
-// 当前候选人编辑器的显示状态，由公开打开方法更新。
-const visible = ref(false)
-// 加载当前候选人详情，并在请求结束后恢复加载状态。
-const loadCandidate = async () => {
-  loading.value = true
-  try {
-    await getCandidate(props.candidateId)
-  } finally {
-    loading.value = false
-  }
-}
-// 保存当前候选人，服务端确认后通知父组件；失败交由调用方处理。
-const handleSave = async () => {
-  await saveCandidate(props.candidateId)
-  emit('saved', props.candidateId)
-}
-// 打开当前候选人的编辑器，供组件外部调用。
-const openEditor = () => {
-  visible.value = true
-}
-// 组件挂载后加载当前候选人的详情。
-onMounted(loadCandidate)
-
-defineExpose({
-  /** 打开当前候选人的编辑器。 */
-  openEditor
-})
-</script>
-```
-
-`defineExpose` 之后没有声明或执行语句。函数内部的 `await` 不影响这个末尾位置要求。
-
-#### 场景 2：顶层 await 之前暴露已初始化绑定
-
-**正例：**
-
-接口返回候选人姓名字符串。先建立并暴露 ref，异步结果再更新同一个 ref：
-
-```vue
-<script setup lang="ts">
-import { ref } from 'vue'
-import { loadCandidateName } from '@/apis'
-
-const props = defineProps<{
-  /** 本次详情加载关联的候选人标识。 */
-  candidateId: string
-}>()
-// 当前候选人的展示姓名，详情返回后更新。
-const candidateName = ref('')
-
-defineExpose({
-  /** 异步详情加载后同步更新的候选人展示姓名。 */
-  candidateName
-})
-
-candidateName.value = await loadCandidateName(props.candidateId)
-</script>
-```
-
-不能把暴露操作延迟到异步结果到达后，也不能在公开绑定初始化前引用它。[Vue 模板引用文档](https://vuejs.org/guide/essentials/template-refs.html#ref-on-component)说明了等待前暴露的要求。
-
-**反例：**
-
-下列片段分别演示宏被运行时声明打断、宏放入函数，以及没有顶层等待时在 `defineExpose` 后继续注册生命周期：
-
-```ts
-// 当前详情加载状态。
-const loading = ref(false)
-const props = defineProps<{ candidateId: string }>()
-
-const createEmitter = () => {
-  return defineEmits<{ saved: [candidateId: string] }>()
-}
-
-defineExpose({ openEditor })
-onMounted(loadCandidate)
-```
-
-**本条检查清单：**
-
-- 每个宏调用均位于 `<script setup>` 顶层。
-- 非 expose 宏紧随导入，形成首个声明组。
-- 无顶层等待时 expose 最后执行。
-- 有顶层等待时，公开绑定先初始化并在首次等待前暴露。
-
 <a id="vue-6"></a>
 
 ### Vue 6：核实 Vite 自动导入后决定显式导入
@@ -665,17 +758,12 @@ AutoImport({
 ```vue
 <script setup lang="ts">
 const props = defineProps<{
-  /** 当前候选人页面关联的候选人标识。 */
   candidateId: string
 }>()
 
-// 当前候选人页面的路由信息，供页面读取导航上下文。
 const route = useRoute()
-// 当前候选人页面的导航能力，供详情操作使用。
 const router = useRouter()
-// 当前候选人搜索关键词，供查询输入使用。
 const keyword = ref('')
-// 去除首尾空格后的查询关键词，供候选人搜索使用。
 const normalizedKeyword = computed(() => keyword.value.trim())
 </script>
 ```
@@ -711,15 +799,11 @@ import { computed } from 'vue'
 import { useRoute } from 'vue-router'
 
 const props = defineProps<{
-  /** 当前候选人页面关联的候选人标识。 */
   candidateId: string
 }>()
 
-// 当前候选人页面的路由信息。
 const route = useRoute()
-// 当前搜索输入的原始关键词。
 const keyword = ref('')
-// 候选人查询使用的标准化关键词。
 const normalizedKeyword = computed(() => keyword.value.trim())
 </script>
 ```
@@ -745,7 +829,116 @@ const normalizedKeyword = computed(() => keyword.value.trim())
 
 <a id="vue-7"></a>
 
-### Vue 7：中文业务注释、契约与模板区域
+### Vue 7：编译宏的位置与异步暴露例外
+
+**独立 reference：** [compiler-macro-examples.md](/D:/desktop/coding-skill/vue-code-rules/references/compiler-macro-examples.md)
+
+所有 Vue 编译宏只能在 `<script setup>` 的脚本作用域调用，不能放在函数、回调、条件、循环或其他嵌套块内。
+
+除 `defineExpose` 外，`defineOptions`、`defineProps`、`withDefaults`、`defineModel`、`defineEmits`、`defineSlots` 等宏应在必要导入之后组成第一个声明组，位于普通状态、computed、watch、生命周期和函数之前。
+
+没有顶层 `await` 时，`defineExpose` 是脚本最后一条语句；存在顶层 `await` 时，必须先初始化公开绑定，并在第一次顶层等待前调用 `defineExpose`，后面再进行异步初始化及依赖操作。仅在函数或回调里使用 `await` 不触发该例外。
+
+**对应示例与适用边界：**
+
+#### 场景 1：普通脚本末尾暴露公开方法
+
+**正例：**
+
+假设 Vue API 未被自动导入，接口函数由项目 API 公共入口提供。这里只演示编译宏位置，业务契约注释的写法见 Vue 8。
+
+```vue
+<script setup lang="ts">
+import { onMounted, ref } from 'vue'
+import { getCandidate, saveCandidate } from '@/apis'
+
+defineOptions({ inheritAttrs: false })
+const props = defineProps<{
+  candidateId: string
+}>()
+const emit = defineEmits<{
+  saved: [candidateId: string]
+}>()
+
+const loading = ref(false)
+const visible = ref(false)
+const loadCandidate = async () => {
+  loading.value = true
+  try {
+    await getCandidate(props.candidateId)
+  } finally {
+    loading.value = false
+  }
+}
+const handleSave = async () => {
+  await saveCandidate(props.candidateId)
+  emit('saved', props.candidateId)
+}
+const openEditor = () => {
+  visible.value = true
+}
+onMounted(loadCandidate)
+
+defineExpose({
+  openEditor
+})
+</script>
+```
+
+`defineExpose` 之后没有声明或执行语句。函数内部的 `await` 不影响这个末尾位置要求。
+
+#### 场景 2：顶层 await 之前暴露已初始化绑定
+
+**正例：**
+
+接口返回候选人姓名字符串。先建立并暴露 ref，异步结果再更新同一个 ref：
+
+```vue
+<script setup lang="ts">
+import { ref } from 'vue'
+import { loadCandidateName } from '@/apis'
+
+const props = defineProps<{
+  candidateId: string
+}>()
+const candidateName = ref('')
+
+defineExpose({
+  candidateName
+})
+
+candidateName.value = await loadCandidateName(props.candidateId)
+</script>
+```
+
+不能把暴露操作延迟到异步结果到达后，也不能在公开绑定初始化前引用它。[Vue 模板引用文档](https://vuejs.org/guide/essentials/template-refs.html#ref-on-component)说明了等待前暴露的要求。
+
+**反例：**
+
+下列片段分别演示宏被运行时声明打断、宏放入函数，以及没有顶层等待时在 `defineExpose` 后继续注册生命周期：
+
+```ts
+const loading = ref(false)
+const props = defineProps<{ candidateId: string }>()
+
+const createEmitter = () => {
+  return defineEmits<{ saved: [candidateId: string] }>()
+}
+
+defineExpose({ openEditor })
+onMounted(loadCandidate)
+```
+
+**本条检查清单：**
+
+- 每个宏调用均位于 `<script setup>` 顶层。
+- 非 expose 宏紧随导入，形成首个声明组。
+- 无顶层等待时 expose 最后执行。
+- 有顶层等待时，公开绑定先初始化并在首次等待前暴露。
+
+<a id="vue-8"></a>
+
+### Vue 8：中文业务注释、契约与模板区域
 
 **独立 reference：** [script-comment-examples.md](/D:/desktop/coding-skill/vue-code-rules/references/script-comment-examples.md)
 
@@ -922,9 +1115,9 @@ if (nextValue < anchorValue) {
 - 多区域模板说明主要区域及重要规则，条件链连续。
 - 没有为承载注释新增冗余结构，也没有编造产品理由。
 
-<a id="vue-8"></a>
+<a id="vue-9"></a>
 
-### Vue 8：组件命名、目录、公共入口与实例类型
+### Vue 9：组件命名、目录、公共入口与实例类型
 
 **独立 reference：** [component-structure-examples.md](/D:/desktop/coding-skill/vue-code-rules/references/component-structure-examples.md)
 
@@ -932,7 +1125,13 @@ if (nextValue < anchorValue) {
 
 既有页面或组件树下的第一层页面、视图和组件，即使很简单，也必须采用含 `index.vue` 和 `index.ts` 的目录形式。只有所属者私有 `component/` 目录中的简单子组件可保持具名 `.vue` 单文件。需要有意义的支持文件时改为目录形式；达到 CSS 强制提取条件而需要独立样式，也属于这种情况。
 
-每个 `.vue` 文件最多 1000 行。拆分或移动时更新公共入口与消费者，检查自动组件发现；不迁移无关组件。`index.ts` 转发默认组件和有意公开的类型，普通 setup 逻辑和样式仍留在 SFC 或有明确职责的模块中。
+`index.ts` 除转发默认组件外，还应显式转发外部确实需要的方法、组件、类型及子目录模块，作为统一公共入口；不放业务实现，不为方便而批量导出私有内部文件。组件实例方法仍在 SFC 中通过 `defineExpose` 实现公开，不把 setup 内状态改造成模块全局状态。
+
+组件或页面根目录只能按需使用 `component/`、`constants/`、`hooks/`、`type/`、`style/` 以及规定的入口、样式文件，不得私自添加无关目录或游离文件。私有子组件放 `component/`，常量放 `constants/`，类型放 `type/`，抽离的功能逻辑放 `hooks/`；不得在组件内另建 `utils/`、`helpers/`、`services/`，也不得把 helper.ts、format.ts、context.ts、useDetailTools.ts 等文件散落在根目录。
+
+同一组件所属的功能函数可按内聚职责组合成一个工具性 hook，如 `hooks/useDetailTools.ts`；不为每个小函数单独建文件，也不为工具 hook 凭空增加响应式状态。简单一次性逻辑仍可留在 `index.vue`。真正跨模块公用的无状态工具放项目既有 `utils` 结构，优先复用已有模块；公用的响应式组合逻辑继续按项目 hooks 层管理。
+
+独立样式采用互斥形式：只有一个样式文件时使用 `index.less`，有多个确有必要的样式文件时全部放入 `style/`，不得与根目录 `index.less` 共存。不得只为一个文件创建 style 目录，也不得人为拆分样式凑目录。保留已有样式语言时采用对应扩展名；是否必须提取样式仍遵循 CSS 阈值，没有独立样式需求时两种形式都省略。
 
 **对应示例与适用边界：**
 
@@ -1041,31 +1240,37 @@ src/components/candidate-picker/
 
 `index.vue` 负责界面协调；hook 负责内聚搜索行为；结果子组件仍然简单，保持单文件。样式经组件自身的 scoped style 引入，保留作用域。没有这些实际职责时，省略对应文件和目录。
 
-完整的可选归属结构如下，不是要求每个组件一次性生成所有目录：
+按你提供的组件目录图，完整允许结构如下；index.vue、index.ts 必须保留，其他项目按实际需要创建，不是要求每个组件生成全部目录。单一样式文件形式：
 
 ```text
-owner/
-|-- index.vue
+teacher-exam-detail/
+|-- component/               私有子组件
+|-- constants/               私有常量
+|-- hooks/                   私有组合逻辑及工具性 hook
+|-- type/                    私有类型
+|-- index.less               单个独立样式文件，按需创建
 |-- index.ts                 组件公共出口
-|-- index.less               可选的独立所属样式
-|-- component/
-|   |-- simple-child.vue     简单私有子组件
-|   `-- complex-child/
-|       |-- index.vue
-|       |-- index.ts
-|       |-- component/       该子组件自己的私有组件
-|       `-- hooks/           该子组件自己的 hook
-|-- hooks/                   所属者私有组合式函数
-|-- constants/               所属者私有常量
-`-- type/                    所属者私有类型
+`-- index.vue
 ```
 
-CSS 规则满足以下任一条件就必须提取整个内联样式块，不能因 Vue 文件尚未达到 1000 行而豁免：
+多个独立样式文件形式；图中 style 与 index.less 同时出现的情况，以你的文字要求为准，二者互斥：
 
-- 至少 80 个非空行。
-- 至少 4 个自有选择器组，且具备至少 2 类复杂度信号：三层及以上嵌套；至少三个状态或伪类分支；deep 或第三方覆盖；keyframes 或复杂动画；响应式、supports 或 container 分支。
+```text
+teacher-exam-detail/
+|-- component/
+|-- constants/
+|-- hooks/
+|-- style/
+|   |-- scoped.less
+|   `-- global.less
+|-- type/
+|-- index.ts
+`-- index.vue
+```
 
-私有子组件因此新增独立样式时，转换为：
+scoped.less、global.less 仅演示确有作用域隔离需求的多个样式文件，并非必需文件名。子组件转换为目录后也遵守同一结构，不能借支持文件增加无关目录或根目录散落文件。
+
+私有子组件按第 10 条及 CSS 规则提取样式后，转换为目录形式：
 
 ```text
 component/custom-range-editor/
@@ -1087,7 +1292,7 @@ src/components/candidate-picker/
 `-- type/
 ```
 
-#### 场景 4：公共入口转发默认组件
+#### 场景 4：公共入口转发组件及外部需要的模块
 
 **正例：**
 
@@ -1096,6 +1301,17 @@ src/components/candidate-picker/
 ```ts
 export { default } from './index.vue'
 ```
+
+外部还需要该业务所属的特定组件、hook/方法或常量时，在同一 `index.ts` 显式转发。例如以下示例假定各导出已经存在，且属于确定的公开契约：
+
+```ts
+export { default } from './index.vue'
+export { default as StatisticsSummary } from './component/statistics-summary'
+export { useDetailActions } from './hooks/useDetailActions'
+export { STATISTICS_TAB } from './constants'
+```
+
+目录管理的子组件通过自身入口转发。普通私有子组件和实现 hook 仍保持私有，不将整个子目录无差别导出。模块方法/hook 使用具名导出，SFC 暴露的实例方法通过组件实例调用；入口只转发，不实现这些方法。
 
 消费者通过组件目录的公共入口导入，简单私有单文件直接导入：
 
@@ -1130,7 +1346,6 @@ export * from './index.vue'
 import Drawer from './index.vue'
 
 export default Drawer
-/** 抽屉组件公开实例，供其他组件声明引用及调用暴露的方法。 */
 export type DrawerInstance = InstanceType<typeof Drawer>
 ```
 
@@ -1140,11 +1355,62 @@ export type DrawerInstance = InstanceType<typeof Drawer>
 import { DrawerInstance } from '@/components/drawer'
 import Drawer from '@/components/drawer'
 
-// 当前页面持有的抽屉实例，用于调用抽屉公开的方法。
 const drawerRef = ref<DrawerInstance | null>(null)
 ```
 
 此处假设 `ref` 被生效配置自动导入，否则显式导入。普通类型导入假设工具链可安全擦除；核实配置要求时改为独立 `import type`。没有外部实例类型消费者时，不要求预先导出实例类型。
+
+#### 场景 6：功能工具与样式不产生游离文件
+
+**正例：**
+
+详情页内聚的转换、格式化等功能可组合到一个工具性 hook；跨模块实际公用的无状态函数放项目 utils，公共入口只转发公开函数：
+
+```text
+src/
+|-- pages/teacher-exam-detail/
+|   |-- hooks/
+|   |   `-- useDetailTools.ts
+|   |-- index.ts
+|   `-- index.vue
+`-- utils/
+    |-- exam-statistics.ts
+    `-- index.ts
+```
+
+不为了工具 hook 增加无用的 ref、watcher 或副作用；无需抽离的简单一次性逻辑保留在 SFC。
+
+**反例：**
+
+不要把同一详情页的私有逻辑、类型或上下文散落到额外目录和根文件：
+
+```text
+teacher-exam-detail/
+|-- helpers/
+|-- utils/
+|-- services/
+|-- helper.ts
+|-- format.ts
+|-- context.ts
+|-- useDetailTools.ts
+|-- detail-type.ts
+|-- index.ts
+`-- index.vue
+```
+
+同一组件也不能保留两种独立样式形式：
+
+```text
+teacher-exam-detail/
+|-- style/
+|   |-- scoped.less
+|   `-- global.less
+|-- index.less
+|-- index.ts
+`-- index.vue
+```
+
+单文件时只用 index.less；多个确有必要的样式文件全部归入 style，并省略根样式文件。按当前需求创建内容，不照完整结构生成空目录。
 
 **本条检查清单：**
 
@@ -1154,11 +1420,70 @@ const drawerRef = ref<DrawerInstance | null>(null)
 - 没有空目录、无意义支持文件或被绕过的公共入口。
 - 文件和标签命名正确，hooks/ 内文件采用 camelCase。
 - 外部需要的实例类型从公共入口具名导出。
+- index.ts 显式转发默认组件和外部需要的方法、组件、子目录模块及类型，不放实现或批量暴露私有内容。
+- 根目录仅含允许的必需及可选项目，没有私自添加的无关目录或游离文件。
+- 私有内聚功能函数归工具性 hook，真正公用的无状态函数归项目 utils。
+- 独立样式单文件用 index.less，多文件用 style，二者互斥，不创建单文件 style 目录。
+
+<a id="vue-10"></a>
+
+### Vue 10：组件按职责拆分与文件规模
+
+**独立 reference：** [component-decomposition-examples.md](/D:/desktop/coding-skill/vue-code-rules/references/component-decomposition-examples.md)
+
+每个 `.vue` 文件最多 1000 行，并按内容和职责决定拆分方式：模板/HTML 偏多、嵌套复杂或存在独立业务区域时，考虑抽成子组件；script 偏多、混合多个功能职责时，考虑将对应功能迁入职责明确的 hooks；style 偏多或复杂时，按 `css-code-rules` 提取样式。不能只按固定行数切块，也不必等到 1000 行才拆分；CSS 强制阈值独立生效。拆分后的每个 Vue 文件仍须满足上限，SFC 保留简单的页面协调逻辑。
+
+拆分或移动时更新公共入口与消费者，检查自动组件发现，保留状态归属、生命周期、prop/event/slot 契约及样式作用域；不迁移无关组件。
+
+本条负责何时拆、按什么职责拆，以及拆分后如何检查。文件放置、命名、样式文件形式和 index.ts 的公开转发范围由第 9 条负责，不重复放在同一条中。
+
+#### 场景 1：按模板、脚本、样式的内容和职责拆分
+
+| 内容特征 | 拆分依据 | 迁移位置与要求 |
+| --- | --- | --- |
+| 模板/HTML 偏多、嵌套复杂 | 重复 UI、可独立维护的业务区域、父组件层级难以阅读 | 抽到 component/，建立清晰 props/events/slots；不为单个简单节点拆组件或增加包裹 |
+| script 偏多 | 查询筛选、选择等不同功能混在一起，遮蔽 SFC 的协调职责 | 按职责拆到 hooks/，相关状态、computed、watcher、动作及清理一同迁移，保留实例归属 |
+| style 偏多或复杂 | 达到 CSS 强制提取阈值，或存在具体维护问题需要提前提取 | 按 CSS 规则整体提取并保留作用域；单文件用 index.less，多文件用 style；不按视觉区块拆分 |
+| 总文件超过 1000 行 | 模板、脚本和样式任意组合导致超限 | 按上述职责边界拆至每个 .vue 均达标，并更新入口、消费者及自动发现 |
+
+例如详情页保留协调逻辑，概览和图表下沉子组件，查询和选择分别进入 hook：
+
+```text
+exam-detail/
+|-- component/
+|   |-- statistics-summary.vue
+|   `-- statistics-chart/
+|       |-- index.vue
+|       |-- index.ts
+|       `-- index.less
+|-- hooks/
+|   |-- useExamQuery.ts
+|   `-- useExamSelection.ts
+|-- index.less
+|-- index.ts
+`-- index.vue
+```
+
+概览仍是简单私有子组件；图表因拥有独立样式而采用目录形式，图表与父组件的样式分别归各自所有者。编译宏和简单 UI 协调保留在所属 SFC；不能将 hooks 写成模块级单例，也不能把整个 script 换个文件名塞入无职责边界的大 hook。仅真正供外部消费的子模块从公共入口转发，同一所属模块内仍允许合适的直接本地导入。
+
+#### 场景 2：样式提取阈值独立生效
+
+CSS 规则满足以下任一条件就必须提取整个内联样式块，不能因 Vue 文件尚未达到 1000 行而豁免：
+
+- 至少 80 个非空行。
+- 至少 4 个自有选择器组，且具备至少 2 类复杂度信号：三层及以上嵌套；至少三个状态或伪类分支；deep 或第三方覆盖；keyframes 或复杂动画；响应式、supports 或 container 分支。
+
+**本条检查清单：**
+
 - 每个 .vue 不超过 1000 行，结构移动同步更新消费者和自动发现。
+- HTML 偏多或复杂时考虑子组件，script 偏多时考虑按职责拆 hooks，style 偏多时按 CSS 规则提取，不机械按行切分。
+- 拆分后保留状态与生命周期归属、组件契约和样式作用域，更新公共入口、消费者及自动组件发现。
+- 样式提取遵循 CSS 对应引用；迁移后的目录和公共入口遵循 Vue 9。
+- 编译宏与简单协调保留在 SFC，不引入模块级共享状态或无关迁移。
 
-<a id="vue-9"></a>
+<a id="vue-11"></a>
 
-### Vue 9：所有 provide/inject 场景使用固定上下文模式
+### Vue 11：所有 provide/inject 场景使用固定上下文模式
 
 **独立 reference：** [complex-component-context-examples.md](/D:/desktop/coding-skill/vue-code-rules/references/complex-component-context-examples.md)
 
@@ -1175,46 +1500,33 @@ const drawerRef = ref<DrawerInstance | null>(null)
 
 #### 场景 1：固定实现结构
 
-以下完整结构取自引用中的工作台例子，中文说明补充类型及契约含义。示例假设 Vue 运行时 API 未被自动导入，因此保留显式导入；覆盖已核实后省略相应运行时导入。类型导入按工具实际要求选择普通导入或独立 `import type`。
+以下完整结构取自引用中的工作台例子，类型及契约含义由正文说明，代码只展示上下文结构。示例假设 Vue 运行时 API 未被自动导入，因此保留显式导入；覆盖已核实后省略相应运行时导入。类型导入按工具实际要求选择普通导入或独立 `import type`。
 
 ```ts
 import { computed, inject as vueInject, provide as vueProvide, ref } from 'vue'
 import { InjectionKey, Ref } from 'vue'
 import { loadWorkbenchPage } from '@/apis'
 
-/** 工作台所属实例的分页及请求状态。 */
 interface Page {
   loading: boolean
-  /** 从 1 开始的工作台页码。 */
   pageNumber: number
 }
-/** 所属工作台及后代共同使用的完整上下文契约。 */
 interface WorkbenchContext {
-  /** 当前工作台实例拥有的分页状态。 */
   page: Ref<Page>
-  /** 由分页状态派生的只读加载反馈。 */
   loading: Readonly<Ref<boolean>>
-  /** 初始化当前页，请求失败向调用方传播。 */
   initPage: () => Promise<void>
 }
 
-// 为工作台创建安全默认值，每次调用均返回新的普通状态对象。
 const createDefaultPage = (): Page => {
   return { loading: false, pageNumber: 1 }
 }
-// 标识工作台组件子树的上下文，避免与其他业务上下文混用。
 const WORKBENCH_CONTEXT_KEY: InjectionKey<WorkbenchContext> = Symbol('workbench-context')
 
-// 提供工作台上下文的创建与读取入口，不在模块层持有共享响应式实例。
 export const useWorkbenchContext = () => {
   return {
-    // 为当前所属工作台实例创建并提供完整共享状态。
     provide() {
-      // 当前工作台实例的分页与加载状态。
       const page = ref<Page>(createDefaultPage())
-      // 供所属者与后代展示当前工作台加载反馈。
       const loading = computed(() => page.value.loading)
-      // 初始化当前工作台页；请求结束后恢复加载状态，失败交由调用方处理。
       const initPage = async () => {
         page.value.loading = true
         try {
@@ -1223,17 +1535,14 @@ export const useWorkbenchContext = () => {
           page.value.loading = false
         }
       }
-      // 所属者和后代共享同一个完整上下文对象及其内部实例。
       const context: WorkbenchContext = { page, loading, initPage }
       vueProvide(WORKBENCH_CONTEXT_KEY, context)
       return context
     },
-    // 读取所属工作台的共享状态；位于所属子树之外时返回完整安全默认值。
     inject() {
       return vueInject(WORKBENCH_CONTEXT_KEY, {
         page: ref<Page>(createDefaultPage()),
         loading: ref(false),
-        // 缺少所属工作台时保持安全空操作，不发起初始化请求。
         initPage: async () => {}
       })
     }
@@ -1252,14 +1561,12 @@ export const useWorkbenchContext = () => {
 所属组件在 setup 中为当前实例提供一次：
 
 ```ts
-// 创建当前工作台与其后代共享的实例状态和操作。
 const { page, loading, initPage } = useWorkbenchContext().provide()
 ```
 
 后代读取同一所属者的上下文：
 
 ```ts
-// 读取所属工作台提供的共享状态与初始化操作。
 const { page, loading, initPage } = useWorkbenchContext().inject()
 ```
 
@@ -1268,7 +1575,6 @@ const { page, loading, initPage } = useWorkbenchContext().inject()
 后代为了读取状态而调用 provider，会为自己的子树创建另一份状态：
 
 ```ts
-// 错误：后代重新提供上下文，导致状态与原所属者分离。
 const { page, loading, initPage } = useWorkbenchContext().provide()
 ```
 
@@ -1297,17 +1603,18 @@ const { page, loading, initPage } = useWorkbenchContext().provide()
 ## 三、跨条款边界与规则归属
 
 - 本报告依据工作区最新 Vue 源文件。当前 Vue 1 未包含“模板禁止业务转换”的独立要求，模板引用也未规定该条；不将已安装旧副本中的表述重新写成当前工作区规则。
-- Vue 2 要求以尽可能少的 DOM 节点和层级实现功能。容器命名清楚本身不足以证明必要性；必须核实已有元素无法直接承担所需布局或行为。
-- Vue 1 的组件标签 kebab-case 与 Vue 8 的文件目录命名相互补充；插槽不成为多余 DOM 的理由。
-- Vue 4 允许独立模板或脚本逻辑区域之间最多一行空行；CSS 组件选择器内部仍按 CSS 规则保持连续，不能相互套用。
-- Vue 5 的编译宏无泛化声明注释，不能被解释为 Vue 7 的业务契约免注释；业务 prop、event、model、slot 和公开动作语义仍应在成员处说明。
+- Vue 2 要求以尽可能少的 DOM 节点和层级实现功能，并优先使用常见标签，禁用少见标签及 landmark/分区容器；用户未明确要求无障碍兼容时，禁止主动添加无关的无障碍属性。容器命名清楚本身不足以证明必要性；必须核实已有元素无法直接承担所需布局或行为。
+- Vue 1 的组件标签 kebab-case 与 Vue 9 的文件目录命名相互补充；插槽不成为多余 DOM 的理由。
+- Vue 5 允许独立模板或脚本逻辑区域之间最多一行空行；CSS 组件选择器内部仍按 CSS 规则保持连续，不能相互套用。
+- Vue 7 的编译宏无泛化声明注释，不能被解释为 Vue 8 的业务契约免注释；业务 prop、event、model、slot 和公开动作语义仍应在成员处说明。
 - Vue 6 只在精确 API 已被生效配置覆盖时省略运行时导入。生成声明、类型可见和相邻文件写法均不能单独替代配置核实。
-- Vue 8 的第一层组件目录是强制要求；支持样式、hook、常量、类型和子组件按需增加，不生成空目录。外部实例类型也只在真实消费者需要时导出。
-- CSS 强制提取条件与 Vue 1000 行上限独立生效；私有单文件需要独立样式时必须转换为目录。阈值细节以 CSS 对应引用为准。
-- Vue 9 适用于任何深度及任意共享字段数量的 provide/inject 场景。门面恰好两个方法、同一个 context 对象和完整安全 fallback 均为强制结构，不是可选建议。
-- 示例在必要位置补足中文契约说明、将英文注释及界面文案改为中文，并合并部分重复演示；不声称示例与源代码围栏逐字相同。本轮只重构引用归属和加载路由，9 条核心规则及原有源代码示例保持不变。
+- Vue 9 的第一层组件目录是强制要求；组件根目录只使用规定结构，不增加无关目录或游离文件。公用无状态工具归项目 utils；独立样式单文件使用 index.less，多文件放 style，二者互斥。index.ts 转发默认组件及外部实际需要的方法、组件、类型和子目录模块。
+- Vue 10 负责组件按职责拆分与 1000 行上限，HTML 对应子组件、script 对应 hooks、style 对应 CSS 规则。CSS 强制提取条件独立生效；私有单文件需要独立样式时必须转换为目录。阈值细节以 CSS 对应引用为准。
+- Vue 11 适用于任何深度及任意共享字段数量的 provide/inject 场景。门面恰好两个方法、同一个 context 对象和完整安全 fallback 均为强制结构，不是可选建议。
+- Vue 3 排列单个开始标签内部的指令、属性与事件，不改变 DOM 或插槽顺序；v-if 与 v-show 同属最前的最高级指令组，动态布尔值属于绑定，事件最后，展开覆盖关系必须保留。
+- 所有正反例非必要不出现注释。注释规则及注释位置/间距示例保留用于对照的必要注释，其余解释位于代码块外；不声称示例与源代码围栏逐字相同。11 条规则及一条规则一个主 reference 的结构保持不变，实际项目代码的业务注释要求不受示例精简影响。
 
-## 四、9 条核心规则与 9 个独立 reference
+## 四、11 条核心规则与 11 个独立 reference
 
 每条核心规则对应一个独立主 reference，各文件标明 `Owns Core Rule N.`，并包含所属规则的要求、完整示例和检查清单。原模板引用拆为 SFC/标签/插槽与 DOM 结构；原脚本结构引用拆为编译宏与自动导入。跨规则引用只指向对应归属，不再让同一个主文件承载两条规则。
 
@@ -1315,13 +1622,15 @@ const { page, loading, initPage } = useWorkbenchContext().provide()
 | --- | --- |
 | Vue 1 | [template-examples.md](/D:/desktop/coding-skill/vue-code-rules/references/template-examples.md) |
 | Vue 2 | [dom-structure-examples.md](/D:/desktop/coding-skill/vue-code-rules/references/dom-structure-examples.md) |
-| Vue 3 | [class-binding-examples.md](/D:/desktop/coding-skill/vue-code-rules/references/class-binding-examples.md) |
-| Vue 4 | [blank-line-examples.md](/D:/desktop/coding-skill/vue-code-rules/references/blank-line-examples.md) |
-| Vue 5 | [compiler-macro-examples.md](/D:/desktop/coding-skill/vue-code-rules/references/compiler-macro-examples.md) |
+| Vue 3 | [template-attribute-order-examples.md](/D:/desktop/coding-skill/vue-code-rules/references/template-attribute-order-examples.md) |
+| Vue 4 | [class-binding-examples.md](/D:/desktop/coding-skill/vue-code-rules/references/class-binding-examples.md) |
+| Vue 5 | [blank-line-examples.md](/D:/desktop/coding-skill/vue-code-rules/references/blank-line-examples.md) |
 | Vue 6 | [auto-import-examples.md](/D:/desktop/coding-skill/vue-code-rules/references/auto-import-examples.md) |
-| Vue 7 | [script-comment-examples.md](/D:/desktop/coding-skill/vue-code-rules/references/script-comment-examples.md) |
-| Vue 8 | [component-structure-examples.md](/D:/desktop/coding-skill/vue-code-rules/references/component-structure-examples.md) |
-| Vue 9 | [complex-component-context-examples.md](/D:/desktop/coding-skill/vue-code-rules/references/complex-component-context-examples.md) |
+| Vue 7 | [compiler-macro-examples.md](/D:/desktop/coding-skill/vue-code-rules/references/compiler-macro-examples.md) |
+| Vue 8 | [script-comment-examples.md](/D:/desktop/coding-skill/vue-code-rules/references/script-comment-examples.md) |
+| Vue 9 | [component-structure-examples.md](/D:/desktop/coding-skill/vue-code-rules/references/component-structure-examples.md) |
+| Vue 10 | [component-decomposition-examples.md](/D:/desktop/coding-skill/vue-code-rules/references/component-decomposition-examples.md) |
+| Vue 11 | [complex-component-context-examples.md](/D:/desktop/coding-skill/vue-code-rules/references/complex-component-context-examples.md) |
 
 ## 五、当前技能展示信息
 
@@ -1333,22 +1642,24 @@ const { page, loading, initPage } = useWorkbenchContext().provide()
 
 ## 六、完整性核对与文件快照
 
-正文覆盖全部 9 条核心规则、9 个独立 reference 的强制要求、各场景主题及检查清单，共包含 66 个代码围栏块。引用拆分前后的 63 个源代码围栏块逐字一致，没有丢失或新增示例代码。9 条核心规则内容保持不变。
+正文覆盖全部 11 条核心规则、11 个独立 reference 的强制要求、各场景主题及检查清单，共包含 80 个代码围栏块。当前引用共包含 77 个源代码围栏块；本轮只精简示例中的非必要注释，保留全部示例及其非注释代码。Vue 8 的注释演示和 Vue 5 的必要注释间距/位置对照仍保留。
 
-本轮同步更新了技能引用结构和审阅报告。核对对象为工作区的 SKILL.md、9 个 reference 和 UI 元数据，共 11 个来源文件；下表按实际文件字节计算 SHA-256，便于后续判断报告与源文件是否仍对应。图标不属于规则正文快照。
+本轮仅更新 Vue 技能的示例注释政策、相关引用中的示例及本审阅报告，未修改其他技能或其报告。核对对象为工作区的 SKILL.md、11 个 reference 和 UI 元数据，共 13 个 Vue 来源文件；下表按实际文件字节计算 SHA-256，便于后续判断报告与源文件是否仍对应。图标不属于规则正文快照。
 
-文档校验覆盖核心规则编号、9 个独立引用的覆盖、内部锚点、本地文件链接、代码围栏配对、中文占位标记替换，以及来源快照一致性。本仓库未提供可运行的 Vue 应用及对应构建配置；报告中的示例未编译或执行，不能据此宣称应用类型检查、lint 或运行时行为已经通过。
+文档校验覆盖核心规则编号、11 个独立引用的覆盖、内部锚点、本地文件链接、代码围栏配对、中文占位标记替换，以及来源快照一致性。本仓库未提供可运行的 Vue 应用及对应构建配置；报告中的示例未编译或执行，不能据此宣称应用类型检查、lint 或运行时行为已经通过。
 
 | 文件 | 字节数 | SHA-256 |
 | --- | --- | --- |
-| vue-code-rules/SKILL.md | 8698 | `6db525163f32256b96115287dd9748bc668be800210baa63336be453b03b941f` |
-| vue-code-rules/references/auto-import-examples.md | 4131 | `e34368e3af44dbfbd28a23d928cce70ef25aea82255c42f8198d840df6d3f47f` |
-| vue-code-rules/references/blank-line-examples.md | 3906 | `9a0a1450e279d6018040c4b4ade431a8920e3b63ad10467b19cf1d79a1ef9c2a` |
-| vue-code-rules/references/class-binding-examples.md | 4190 | `bc02d27eb450236fc75bd1161c7fc5f750756ca89964ceafa92ad30442eda21b` |
-| vue-code-rules/references/compiler-macro-examples.md | 5144 | `53a6850a038b8a3b216dded93ac7bb630c962d69abf75838c0791dda3a50e069` |
-| vue-code-rules/references/complex-component-context-examples.md | 5634 | `c77cf99da3698b33e91fc380a0c914d2c31a0dea5e996521a8cf5fd168c406a7` |
-| vue-code-rules/references/component-structure-examples.md | 9830 | `7df29a6b1833abbf693f44d1f0e1dc4ac1db84a236817ac4970289f4cbfa872c` |
-| vue-code-rules/references/dom-structure-examples.md | 3336 | `b3fc20531e461fcc3dbf7b04191666331dfdd9569313c445be67aed651b2dab6` |
-| vue-code-rules/references/script-comment-examples.md | 9256 | `13935d00aeb81640900e3bfe29ea3d5419a941a9c991bce9ea0c69f07456a50e` |
-| vue-code-rules/references/template-examples.md | 2959 | `531eed3de5dacc4c4e1da930bbddc3605f0385e528d9799613e39555ac472b9e` |
+| vue-code-rules/SKILL.md | 12162 | `1810b6e8139b214130974b61fef078d1a90e6d6e21b04ca2db3bb28a978d3032` |
+| vue-code-rules/references/auto-import-examples.md | 3265 | `3d851147c01b7eff5f14bdaf91b5f6af847948dd78024e47587e887352fa93b2` |
+| vue-code-rules/references/blank-line-examples.md | 3906 | `f3e6c08d81a7b9fd79be5d0e2ea09bc268b23a181efa0cd621538b224c547fdf` |
+| vue-code-rules/references/class-binding-examples.md | 4118 | `995748dde1288a530cef87e3d7c7b2cb1e23101447d1e49fb991de67b07a21f5` |
+| vue-code-rules/references/compiler-macro-examples.md | 4377 | `94a9e53b6bca685977b187ea9d443d9f119323cf72a0cc0553331f00839116a0` |
+| vue-code-rules/references/complex-component-context-examples.md | 4797 | `4b7047f2161f6b00d8c8695be011e7db47307b5600367f3a542ae457edba20ab` |
+| vue-code-rules/references/component-decomposition-examples.md | 4060 | `bc30591a4ef8bfba8515b49d63816f664826c57531c191f29d09c239f9023867` |
+| vue-code-rules/references/component-structure-examples.md | 15141 | `2de22ef77eeca313ef7038c86736e81c6f11d5d7f732a5ec4785a46c0a62af73` |
+| vue-code-rules/references/dom-structure-examples.md | 6068 | `dfc112b5d125ba4111b24c72b4397874425521e23ee3115726518caec0800a59` |
+| vue-code-rules/references/script-comment-examples.md | 9256 | `e7cf1ecc26f72fe1480e6c4b58025436781f7dee4836c3e27a58a2bb12650fcb` |
+| vue-code-rules/references/template-attribute-order-examples.md | 8281 | `7117d9e05a83e43c48f45ce0fe4e03d6829d3c69a220941d786d8774c9a94362` |
+| vue-code-rules/references/template-examples.md | 3155 | `117bb62f30ce763ab317f7184aa1dbfedc5304c79d6776f49072ac497a36564a` |
 | vue-code-rules/agents/openai.yaml | 210 | `a429e2e6494f2e8f75cdbc0caea54da9d27d09c9b4b17edd3063a5adf01ef519` |

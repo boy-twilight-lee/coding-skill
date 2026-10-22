@@ -1,6 +1,6 @@
 # Vue Blank Line Examples
 
-Owns Core Rule 4.
+Owns Core Rule 5.
 
 ## Ownership
 
