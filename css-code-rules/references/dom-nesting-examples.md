@@ -6,7 +6,7 @@ Owns Core Rule 4.
 
 1. In Less/Sass/SCSS, follow the actual rendered DOM parent hierarchy and the order of child branches. Nest every owned descendant under its actual parent selector and retain intermediate DOM parents; do not float descendants outside their parents, flatten them at the stylesheet root, or skip a parent to reduce nesting depth. Only actual stylesheet roots, intentional global rules, and separately rendered Teleport roots are top-level. Retain concise complete class names instead of generating opaque names by concatenation. Use `& >` only when a stable direct-child boundary is needed to prevent unintended descendant matches; otherwise preserve the DOM hierarchy with ordinary nesting. Never start a nested selector with a bare `>`.
 
-2. When component-local declarations are genuinely reused, first define a focused non-emitting mixin at the top of the nearest common DOM ancestor selector scope, before ordinary declarations and child rules. Invoke it inside each consumer's original nested path. Do not lift consumers, skip their DOM parents, or flatten selectors to implement reuse. Existing application-wide utilities keep their established global ownership.
+2. When component-local declarations are genuinely reused, define a focused non-emitting mixin in the nearest common DOM ancestor selector scope, after all ordinary CSS declarations and before nested selectors. Invoke it inside each consumer's original nested path, after that consumer's ordinary CSS declarations and before nested selectors. Keep definitions before calls in the same scope. If the owner has no ordinary declarations, its mixin definitions may begin the scope. Do not lift consumers, skip their DOM parents, or flatten selectors to implement reuse. Existing application-wide utilities keep their established global ownership.
 
 3. Declare the owning element once, then place its pseudo-elements and pseudo-classes inside that block using `&`, such as `&::after` and `&:hover`. Group shared conditions into a branch such as `&:not(.a):not(.b)` and nest its interaction state as `&:hover` inside it. Do not repeat the owning class with flattened pseudo chains under its parent. Follow the exact supplied wrong/right example in Scenario 3. Business state classes are chained to their owner, and state-dependent descendants retain the actual DOM parent path.
 
@@ -165,7 +165,7 @@ Situation: the title and summary in Scenario 1 share ellipsis styling. Their com
 
 **Positive example:**
 
-Define the non-emitting mixin at the top of that ancestor selector scope, before ordinary declarations and child rules. Invoke it at each consumer while preserving the DOM hierarchy and order:
+Define the non-emitting mixin after the ancestor's ordinary CSS declarations and before its nested selectors. This ancestor has no ordinary declarations, so the definition begins its scope. Invoke it after each consumer's ordinary CSS declarations while preserving the DOM hierarchy and order:
 
 ```less
 .cx-container {
@@ -207,7 +207,7 @@ Prefer this nearest-common-DOM-ancestor mixin placement for component-local repe
 ## Review Checklist
 
 - Descendants follow the actual DOM parent chain and child order; no child floats outside its parent and no intermediate parent is skipped to reduce depth.
-- Reused local declarations are defined as focused mixins at the top of the common DOM ancestor scope and invoked from intact consumer paths.
+- Local mixin definitions and calls follow all ordinary CSS declarations and precede nested selectors, with definitions kept in the common DOM ancestor and calls kept in intact consumer paths.
 - Direct-child combinators express a stable boundary and use `& >` in preprocessor nesting.
 - Pseudo-elements and pseudo-classes use owner-local & branches; shared conditions contain nested interaction branches as in the supplied example.
 - Business-state child changes retain their full DOM parent path.

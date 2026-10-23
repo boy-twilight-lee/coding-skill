@@ -5,14 +5,13 @@
 1. Group declarations by the aspect of element presentation they control. Every category stays contiguous: positioning and transforms; interaction; dimensions, clipping, and replaced-content fitting; margin/padding; visual appearance; typography; transition/animation; display/layout. Do not interleave unrelated categories or sort alphabetically. This order follows the supplied map-editor-back example.
 2. Keep position offsets and transform together. Keep height and its constraints before width and its constraints. Keep background/borders/radius/shadow together, text properties together, transition/animation together, and display plus its flex/grid/alignment/gap properties together at the end.
 3. Omit unused categories and ineffective or reset/default duplicates. The sequence is not a required property set. Do not add section comments between declaration categories; adjacency expresses the grouping.
-4. Define local non-emitting mixins at the top of the common DOM ancestor scope. Place mixin calls where their emitted property group belongs. Put nested DOM/state/pseudo selectors after the owning declarations while preserving the DOM hierarchy.
-5. Preserve effective shorthand/longhand precedence and deliberate compatibility fallbacks when organizing declarations; do not change behavior merely to sort. If active Stylelint requires a different order, follow the executable configuration and report the scoped conflict.
+4. Mixin definitions and calls must follow all ordinary CSS declarations and precede nested DOM/state/pseudo selectors. Keep local non-emitting definitions in the common DOM ancestor scope and before calls in the same scope. Apply the property-group order to ordinary declarations; do not interleave mixin calls with them by emitted property group. Preserve the DOM hierarchy and intended cascade when moving calls.
+5. Preserve effective shorthand/longhand precedence and deliberate compatibility fallbacks when organizing declarations; do not change behavior merely to sort. If active Stylelint requires a different property order, follow the executable configuration and report the scoped conflict; mixin definitions and calls still follow ordinary CSS declarations.
 
 ## Property Groups
 
 | Order | Group | Illustrative properties |
 | --- | --- | --- |
-| Before declarations | Local non-emitting mixin definitions | Define at the top of the common DOM owner, not as a detached global helper. |
 | 1 | Positioning, stacking, and transforms | position; left/right/top/bottom/inset; z-index; transform; transform-origin |
 | 2 | Interaction | cursor; pointer-events; user-select; touch-action; resize |
 | 3 | Dimensions, clipping, and fitting | height and its min/max constraints before width and its min/max constraints; aspect-ratio; box-sizing; overflow; object-fit; object-position |
@@ -21,7 +20,8 @@
 | 6 | Typography | font and font-* properties; line-height; color; text-align; text-overflow; white-space; letter/word spacing |
 | 7 | Motion | transition family; animation family |
 | 8 | Layout | display; flex family; grid family; align/justify family; gap family |
-| After declarations | Nested selectors | DOM children, owner-local pseudo-elements/pseudo-classes and state branches |
+| After ordinary declarations | Mixin definitions and calls | Keep local definitions in the common DOM owner and before calls in the same scope; calls follow the consumer's ordinary declarations. |
+| After mixins | Nested selectors | DOM children, owner-local pseudo-elements/pseudo-classes and state branches |
 
 The groups demonstrate relative order. A property's concrete role and cascade matter; examples assume the included values have a real purpose relative to the target's baseline. Native CSS implementation details remain the agent's project-specific decision. All fenced style examples here use Less.
 
@@ -119,20 +119,20 @@ For a replaced element such as img, group dimensions with object fitting before 
 
 ## Scenario 5: Mixin definition and call placement
 
-Assume header and body are direct DOM children of cx-container. Define the common mixin at the owner top; because it emits only layout properties, place calls in the consumer layout group without skipping parents.
+Assume header and body are direct DOM children of cx-container. Define the common mixin after the owner's ordinary CSS declarations and before nested selectors. Place calls after each consumer's ordinary CSS declarations, regardless of the emitted property group, without skipping parents.
 
 **Positive example:**
 
 ```less
 .cx-container {
+  position: relative;
+  padding: 16px;
+  border: 1px solid #dcdfe6;
   .center() {
     display: flex;
     align-items: center;
     justify-content: center;
   }
-  position: relative;
-  padding: 16px;
-  border: 1px solid #dcdfe6;
   .cx-container-header {
     height: 40px;
     background: #f5f7fa;
@@ -174,6 +174,6 @@ The same properties as Scenario 1 are interleaved across categories. Reorder the
 
 - Every presentation group is contiguous, with transform in positioning and motion before display/layout.
 - Height precedes width; no unused category or reset/default duplicate is added.
-- Mixin placement, DOM hierarchy, and owner-local pseudo/state branches are preserved.
+- Mixin definitions and calls follow ordinary CSS declarations and precede nested selectors; DOM hierarchy and owner-local pseudo/state branches are preserved.
 - Grouping introduces no routine comments.
 - Cascade, shorthand precedence, and compatibility behavior remain intact.

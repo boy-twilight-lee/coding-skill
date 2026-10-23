@@ -70,13 +70,13 @@ Assume the library DOM is verified to match this hierarchy.
 
 ```less
 .cand-row {
+  display: flex;
+  gap: 8px;
   .center() {
     display: flex;
     align-items: center;
     justify-content: center;
   }
-  display: flex;
-  gap: 8px;
   .cand-row-avatar {
     height: 32px;
     width: 32px;
