@@ -4,15 +4,11 @@ Owns Core Rule 10.
 
 ## Mandatory Rules
 
-1. Keep the complete body of each component selector contiguous: no blank lines between ordinary declarations, nested children or siblings, pseudo-classes/elements, state or deep branches, or local mixin definitions and calls. Do not use blank lines as logical grouping within a component; indentation and braces provide the hierarchy. Never leave file-leading, file-trailing, consecutive, or block-edge blank lines. At most one optional blank line may separate genuinely independent top-level stylesheet roots. A normal final newline is retained.
+1. Keep stylesheet code contiguous: no blank lines between ordinary declarations, property groups, nested children or siblings, pseudo-classes/elements, state or deep branches, at-rules, or local mixin definitions and calls. This also applies between independent top-level stylesheet roots. Do not use blank lines as logical grouping; preserve normal line breaks and use indentation and braces to express hierarchy rather than collapsing styles onto one line. Never leave file-leading, file-trailing, consecutive, or block-edge blank lines. Retain one normal final newline. For Vue style blocks, apply this rule inside the stylesheet without changing separators between SFC blocks. Check the final output after formatting and style fixes. All stylesheet examples follow this format except the explicit whitespace counterexample below.
 
 ## Scenario 1: Keep Component Styles Contiguous
 
-The examples below demonstrate contiguous component bodies across ordinary nesting, states, deep branches, and mixins.
-
 ### Positive example 1: Contiguous declarations and DOM branches
-
-Place child selectors immediately after declarations; sibling header/body branches are contiguous too.
 
 ```less
 .cand-card {
@@ -34,8 +30,6 @@ Place child selectors immediately after declarations; sibling header/body branch
 
 ### Positive example 2: Contiguous pseudo and state branches
 
-Keep owner declarations, hover, and business states adjacent without blank-line separators.
-
 ```less
 .cand-card {
   cursor: pointer;
@@ -52,7 +46,7 @@ Keep owner declarations, hover, and business states adjacent without blank-line 
 
 ### Positive example 3: Contiguous deep branches
 
-Assume the library DOM is verified to match this hierarchy. Deep blocks, descendants, and adjacent deep branches contain no blank lines.
+Assume the library DOM is verified to match this hierarchy.
 
 ```less
 .cand-form {
@@ -73,8 +67,6 @@ Assume the library DOM is verified to match this hierarchy. Deep blocks, descend
 ```
 
 ### Positive example 4: Contiguous mixin definitions and consumers
-
-Keep the mixin at the common DOM owner top, with no blank line after its definition or between subsequent declarations and consumers.
 
 ```less
 .cand-row {
@@ -99,9 +91,19 @@ Keep the mixin at the common DOM owner top, with no blank line after its definit
 }
 ```
 
-**Negative example:**
+### Positive example 5: Contiguous top-level roots
 
-Do not insert blank lines inside the component, even to separate declarations or sibling selectors:
+```less
+.map-editor {
+  position: relative;
+  display: flex;
+}
+.map-preview {
+  overflow: hidden;
+}
+```
+
+**Negative example:**
 
 ```less
 .cand-card {
@@ -124,6 +126,8 @@ Do not insert blank lines inside the component, even to separate declarations or
 }
 ```
 
-## Review Checklist
+## Formatter and Linter Guidance
 
-- Component roots contain no blank lines, including between sibling, pseudo/state/deep, or mixin blocks; independent top-level roots have at most one optional separator.
+Prettier preserves existing single blank lines and has no option to forbid them. ESLint's JavaScript/TypeScript empty-line rules do not enforce whitespace inside Less files or Vue style blocks.
+
+When style-tool configuration is part of the requested task, use Stylelint with `@stylistic/stylelint-plugin` and set `@stylistic/max-empty-lines` to `0`. Keep inherited `declaration-empty-line-before`, `rule-empty-line-before`, `at-rule-empty-line-before`, `comment-empty-line-before`, and `@stylistic/block-closing-brace-empty-line-before` rules consistent with that limit by setting them to `never` or disabling conflicting requirements. Use syntax parsers appropriate to the actual files, such as `postcss-less` for Less and `postcss-html` for Vue style blocks. Apply the configured Stylelint fix after formatting and inspect the final result. If that tool is unavailable, remove blank lines in the changed stylesheet regions directly; do not install dependencies or rewrite project configuration solely to satisfy a normal style edit.

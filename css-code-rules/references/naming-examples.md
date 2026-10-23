@@ -55,13 +55,10 @@ Avoid generic roots, double-underscore/double-hyphen BEM, visual-only names, and
 ```less
 .card {
 }
-
 .cand-card__header {
 }
-
 .cand-card--selected {
 }
-
 .table-box-header-red {
 }
 ```
@@ -127,7 +124,6 @@ Do not shorten the same structure into arbitrary single letters or an undecipher
   .h-r-c-e-m-p-c-h-w {
   }
 }
-
 .hrcempc {
   .hrcempchw {
   }
@@ -156,7 +152,6 @@ Two top-level roots are valid because they belong to separate rendered trees:
 ```less
 .cand-filter {
 }
-
 .cand-filter-popper {
   .cand-filter-popper-option {
   }

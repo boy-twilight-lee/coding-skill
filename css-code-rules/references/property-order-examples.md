@@ -4,7 +4,7 @@
 
 1. Group declarations by the aspect of element presentation they control. Every category stays contiguous: positioning and transforms; interaction; dimensions, clipping, and replaced-content fitting; margin/padding; visual appearance; typography; transition/animation; display/layout. Do not interleave unrelated categories or sort alphabetically. This order follows the supplied map-editor-back example.
 2. Keep position offsets and transform together. Keep height and its constraints before width and its constraints. Keep background/borders/radius/shadow together, text properties together, transition/animation together, and display plus its flex/grid/alignment/gap properties together at the end.
-3. Omit unused categories and ineffective or reset/default duplicates. The sequence is not a required property set. Do not add section comments or decorative blank lines between declaration categories; adjacency expresses the grouping.
+3. Omit unused categories and ineffective or reset/default duplicates. The sequence is not a required property set. Do not add section comments between declaration categories; adjacency expresses the grouping.
 4. Define local non-emitting mixins at the top of the common DOM ancestor scope. Place mixin calls where their emitted property group belongs. Put nested DOM/state/pseudo selectors after the owning declarations while preserving the DOM hierarchy.
 5. Preserve effective shorthand/longhand precedence and deliberate compatibility fallbacks when organizing declarations; do not change behavior merely to sort. If active Stylelint requires a different order, follow the executable configuration and report the scoped conflict.
 
@@ -175,5 +175,5 @@ The same properties as Scenario 1 are interleaved across categories. Reorder the
 - Every presentation group is contiguous, with transform in positioning and motion before display/layout.
 - Height precedes width; no unused category or reset/default duplicate is added.
 - Mixin placement, DOM hierarchy, and owner-local pseudo/state branches are preserved.
-- Grouping introduces no decorative blank lines or routine comments.
+- Grouping introduces no routine comments.
 - Cascade, shorthand precedence, and compatibility behavior remain intact.

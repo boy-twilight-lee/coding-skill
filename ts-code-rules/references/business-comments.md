@@ -2,6 +2,10 @@
 
 Owns Core Rule 6.
 
+## Ownership
+
+This reference is the canonical source for generic script-comment coverage, wording, placement, and syntax. `vue-code-rules` also applies it to JavaScript Vue scripts without importing unrelated TypeScript rules. Vue-specific registration placement, compiler-macro exceptions, and the prohibition on adding template comments belong to [Vue-Specific Comment Rules](../../vue-code-rules/references/script-comment-examples.md).
+
 ## Example Presentation
 
 Keep positive and negative examples free of nonessential comments. Retain comments only when demonstrating a comment rule, spacing/placement, or an essential non-obvious constraint; put ordinary explanations outside code fences. Focused examples do not waive actual project-code comment coverage. Use actual Chinese comments rather than placeholder markers.
@@ -12,8 +16,8 @@ Keep positive and negative examples free of nonessential comments. Retain commen
 2. Document business functions, methods, composables, handlers, and callback registrations by their action and result or affected state. Include parameter meaning, return contract, sequencing, side effects, and failure ownership where relevant. Prefer `//` for ordinary responsibility comments, including public declarations; use JSDoc only when a concrete documentation-tooling or structured-tag requirement calls for it, without repeating TypeScript parameter types. Keep one-use callbacks inline and comment the registration rather than extracting a comment target.
 3. Document each meaningful internal stage or important branch at its smallest cohesive block: validation/early exit, conversion, request sequencing, merging/state commits, interaction boundaries, fallback/retry/deduplication, side effects, recovery, and cleanup. A function comment does not replace distinct internal rules; a single-stage function needs no duplicate explanation. Derive reasons from code and verified contracts.
 4. Document domain interfaces, type aliases, enums, and exported contracts. Important members describe units, source, allowed states, defaults, optional/null meanings, or consumer expectations where relevant. Keep member contracts next to members instead of repeating them at every use.
-5. Keep comments adjacent and accurate. Do not narrate imports, temporary destructuring, loop variables, mechanical map/filter callbacks, obvious accessors, trivial language helpers, mechanical utility types, generated/vendor declarations, or self-evident id/name fields. Use another language only for an explicit project requirement or necessary exact external term. Follow `vue-code-rules` for macro exceptions and Vue-specific placement.
-6. Prefer `//` whenever an ordinary comment fits on one line, including comments on interfaces, type aliases, and contract members. Do not default to single-line `/* ... */` or `/** ... */`. For a cohesive explanation that genuinely needs multiple lines, consider `/* ... */`; several `//` lines remain valid when clearer. Do not pad a short comment into multiple lines merely to justify a block. Vue compiler macros still prohibit all internal comments.
+5. Keep comments adjacent and accurate. Do not narrate imports, temporary destructuring, loop variables, mechanical map/filter callbacks, obvious accessors, trivial language helpers, mechanical utility types, generated/vendor declarations, or self-evident id/name fields. Use another language only for an explicit project requirement or necessary exact external term. Apply the linked Vue-specific rules when reviewing Vue code.
+6. Prefer `//` whenever an ordinary comment fits on one line, including comments on interfaces, type aliases, and contract members. Do not default to single-line `/* ... */` or `/** ... */`. For a cohesive explanation that genuinely needs multiple lines, consider `/* ... */`; several `//` lines remain valid when clearer. Do not pad a short comment into multiple lines merely to justify a block.
 
 Never introduce a wrapper, intermediate, or guard only to hold a comment; apply [Abstraction and Cleanup](abstraction-and-cleanup.md). Cover affected code without expanding an ordinary change into repository-wide annotation work.
 

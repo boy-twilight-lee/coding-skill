@@ -2,7 +2,7 @@
 
 Owns Core Rule 7.
 
-For the runtime import prerequisites in these examples, read Core Rule 6's [Auto-Import Examples](auto-import-examples.md). For compiler-macro comment exceptions and business contract documentation, read Core Rule 8's [Vue Script Comment Examples](script-comment-examples.md).
+For the runtime import prerequisites in these examples, read Core Rule 6's [Auto-Import Examples](auto-import-examples.md). For compiler-macro comment exceptions and standalone contract placement, read Core Rule 8's [Vue-Specific Comment Rules](script-comment-examples.md).
 
 ## Mandatory Rules
 

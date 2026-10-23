@@ -33,11 +33,9 @@ Do not separate the same selector by declaration category:
 .talent-card-header {
   padding: 12px 16px;
 }
-
 .talent-card-header {
   border-bottom: 1px solid #dcdfe6;
 }
-
 .talent-card-header {
   display: flex;
   align-items: center;

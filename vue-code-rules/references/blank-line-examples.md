@@ -1,71 +1,30 @@
-# Vue Blank Line Examples
+# Template Blank Lines
 
 Owns Core Rule 5.
 
-## Ownership
+## Ownership and Required Routing
 
-This reference owns whitespace between SFC blocks, inside templates, and inside JavaScript Vue scripts. For TypeScript script blocks, `ts-code-rules` is the canonical source for statement and declaration spacing. For style blocks, `css-code-rules` is the canonical source for selector and declaration spacing.
+This reference owns blank lines only inside `<template>`, including nested slot templates. Before deciding whitespace elsewhere, fully read the appropriate canonical reference:
+
+| Region | Canonical reference |
+| --- | --- |
+| Template interior | This reference |
+| Any Vue script block, JavaScript or TypeScript | [TS Blank Lines](../../ts-code-rules/references/blank-lines.md) |
+| TypeScript/TSX modules and top-level SFC block separators | [TS Blank Lines](../../ts-code-rules/references/blank-lines.md) |
+| Vue style interiors and standalone stylesheets | [CSS Blank Lines](../../css-code-rules/references/blank-line-examples.md) |
+
+Reusing TS whitespace guidance for JavaScript does not activate unrelated TypeScript rules. Do not infer script or stylesheet requirements from template examples.
 
 ## Mandatory Rules
 
-1. Keep at most one blank line between top-level SFC blocks or genuinely separate logical regions. Never use consecutive blank lines or leave a blank line at the beginning or end of an SFC block.
+1. Use at most one blank line only when it materially separates independent template regions. Do not add blank lines by tag type, nesting level, or repeated component count.
+2. Keep tightly coupled nodes contiguous, including repeated items, adjacent label/value pairs, one component's slot declarations, and `v-if`/`v-else-if`/`v-else` chains.
+3. Do not leave consecutive blank lines or blank lines immediately inside `<template>`, a nested slot template, or an element's opening/closing edges. Do not add template comments as region separators.
+4. Preserve whitespace that participates in rendered text, inline-element spacing, or whitespace-sensitive content. A source-formatting cleanup must not change visible output.
 
-2. In templates, keep tightly coupled nodes together. Use one blank line only when it materially separates independent UI regions; do not separate repeated items, adjacent label/value pairs, or one component's slot declarations.
-
-3. In JavaScript Vue scripts, do not place blank lines immediately inside a code block, between a comment and the declaration or statement it documents, or between tightly coupled statements. TypeScript scripts apply the equivalent rule from `ts-code-rules` instead of duplicating it here.
-
-4. Style blocks apply `css-code-rules` directly. Do not infer style whitespace from template or script examples.
-
-## Scenario 1: Separate SFC Blocks
+## Scenario 1: Keep Coupled Nodes Together
 
 **Positive example:**
-
-Use at most one blank line between blocks and none at their inner edges:
-
-```vue
-<template>
-  <div class="user-card">{{ name }}</div>
-</template>
-
-<script setup lang="ts">
-const props = defineProps<{
-  name: string
-}>()
-</script>
-
-<style lang="less" scoped>
-.user-card {
-  color: #303133;
-}
-</style>
-```
-
-Do not add empty blocks merely to complete the sequence; block presence and order are governed by the template rules.
-
-**Negative example:**
-
-Do not add multiple blank lines between those same SFC blocks or blank lines at their inner edges:
-
-```vue
-<template>
-
-  <div class="user-card">{{ name }}</div>
-
-</template>
-
-
-<script setup lang="ts">
-
-const props = defineProps<{ name: string }>()
-
-</script>
-```
-
-## Scenario 2: Group Template Nodes
-
-**Positive example:**
-
-Keep one component's tightly coupled content contiguous:
 
 ```vue
 <div class="user-card">
@@ -74,11 +33,7 @@ Keep one component's tightly coupled content contiguous:
 </div>
 ```
 
-A single blank line may separate genuinely independent template regions. It must not be used as decoration or as a substitute for a meaningful component boundary.
-
 **Negative example:**
-
-Do not split the same label/value group with decorative blank lines:
 
 ```vue
 <div class="user-card">
@@ -88,42 +43,38 @@ Do not split the same label/value group with decorative blank lines:
 </div>
 ```
 
-## Scenario 3: Group JavaScript Script Logic
+## Scenario 2: Separate Independent Regions without Splitting Branches
 
 **Positive example:**
 
-One blank line may separate different responsibilities. When a comment is justified, keep it attached to what it documents:
+The filters and result group have distinct responsibilities. The result branches remain adjacent:
 
-```js
-const selectedUserId = ref('')
-const hasSelectedUser = computed(() => Boolean(selectedUserId.value))
+```vue
+<template>
+  <question-filters v-model="filters" />
 
-const clearSelectedUser = () => {
-  selectedUserId.value = ''
-}
+  <question-list v-if="questions.length" :questions="questions" />
+  <question-empty v-else />
+</template>
 ```
-
-For a TypeScript script, use the corresponding `ts-code-rules` blank-line rule rather than treating this JavaScript example as an additional requirement.
 
 **Negative example:**
 
-Do not detach those same comments or add blank lines at function edges:
+The blank lines pad template edges and split one conditional result group:
 
-```js
-// <zh: preserve the server selection so cancellation can restore it.>
+```vue
+<template>
 
-const selectedUserId = ref('')
+  <question-list v-if="questions.length" :questions="questions" />
 
-const clearSelectedUser = () => {
+  <question-empty v-else />
 
-  selectedUserId.value = ''
-
-}
+</template>
 ```
 
 ## Review Checklist
 
-- SFC blocks have at most one blank line between them and no leading or trailing inner blank lines.
-- Template blank lines separate independent UI regions rather than tightly coupled nodes.
-- Justified JavaScript comments touch what they document, and logical groups use at most one blank line.
-- TypeScript-script and style-block whitespace are reviewed by their canonical language skills.
+- Only template-interior blank lines are decided here; scripts, SFC separators, and styles use their canonical references.
+- At most one blank line separates genuinely independent regions; coupled nodes, slots, and conditional branches remain contiguous.
+- There are no consecutive or block-edge blank lines and no added template comments.
+- Whitespace-sensitive text and rendered inline spacing remain unchanged.

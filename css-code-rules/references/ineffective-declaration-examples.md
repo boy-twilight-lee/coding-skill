@@ -44,7 +44,6 @@ Assume the project already has the following active global reset and body typogr
   margin: 0;
   padding: 0;
 }
-
 body {
   font-family: Arial, sans-serif;
   font-size: 14px;

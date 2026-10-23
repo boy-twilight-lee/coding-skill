@@ -22,12 +22,12 @@ After formatting, re-check the changed file for rules a generic formatter cannot
 
 - Actual DOM parent hierarchy, child order, and common-ancestor mixin placement.
 - Correct `:deep(...)` consolidation.
-- No blank lines inside component roots; only optional single separators between independent top-level roots.
+- Whitespace follows [Blank Line Examples](blank-line-examples.md).
 - Required declaration category order.
 - Duplicate blocks and redundant declarations.
 - Target-browser compatibility.
 
-Formatter success confirms syntax and configured formatting, not architectural compliance.
+Formatter success confirms syntax and configured formatting, not compliance with all style rules.
 
 **Negative example:**
 
