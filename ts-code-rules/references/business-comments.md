@@ -9,10 +9,11 @@ Keep positive and negative examples free of nonessential comments. Retain commen
 ## Mandatory Rules
 
 1. Add concise Chinese responsibility comments above major business declarations, including state, refs, reactive records, computed values, persistent fields, configuration, thresholds, and mappings. Explain their role, scope/source, and relevant units, defaults, reset timing, or dependencies. Clear names do not waive coverage. A small contiguous group with one responsibility may share a comment.
-2. Document business functions, methods, composables, handlers, and callback registrations by their action and result or affected state. Include parameter meaning, return contract, sequencing, side effects, and failure ownership where relevant. Use JSDoc when public callers benefit; do not repeat TypeScript parameter types. Keep one-use callbacks inline and comment the registration rather than extracting a comment target.
+2. Document business functions, methods, composables, handlers, and callback registrations by their action and result or affected state. Include parameter meaning, return contract, sequencing, side effects, and failure ownership where relevant. Prefer `//` for ordinary responsibility comments, including public declarations; use JSDoc only when a concrete documentation-tooling or structured-tag requirement calls for it, without repeating TypeScript parameter types. Keep one-use callbacks inline and comment the registration rather than extracting a comment target.
 3. Document each meaningful internal stage or important branch at its smallest cohesive block: validation/early exit, conversion, request sequencing, merging/state commits, interaction boundaries, fallback/retry/deduplication, side effects, recovery, and cleanup. A function comment does not replace distinct internal rules; a single-stage function needs no duplicate explanation. Derive reasons from code and verified contracts.
 4. Document domain interfaces, type aliases, enums, and exported contracts. Important members describe units, source, allowed states, defaults, optional/null meanings, or consumer expectations where relevant. Keep member contracts next to members instead of repeating them at every use.
 5. Keep comments adjacent and accurate. Do not narrate imports, temporary destructuring, loop variables, mechanical map/filter callbacks, obvious accessors, trivial language helpers, mechanical utility types, generated/vendor declarations, or self-evident id/name fields. Use another language only for an explicit project requirement or necessary exact external term. Follow `vue-code-rules` for macro exceptions and Vue-specific placement.
+6. Prefer `//` whenever an ordinary comment fits on one line, including comments on interfaces, type aliases, and contract members. Do not default to single-line `/* ... */` or `/** ... */`. For a cohesive explanation that genuinely needs multiple lines, consider `/* ... */`; several `//` lines remain valid when clearer. Do not pad a short comment into multiple lines merely to justify a block. Vue compiler macros still prohibit all internal comments.
 
 Never introduce a wrapper, intermediate, or guard only to hold a comment; apply [Abstraction and Cleanup](abstraction-and-cleanup.md). Cover affected code without expanding an ordinary change into repository-wide annotation work.
 
@@ -33,15 +34,15 @@ const updatedAt = new Date(result.updatedAt * 1000)
 Type-only declarations also carry business contracts:
 
 ```ts
-/** 候选人列表查询条件，供列表请求与分页共同使用。 */
+// 候选人列表查询条件，供列表请求与分页共同使用。
 interface CandidateQuery {
   keyword: string
-  /** 从 1 开始的页码，与服务端分页约定保持一致。 */
+  // 从 1 开始的页码，与服务端分页约定保持一致。
   pageNumber: number
-  /** null 表示不限制职位。 */
+  // null 表示不限制职位。
   roleCode: number | null
 }
-/** 草稿保存状态，区分未保存修改、保存中和已同步。 */
+// 草稿保存状态，区分未保存修改、保存中和已同步。
 type DraftStatus = 'dirty' | 'saving' | 'synced'
 ```
 
@@ -168,9 +169,45 @@ const submitCandidate = async () => {
 }
 ```
 
+## Scenario 4: Prefer Line Comments and Consider Blocks for Multiline Explanations
+
+**Positive example:**
+
+An ordinary single-line responsibility comment uses `//`:
+
+```ts
+// 候选人抽屉的打开状态，供列表操作控制展示。
+const candidateDrawerVisible = ref(false)
+```
+
+**Negative example:**
+
+Do not default to a block for that same single-line comment. Single-line JSDoc is also unnecessary without a concrete documentation requirement:
+
+```ts
+/* 候选人抽屉的打开状态，供列表操作控制展示。 */
+const candidateDrawerVisible = ref(false)
+```
+
+**Multiline option:**
+
+For one cohesive explanation with multiple points, a block comment is appropriate; consecutive `//` lines are also valid. The owner supplies the existing page and selection refs:
+
+```ts
+/*
+ * 切换分组后回到第一页，避免沿用旧分组页码而显示空页。
+ * 同时清空候选人选择，避免后续操作使用旧分组的候选人。
+ */
+const resetGroupSelection = () => {
+  pageNumber.value = 1
+  selectedCandidateId.value = ''
+}
+```
+
 ## Review Checklist
 
 - Major declarations, business actions, contracts, and important members have responsibility documentation even when names are clear.
 - Key internal stages and branches are explained without mechanical narration or duplicated single-stage comments.
 - Comments are adjacent, Chinese unless a defined exception applies, and supported by verified behavior.
+- Single-line comments prefer `//`, including contract members; multiline explanations may use `/* ... */` without forcing blocks or padding short comments. JSDoc has a concrete documentation requirement.
 - Examples contain comments only for the demonstrated rule or an essential non-obvious constraint.

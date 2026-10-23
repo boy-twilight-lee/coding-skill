@@ -22,7 +22,7 @@
 | --- | --- | --- |
 | `command-execution-rules` | Shell、系统命令、命令执行封装和自动化脚本 | 直接执行与 Python 编排的选择、参数安全、工作目录、输出编码、超时和失败报告 |
 | `ts-code-rules` | TypeScript、TSX、Vue SFC 中的 TypeScript | 改动范围与冗余清理、中文业务注释、空行与导入规范、源码分层与公共入口、异步及错误处理、运行时兼容性 |
-| `vue-code-rules` | Vue 3 SFC、组件、页面、布局和 composable | SFC 结构与最小 DOM、类绑定、编译器宏与自动导入、中文业务注释、组件目录与实例类型、固定 provide/inject 上下文模式 |
+| `vue-code-rules` | Vue 3 SFC、组件、页面、布局和 composable | SFC 结构与最小 DOM、类绑定、编译器宏与自动导入、模板 props 访问、中文业务注释、组件目录与实例类型、固定 provide/inject 上下文模式 |
 | `css-code-rules` | CSS、Less、Sass、SCSS、Vue 样式块 | 预处理器与作用域、样式提取、业务类名、DOM 层级嵌套与 mixin、深度选择器、布局与组件库定制、无效声明清理、属性顺序与兼容性 |
 
 ## 🧠 上下文占用
@@ -31,14 +31,14 @@
 
 | Skill | 仅加载 `SKILL.md` | 全量加载最大占用（约） |
 | --- | ---: | ---: |
-| `ts-code-rules` | 1.66k | 9.83k |
-| `vue-code-rules` | 1.35k | 13.26k |
+| `ts-code-rules` | 1.12k | 8.57k |
+| `vue-code-rules` | 1.54k | 15.08k |
 | `css-code-rules` | 1.91k | 13.26k |
-| **三个合计** | **4.93k** | **36.35k** |
+| **三个合计** | **4.58k** | **36.92k** |
 
-统计时间：2026-10-22。使用 `tiktoken 0.14.0` 的 `o200k_base` 编码，逐文件统计 UTF-8 文本（换行统一为 LF），结果保留两位小数。“全量加载最大占用”指每个 Skill 的 `SKILL.md`（含 frontmatter）和 `references/` 下全部 Markdown 文件各加载一次；三个 Skill 分别包含 16、11、14 个 reference，全量计数分别为 9,831、13,260、13,262 tokens，合计 36,353 tokens。不计图片、`agents/openai.yaml`、其他 Skill、仓库代码、对话和工具消息包装开销，也不计重复读取。
+统计时间：2026-10-23。使用 `tiktoken 0.14.0` 的 `o200k_base` 编码，逐文件统计 UTF-8 文本（换行统一为 LF），结果保留两位小数。“全量加载最大占用”指每个 Skill 的 `SKILL.md`（含 frontmatter）和 `references/` 下全部 Markdown 文件各加载一次；三个 Skill 分别包含 9、12、14 个 reference，全量计数分别为 8,574、15,080、13,262 tokens，合计 36,916 tokens。不计图片、`agents/openai.yaml`、其他 Skill、仓库代码、对话和工具消息包装开销，也不计重复读取。
 
-实际使用时按任务加载匹配的 references，通常低于全量值；仅加载入口的数值用于对比，不代表已满足必读要求。上述最大值是规则文本单次全量加载的估算值，实际上下文占用还取决于所用模型的 tokenizer、工具输出格式和重复加载情况。Vue 任务同时触发 TypeScript 与 CSS 规则时，三者全量合计约 **36.35k**。规则文件更新后需重新统计。
+实际使用时按任务加载匹配的 references，通常低于全量值；仅加载入口的数值用于对比，不代表已满足必读要求。上述最大值是规则文本单次全量加载的估算值，实际上下文占用还取决于所用模型的 tokenizer、工具输出格式和重复加载情况。Vue 任务同时触发 TypeScript 与 CSS 规则时，三者全量合计约 **36.92k**。规则文件更新后需重新统计。
 
 ## 📦 安装
 

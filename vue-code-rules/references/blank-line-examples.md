@@ -24,7 +24,7 @@ Use at most one blank line between blocks and none at their inner edges:
 
 ```vue
 <template>
-  <div class="user-card">{{ props.name }}</div>
+  <div class="user-card">{{ name }}</div>
 </template>
 
 <script setup lang="ts">
@@ -49,7 +49,7 @@ Do not add multiple blank lines between those same SFC blocks or blank lines at 
 ```vue
 <template>
 
-  <div class="user-card">{{ props.name }}</div>
+  <div class="user-card">{{ name }}</div>
 
 </template>
 

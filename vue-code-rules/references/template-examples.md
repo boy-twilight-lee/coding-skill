@@ -20,7 +20,7 @@ For attribute and directive order on each opening tag, read Core Rule 3's [Templ
 
 ```vue
 <template>
-  <div class="user-card">{{ props.name }}</div>
+  <div class="user-card">{{ name }}</div>
 </template>
 
 <script setup lang="ts">
@@ -48,7 +48,7 @@ const props = defineProps<{
 </script>
 
 <template>
-  <div class="user-card">{{ props.name }}</div>
+  <div class="user-card">{{ name }}</div>
 </template>
 
 <style lang="less" scoped>
@@ -75,7 +75,7 @@ Define a named extension point inside a child whose root still represents one bu
 ```vue
 <template>
   <div class="user-card">
-    <span class="user-card-name">{{ props.name }}</span>
+    <span class="user-card-name">{{ name }}</span>
     <div class="user-card-actions">
       <slot name="actions" />
     </div>
