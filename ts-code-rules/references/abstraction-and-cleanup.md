@@ -114,7 +114,7 @@ watch(phone, (currentPhone, previousPhone) => {
 
 An intermediate value is still useful when it names a real business concept, is reused, enables type narrowing, or makes a complex expression materially clearer. A guard remains necessary when the caller, framework, or API can deliver the guarded state; verify that contract before simplifying it.
 
-The try/catch required around await by [Async and Try/Catch](async-and-try-catch.md) must not be removed as redundant, even when catch is empty or only rethrows.
+The try/catch required around an await that can throw or reject by [Async and Try/Catch](async-and-try-catch.md) must not be removed as redundant, even when catch is empty or only rethrows. Do not retain a wrapper solely for an await verified not to throw or reject; preserve any catch needed for other throwing statements.
 
 ## Review Checklist
 

@@ -18,7 +18,7 @@ Keep positive and negative examples free of nonessential comments. Retain commen
 5. Keep simple one-use logic inline. Extract for real complexity, reuse, or an independent responsibility. Remove change-owned dead code, debugging, pass-through wrappers, meaningless intermediates, and caller-guaranteed guards.
 6. Add concise Chinese business comments for major state, configuration, constants, functions, handlers, domain contracts, important fields, and key processing stages. Prefer `//` for single-line comments, including contract members; consider `/* ... */` for cohesive multiline explanations. Clear names do not waive coverage. Keep comments adjacent and supported by verified behavior; avoid mechanical narration and structures created only to hold comments.
 7. Own blank lines in TypeScript/TSX, all Vue script blocks, and top-level SFC separators. Use at most one blank line only between genuinely separate logical regions; never use consecutive, leading, trailing, block-edge, comment-separating, or tightly-coupled blank lines. Template interiors belong to `vue-code-rules`; stylesheet interiors belong to `css-code-rules`.
-8. Prefer `await` for ordinary asynchronous flow. Every await requires try/catch in its current function or top-level module, even with an empty catch; caller handling or try/finally alone is insufficient. Related awaits may share one try/catch. Rethrow when the caller must receive failure, and read the guaranteed `error.message` directly without narrowing or fallbacks.
+8. Prefer `await` for ordinary asynchronous flow. Require try/catch only when the awaited operation can throw or reject; do not wrap verified non-throwing, non-rejecting operations solely because they use await. When failure is possible or unverified, catch in the current function or top-level module, even with an empty catch; caller handling or try/finally alone is insufficient. Related awaits may share one try/catch. Rethrow when the caller must receive failure, and read the guaranteed `error.message` directly without narrowing or fallbacks.
 9. Verify new runtime APIs against actual TypeScript, runtime, browser, and polyfill targets. Transpilation does not supply missing runtime APIs.
 
 ## Required Reference Loading
@@ -32,7 +32,7 @@ After repository inspection and before implementation or review decisions, open 
 - Rule 5: Read [Abstraction and Cleanup](references/abstraction-and-cleanup.md) for extraction, simplification, dead code, wrappers, intermediates, or guards.
 - Rule 6: Read [Business Comments](references/business-comments.md) for declaration, contract, callback, or processing-stage comments, line/block comment selection, and example-comment policy.
 - Rule 7: Read [Blank Lines](references/blank-lines.md) for imports/exports, declarations, statements, contracts, JSX, Vue scripts in either language, or top-level SFC separators.
-- Rule 8: Read [Async and Try/Catch](references/async-and-try-catch.md) for await usage, mandatory catch coverage, empty catches, rejection propagation, or error messages.
+- Rule 8: Read [Async and Try/Catch](references/async-and-try-catch.md) for await usage, throw/rejection conditions, required catch coverage, empty catches, rejection propagation, or error messages.
 - Rule 9: Read [Runtime Compatibility](references/runtime-compatibility.md) for new APIs, target support, fallbacks, or polyfills.
 
 ## Working Process

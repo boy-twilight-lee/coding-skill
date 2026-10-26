@@ -117,7 +117,7 @@ let oldParams = {}
 
 ## Scenario 4: Block Edges and One Continuous Flow
 
-The save flow represents functions, callbacks, conditions, loops, class methods, and try/catch/finally: no edge padding or decorative gaps between dependent statements. Keep the mandatory current-function catch around await.
+The save flow represents functions, callbacks, conditions, loops, class methods, and try/catch/finally: no edge padding or decorative gaps between dependent statements. Assume saving can throw or reject, so keep the required current-function catch around await; verified non-throwing operations follow the exception in [Async and Try/Catch](async-and-try-catch.md).
 
 **Positive example:**
 
