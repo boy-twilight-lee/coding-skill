@@ -12,6 +12,8 @@ Do not introduce or preserve redundant code merely to create a name or comment t
 
 ## Scenario 1: Avoid a One-Off Abstraction
 
+The asynchronous examples assume the page owns save-failure feedback through its existing `Message` API, with no duplicate reporting upstream. Positive and negative examples keep the same error handling so only the abstraction or cleanup differs.
+
 **Positive example:**
 
 Keep a clear one-time transformation at its call site:
@@ -20,7 +22,9 @@ Keep a clear one-time transformation at its call site:
 const candidateName = form.name.trim()
 try {
   await saveCandidate({ ...form, name: candidateName })
-} catch {}
+} catch (error) {
+  Message.error(error.message)
+}
 ```
 
 **Negative example:**
@@ -36,7 +40,9 @@ const getCandidateName = (name: string) => {
 ```ts
 try {
   await saveCandidate({ ...form, name: getCandidateName(form.name) })
-} catch {}
+} catch (error) {
+  Message.error(error.message)
+}
 ```
 
 Extract when logic is reused, independently testable, genuinely complex, or forms a clear responsibility boundary.
@@ -55,7 +61,9 @@ import { saveCandidate } from '@/apis'
 const candidatePayload = buildCandidatePayload(form)
 try {
   await saveCandidate(candidatePayload)
-} catch {}
+} catch (error) {
+  Message.error(error.message)
+}
 ```
 
 **Negative example:**
@@ -72,7 +80,9 @@ const candidatePayload = buildCandidatePayload(form)
 console.log(debugCandidate(candidatePayload))
 try {
   await submitCandidateRequest(candidatePayload)
-} catch {}
+} catch (error) {
+  Message.error(error.message)
+}
 ```
 
 Do not remove unrelated legacy code merely because it appears unused unless the task includes that cleanup and project tooling confirms it is safe. Cleanup follows ownership of the current change, not a file-wide desire for tidiness.
@@ -114,7 +124,7 @@ watch(phone, (currentPhone, previousPhone) => {
 
 An intermediate value is still useful when it names a real business concept, is reused, enables type narrowing, or makes a complex expression materially clearer. A guard remains necessary when the caller, framework, or API can deliver the guarded state; verify that contract before simplifying it.
 
-The try/catch required around an await that can throw or reject by [Async and Try/Catch](async-and-try-catch.md) must not be removed as redundant, even when catch is empty or only rethrows. Do not retain a wrapper solely for an await verified not to throw or reject; preserve any catch needed for other throwing statements.
+The try/catch required around an await that can throw or reject by [Async and Try/Catch](async-and-try-catch.md) must not be removed as redundant, including a catch that preserves failure propagation by rethrowing. Follow that reference for meaningful handling and the documented exception for intentionally ignored failures. Do not retain a wrapper solely for an await verified not to throw or reject; preserve any catch needed for other throwing statements.
 
 ## Review Checklist
 

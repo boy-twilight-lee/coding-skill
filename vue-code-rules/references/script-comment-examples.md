@@ -76,7 +76,7 @@ const visible = defineModel<boolean>('visible', {
 
 ## Scenario 2: Place Watcher and Lifecycle Comments above Registrations
 
-These local excerpts assume verified auto-import coverage for the Vue APIs and owner-provided state/request functions. Their callback awaits use the current-function try/catch required by `ts-code-rules`.
+These local excerpts assume verified auto-import coverage for the Vue APIs and owner-provided state/request functions. The page owns load-failure feedback through its existing `Message` API, without duplicate reporting upstream. Their callback awaits use the current-function try/catch required by `ts-code-rules`.
 
 **Positive example:**
 
@@ -87,14 +87,18 @@ The responsibility comment belongs above the registration, including short callb
 watch(filters, async () => {
   try {
     await loadCandidates()
-  } catch {}
+  } catch (error) {
+    Message.error(error.message)
+  }
 })
 
 // 页面挂载后加载首屏候选人列表。
 onMounted(async () => {
   try {
     await loadCandidates()
-  } catch {}
+  } catch (error) {
+    Message.error(error.message)
+  }
 })
 ```
 
@@ -105,7 +109,9 @@ Include a timing explanation only when a real dependency supports it:
 onMounted(async () => {
   try {
     await loadCandidates()
-  } catch {}
+  } catch (error) {
+    Message.error(error.message)
+  }
 })
 ```
 
@@ -118,14 +124,18 @@ watch(filters, async () => {
   // 筛选条件变化后重新加载候选人。
   try {
     await loadCandidates()
-  } catch {}
+  } catch (error) {
+    Message.error(error.message)
+  }
 })
 
 onMounted(async () => {
   // 页面挂载后初始化候选人数据。
   try {
     await loadCandidates()
-  } catch {}
+  } catch (error) {
+    Message.error(error.message)
+  }
 })
 ```
 

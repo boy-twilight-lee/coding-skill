@@ -5,12 +5,12 @@ Owns Core Rule 8.
 ## Mandatory Rules
 
 1. Prefer `await` to `.then()` for ordinary asynchronous flow. A necessary condition for requiring try/catch around await is that the awaited operation can throw synchronously or reject its promise. If its implementation or documented contract confirms that neither can occur, do not use try/catch solely for that await. A success-only result type or the absence of observed failures does not establish this guarantee. When failure is possible or unverified, the await must be inside a try block with a catch in its current function, or in the module for top-level await. This includes return await and awaits inside conditions. A caller's catch or try/finally without catch is insufficient. Related awaits in one cohesive flow may share one try/catch. Keep any catch needed for other statements that can throw.
-2. When catch is required by the failure condition above, keep it even when it does nothing; `catch {}` is allowed. Do not invent reporting or recovery merely to fill it. If failure must reach the caller, rethrow from the required catch. Both empty and rethrow-only catches are valid and must not be removed as redundant while the failure condition holds; select their behavior according to the operation's failure contract.
+2. When catch is required by the failure condition above, choose meaningful handling according to the operation's failure contract: use the existing feedback or recovery path when this layer owns the failure, or rethrow when failure must reach the caller. Avoid empty catches in ordinary code and examples. Allow one only when a verified contract explicitly permits ignoring the failure and an adjacent comment explains why; absence of local handling alone is insufficient. Do not invent reporting, duplicate existing feedback, or add recovery merely to fill a catch. Rethrow-only catches remain valid and must not be removed as redundant while the failure condition holds.
 3. Under this skill's guaranteed caught-error message contract, read `error.message` directly without `instanceof Error`, `typeof`, or fallback branches. This is a skill contract, not a general JavaScript guarantee; report actual compiler or upstream-contract conflicts rather than silently changing the rule.
 
-## Scenario 1: Keep Try/Catch Even When Catch Is Empty
+## Scenario 1: Keep Try/Catch with Meaningful Failure Handling
 
-Assume `getCandidate` can throw or reject. Lack of local handling does not make the operation non-throwing.
+Assume `getCandidate` can throw or reject and this page owns failure feedback through its existing `Message` API. Lack of local handling does not make the operation non-throwing. Examples using `Message.error` below assume the same feedback ownership without duplicate reporting upstream.
 
 **Positive example:**
 
@@ -18,12 +18,14 @@ Assume `getCandidate` can throw or reject. Lack of local handling does not make 
 try {
   const candidate = await getCandidate(candidateId)
   detail.value = candidate
-} catch {}
+} catch (error) {
+  Message.error(error.message)
+}
 ```
 
 **Negative example:**
 
-Do not omit the catch merely because no local handling is required or the caller handles failures:
+Do not omit the catch merely because the caller could handle failures:
 
 ```ts
 const candidate = await getCandidate(candidateId)
@@ -46,7 +48,9 @@ getCandidate(candidateId).then((candidate) => {
 try {
   const profile = await fetchCandidateProfile(candidateId)
   const permissions = await fetchCandidatePermissions(profile.roleId)
-} catch {}
+} catch (error) {
+  Message.error(error.message)
+}
 ```
 
 One cohesive flow does not require a separate wrapper for each await. Each await that can throw or reject must remain within the current function's try block; a catch outside a callback does not protect an await inside that callback.
@@ -67,7 +71,7 @@ const submitCandidate = async (): Promise<Candidate> => {
 }
 ```
 
-An empty catch consumes the rejection. Use it when no handling or propagation is required; do not remove mandatory try/catch or substitute an empty catch for an existing propagation contract.
+An empty catch consumes the rejection. Missing local handling is not permission to discard a failure; preserve propagation when the caller owns it. Ignoring a failure is a documented exception only when the verified contract allows it.
 
 ## Scenario 4: Read the Guaranteed Message Directly
 
@@ -110,13 +114,16 @@ Do not add an unreachable catch merely because this verified operation is asynch
 try {
   const candidate = await readCachedCandidate(candidateId)
   detail.value = candidate
-} catch {}
+} catch (error) {
+  Message.error(error.message)
+}
 ```
 
 ## Review Checklist
 
 - Verify whether the awaited operation can throw or reject. Operations confirmed to do neither do not use try/catch solely for await; do not infer this guarantee from result types or observed success.
 - Every await with possible or unverified failure uses try/catch in its current function or top-level module, including return await and condition awaits. Preserve catches required by other throwing statements.
-- Empty and rethrow-only catches remain allowed when the failure condition holds; related awaits may share one catch without unnecessary nesting.
+- Ordinary catches perform meaningful handling or preserve failure propagation; empty catches require a verified ignore contract and an adjacent explanation. Examples avoid empty catches unless that exception is the topic.
+- Rethrow-only catches remain valid when the failure condition holds; related awaits may share one catch without unnecessary nesting.
 - Catch behavior preserves the intended failure contract without invented reporting or recovery.
 - Caught messages are read directly; actual typing or upstream-contract conflicts are reported.

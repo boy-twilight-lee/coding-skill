@@ -88,14 +88,16 @@ const handleCandidateSelect = (candidateId: string) => {
 }
 ```
 
-Keep one-use callbacks at the registration site:
+Keep one-use callbacks at the registration site. This page owns load-failure feedback through its existing `Message` API, without duplicate reporting upstream:
 
 ```ts
 // 路由切换完成后刷新候选人列表。
 router.afterEach(async () => {
   try {
     await loadCandidates()
-  } catch {}
+  } catch (error) {
+    Message.error(error.message)
+  }
 })
 ```
 
