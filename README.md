@@ -2,13 +2,14 @@
 
 面向 Codex 的编程规则，按任务组合使用。
 
-| Skill                                                       | 用途                                                                                                                                                            |
-| ----------------------------------------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| [pragmatic-coding](pragmatic-coding/SKILL.md)               | 避免过度设计、无必要的防御代码和无关改动，按目标验证结果。基于 [multica-ai/andrej-karpathy-skills](https://github.com/multica-ai/andrej-karpathy-skills)（MIT） |
-| [command-execution-rules](command-execution-rules/SKILL.md) | 命令执行、Python 编排、参数安全和失败报告                                                                                                                       |
-| [ts-code-rules](ts-code-rules/SKILL.md)                     | TypeScript 类型、导入、源码分层、注释和异步处理                                                                                                                 |
-| [vue-code-rules](vue-code-rules/SKILL.md)                   | Vue 3 模板、组件结构、编译器宏和上下文管理                                                                                                                      |
-| [css-code-rules](css-code-rules/SKILL.md)                   | 样式命名、作用域、布局、提取和兼容性                                                                                                                            |
+| Skill                                                       | 适用范围与主要要求                                                                                                                                                                          | 上下文占用：入口 / 含全部引用 |
+| ----------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ----------------------------: |
+| [pragmatic-coding](pragmatic-coding/SKILL.md)               | 编写、修复和审阅代码时明确假设，避免过度设计，限制改动范围，并按可验证目标检查结果。基于 [multica-ai/andrej-karpathy-skills](https://github.com/multica-ai/andrej-karpathy-skills)（MIT）。 |                 0.63k / 4.27k |
+| [command-execution-rules](command-execution-rules/SKILL.md) | 执行命令或编写自动化时，选择直接命令或 Python 编排，规范参数安全、工作目录、输出编码、超时处理和失败报告。                                                                                  |                 1.22k / 2.42k |
+| [ts-code-rules](ts-code-rules/SKILL.md)                     | 约束 TypeScript、TSX 和 Vue TS 脚本的改动范围、源码分层、公共入口、导入、抽象与清理、中文业务注释、空行、异步异常和运行时兼容性。                                                           |                1.23k / 10.35k |
+| [vue-code-rules](vue-code-rules/SKILL.md)                   | 约束 Vue 3 的 SFC 顺序、模板属性与 class 写法、自动导入、编译宏、props 访问、组件目录与拆分，以及 provide/inject 上下文模式；脚本和样式同时配合 TS、CSS 规则。                              |                1.59k / 13.53k |
+| [css-code-rules](css-code-rules/SKILL.md)                   | 约束 CSS、Less、Sass、SCSS 和 Vue 样式块的语言选择、作用域与提取、类名、DOM 嵌套、deep、布局、冗余声明、注释、空行、属性顺序和兼容性。                                                      |                2.04k / 15.31k |
+| **合计**                                                    | 五个 Skill 的文本量，按未舍入的 token 数求和。                                                                                                                                              |            **6.70k / 45.89k** |
 
 ## 安装与更新
 
