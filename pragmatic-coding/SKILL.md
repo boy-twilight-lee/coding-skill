@@ -1,6 +1,6 @@
 ---
 name: pragmatic-coding
-description: Behavioral guidelines to reduce common LLM coding mistakes. Use when writing, reviewing, or refactoring code to avoid overcomplication, make surgical changes, surface assumptions, and define verifiable success criteria.
+description: Apply pragmatic coding principles when writing or changing code, analyzing code for debugging or review, or reasoning about an implementation plan. Do not use for routine Git or delivery operations such as staging, committing, pushing, or opening a PR unless the current action also requires code changes or implementation reasoning.
 license: MIT
 ---
 
@@ -9,6 +9,12 @@ license: MIT
 Behavioral guidelines to reduce common LLM coding mistakes, derived from [Andrej Karpathy's observations](https://x.com/karpathy/status/2015883857489522876) on LLM coding pitfalls.
 
 **Tradeoff:** These guidelines bias toward caution over speed. For trivial tasks, use judgment.
+
+## When to Apply
+
+Apply this skill to the current action when it involves writing or changing code, analyzing code behavior or correctness, or choosing an implementation approach, even if no files will be edited.
+
+Do not load this skill solely because a task concerns a code repository or follows earlier coding work. Routine Git and delivery actions, such as checking status, inspecting a diff to prepare a commit message, staging, committing, pushing, or opening a PR, do not trigger it. If those actions uncover a need to fix code, resolve conflicts, or evaluate an implementation, apply the skill to that code-related work.
 
 ## 1. Think Before Coding
 
