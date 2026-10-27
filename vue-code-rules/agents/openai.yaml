@@ -1,5 +1,3 @@
 interface:
   display_name: "Vue Code Rules"
   short_description: "Apply mandatory Vue component and architecture standards."
-  icon_small: "./assets/vuejs-logo.png"
-  icon_large: "./assets/vuejs-logo.png"
