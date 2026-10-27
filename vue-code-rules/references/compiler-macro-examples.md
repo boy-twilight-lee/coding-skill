@@ -14,7 +14,7 @@ For the runtime import prerequisites in these examples, read Core Rule 6's [Auto
 
 **Positive example without top-level await:**
 
-Macros except defineExpose precede runtime logic, with defineModel after defineSlots. Keep the one-use load inline in onMounted rather than creating a pass-through method. The callback's await is not top-level, so defineExpose remains last. The example assumes Vue/compiler support for the macros used and no verified runtime auto-import coverage.
+Macros except defineExpose precede runtime logic, with defineModel after defineSlots. The callback's await is not top-level, so defineExpose remains last. The example assumes Vue/compiler support for the macros used and no verified runtime auto-import coverage.
 
 ```vue
 <script setup lang="ts">
@@ -87,4 +87,3 @@ onMounted(async () => {
 - When both are used, `defineModel` follows `defineSlots`; unused macros are not added for ordering alone.
 - Macro receiver names are `props`, `emits`, and `slots`; `withDefaults` around `defineProps` also uses `props`.
 - Without top-level `await`, `defineExpose` is the final statement; with top-level `await`, initialized public bindings are exposed before the first suspension.
-- One-use lifecycle work stays inline; macro-order examples do not introduce pass-through helper methods.

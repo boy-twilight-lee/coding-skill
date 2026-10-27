@@ -1,0 +1,48 @@
+pragmatic-coding 明确重复规则去重：备份与恢复
+
+日期：2026-10-27（Asia/Shanghai）
+仓库：https://github.com/boy-twilight-lee/coding-skill
+删前标签：backup/code-rules-before-pragmatic-dedup-2026-10-27
+删前提交：9edd82fab8215725951052ae266adfa7b88253e0
+本机原始备份：Codex 根目录下 backups/coding-skill-pragmatic-dedup-20261027-120043/before-dedup.zip
+本机清单：同目录 manifest.json，包含原文件 SHA-256。
+Codex 根目录：优先使用 CODEX_HOME，否则使用当前用户目录下 .codex。
+
+备份标签保存去重前的仓库版本。本机 ZIP 额外保存原有四个已安装 Skill、原全局 AGENTS.md、仓库五个 Skill 和当时 README.md 的工作区内容。备份前本机未安装 pragmatic-coding。ZIP 仅保存在本机，避免把个人配置放入远端仓库。
+
+本次仅移除四类通用重复要求及其重复示例、检查项：
+1. 将改动限制在当前需求。
+2. 不做无关重构、改名、注释整理和格式调整。
+3. 简单的一次性逻辑不做无必要抽象。
+4. 清理本次改动产生的死代码，不清理无关历史死代码。
+
+保留具体规则：包装/中间值/守卫的判定、异步异常细则、DOM 与标签要求、目录与组件拆分、CSS 声明/布局/mixin 规则、验证和失败报告要求。pragmatic-coding 与 command-execution-rules 的源文件未改变。
+
+本次去重涉及的 13 个文件：
+ts-code-rules/SKILL.md
+ts-code-rules/references/change-scope.md
+ts-code-rules/references/abstraction-and-cleanup.md
+ts-code-rules/references/blank-lines.md
+ts-code-rules/references/business-comments.md
+ts-code-rules/references/imports.md
+vue-code-rules/SKILL.md
+vue-code-rules/references/compiler-macro-examples.md
+vue-code-rules/references/component-decomposition-examples.md
+vue-code-rules/references/component-structure-examples.md
+vue-code-rules/references/template-attribute-order-examples.md
+css-code-rules/SKILL.md
+css-code-rules/references/formatting-and-review-examples.md
+
+恢复提示词（恢复规则，保留 pragmatic-coding 便于继续比较）：
+
+请根据 backups/pragmatic-dedup-2026-10-27/RESTORE.txt，恢复本次去掉的明确重复规则。先读取仓库说明和 command-execution-rules，检查当前 Git 状态并备份现有改动；从 origin 获取 backup/code-rules-before-pragmatic-dedup-2026-10-27 标签，确认其指向 9edd82fab8215725951052ae266adfa7b88253e0。仅将清单内 13 个文件中的本次去重改动恢复到删前内容；如果已有后续编辑，应逐项合并，保留后续工作。不要 reset --hard、切换整个仓库、覆盖 README.md 或其他用户文件。将恢复后的三个完整 code-rules 同步到实际 CODEX_HOME/skills，未配置时使用 ~/.codex/skills；保留其他技能和配置，暂时保留 pragmatic-coding 及其路由。验证 Markdown 引用、技能格式和源/安装文件一致性，然后只提交本次恢复文件并推送，报告提交号。
+
+完整撤销本次本机试验安装的附加提示词：
+
+在恢复规则之外，也撤销本次安装变化。先读取上述本机 ZIP 和 manifest.json 并校验 SHA-256。按清单还原安装前已有 Skill 的原文件（含元数据），只撤销本次新增的 Pragmatic Coding Skill Routing 段，保留全局 AGENTS.md 中后续新增或修改的其他内容。如果 pragmatic-coding 仍是本次新增且没有后续修改，将其目录移到 Codex 根目录的 backups/ 下，使其退出技能发现路径；移动前确认源和目标绝对路径，先备份再移动。若存在后续修改，先备份并合并处理，不能直接覆盖。不要改动未列入本次迁移的技能、插件或配置。报告恢复范围和验证结果。
+
+测试提示词：
+
+使用 $pragmatic-coding，并结合适用的 code-rules 完成一个小范围修复。检查结果是否只改需求相关代码、是否保留已有风格和公共契约、是否避免一次性抽象，以及是否只清理本次改动造成的未使用项。具体语言与框架约束仍以三个 code-rules 为准。
+
+技能格式和文件同步检查仅证明迁移完整；pragmatic-coding 的行为效果仍需在新的实际任务中验证。

@@ -5,7 +5,9 @@ description: "Apply mandatory stylesheet rules when editing or reviewing CSS, Le
 
 # CSS Code Rules
 
-These rules are mandatory for changed or reviewed styles; existing code does not waive them. Fix directly affected violations without migrating unrelated styles or markup. Project overrides apply only where a rule permits them; report unavoidable conflicts and keep deviations minimal.
+These rules are mandatory for changed or reviewed styles; existing code does not waive them. Project overrides apply only where a rule permits them; report unavoidable conflicts and keep deviations minimal.
+
+Use [pragmatic-coding](../pragmatic-coding/SKILL.md) alongside this skill for general coding behavior.
 
 Introduce CSS custom properties or `var(...)` only for a demonstrated need, and verify that referenced properties exist and are supported by the actual library version or runtime.
 
@@ -24,7 +26,7 @@ Introduce CSS custom properties or `var(...)` only for a demonstrated need, and 
 11. Group properties controlling the same aspect of element presentation contiguously. Follow the supplied example order: positioning and transforms; interaction; dimensions/clipping/fitting; margin/padding; visual appearance; typography; transition/animation; display/layout. Keep transform with positioning, height before width, and transition/animation before display and its flex/grid/alignment/gap properties. Do not interleave categories or add unused properties or comments to complete groups. Mixin definitions and calls must follow all ordinary CSS declarations and precede nested selectors; keep local definitions in the common DOM owner and before calls in the same scope. Do not interleave calls with ordinary declarations by emitted property group. Preserve effective cascade and honor active Stylelint property order when it explicitly conflicts.
 12. Consolidate duplicate selector blocks under their actual DOM owner. Keep related spacing, border, layout, and state declarations together without changing the intended cascade or creating detached child rules.
 13. Verify newer style APIs, selectors, units, and properties against the actual browser targets and build tooling. Confirm support or use the repository-approved fallback before introducing them.
-14. Format only changed style files, restore unrelated formatter churn without losing pre-existing user edits, and re-check the final diff against all applicable rules. Report checks that cannot be run or fail solely on untouched legacy formatting.
+14. Retain pre-format content to preserve pre-existing user edits when restoring formatter changes, and re-check the final diff against all applicable rules. Report checks that cannot be run or fail solely on untouched legacy formatting.
 
 ## Required Reference Loading
 
@@ -43,7 +45,7 @@ After repository inspection and before implementation or review decisions, open 
 - Rule 11: Read [Property Order Examples](references/property-order-examples.md) when grouping presentation properties or placing declarations and mixin calls.
 - Rule 12: Read [Selector Consolidation Examples](references/selector-consolidation-examples.md) when merging duplicate selectors and keeping state changes together under their DOM owner.
 - Rule 13: Read [Compatibility Examples](references/compatibility-examples.md) when checking browser/tooling support for new style features or choosing approved fallbacks.
-- Rule 14: Read [Formatting and Final Review Examples](references/formatting-and-review-examples.md) when formatting only changed files, restoring unrelated churn, or checking the final diff.
+- Rule 14: Read [Formatting and Final Review Examples](references/formatting-and-review-examples.md) when preserving user edits during formatting or checking the final diff.
 
 ## Working Process
 
@@ -51,4 +53,4 @@ After repository inspection and before implementation or review decisions, open 
 
 2. For Vue style blocks, apply `vue-code-rules`; also apply `ts-code-rules` when changing TypeScript.
 
-3. Review changed lines against applicable rules and checklists. Count inline non-blank style lines, record complexity signals, and perform required extraction. Verify affected visual states when a preview or test exists. Run targeted formatter, lint, build, or tests without rewriting unrelated files. Report unmet rules and unavailable or failed checks; syntax or formatting success alone does not prove correctness.
+3. Review changed lines against applicable rules and checklists. Count inline non-blank style lines, record complexity signals, and perform required extraction. Verify affected visual states when a preview or test exists. Run targeted formatter, lint, build, or tests. Report unmet rules and unavailable or failed checks; syntax or formatting success alone does not prove correctness.

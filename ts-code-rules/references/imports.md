@@ -6,7 +6,7 @@ Owns Core Rule 4.
 
 1. Use standard `import { ... } from '...'` declarations by default, including for types. Combine types and runtime values from the same module in one declaration. Do not add separate `import type` lines merely to label type usage or split a shared source into extra declarations. Never use inline `type` modifiers.
 2. Order imports as third-party runtime dependencies, type-only dependencies, internal runtime modules, then UI or component modules. Within the type-only dependency group, module-local types precede shared types. A declaration containing both types and runtime values belongs to its runtime group; do not split it to satisfy grouping.
-3. Avoid `import type` unless a verified, active compiler, lint, bundler, or package runtime constraint makes a standard import invalid. Keep any unavoidable exception minimal and report its concrete reason. Do not change project configuration merely to enforce this preference, and do not reorder or rewrite unaffected imports solely to normalize them.
+3. Avoid `import type` unless a verified, active compiler, lint, bundler, or package runtime constraint makes a standard import invalid. Keep any unavoidable exception minimal and report its concrete reason. Do not change project configuration merely to enforce this preference.
 
 ## Scenario 1: Group Imports by Responsibility
 
@@ -75,4 +75,4 @@ The combined declaration stays in the internal runtime group because it imports 
 - Standard imports are the default; types and values from the same source share one declaration.
 - No unnecessary `import type` lines or inline `type` modifiers appear; unavoidable exceptions have a verified reason.
 - Runtime, type-only, internal, and UI dependencies follow the required order; mixed declarations stay with their runtime group and local types precede shared types.
-- Unaffected imports are preserved; cross-module paths also follow [Public Entries](public-entries.md).
+- Cross-module paths also follow [Public Entries](public-entries.md).

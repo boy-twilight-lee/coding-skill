@@ -13,13 +13,13 @@ Keep positive and negative examples free of nonessential comments. Retain commen
 ## Mandatory Rules
 
 1. Add concise Chinese responsibility comments above major business declarations, including state, refs, reactive records, computed values, persistent fields, configuration, thresholds, and mappings. Explain their role, scope/source, and relevant units, defaults, reset timing, or dependencies. Clear names do not waive coverage. A small contiguous group with one responsibility may share a comment.
-2. Document business functions, methods, composables, handlers, and callback registrations by their action and result or affected state. Include parameter meaning, return contract, sequencing, side effects, and failure ownership where relevant. Prefer `//` for ordinary responsibility comments, including public declarations; use JSDoc only when a concrete documentation-tooling or structured-tag requirement calls for it, without repeating TypeScript parameter types. Keep one-use callbacks inline and comment the registration rather than extracting a comment target.
+2. Document business functions, methods, composables, handlers, and callback registrations by their action and result or affected state. Include parameter meaning, return contract, sequencing, side effects, and failure ownership where relevant. Prefer `//` for ordinary responsibility comments, including public declarations; use JSDoc only when a concrete documentation-tooling or structured-tag requirement calls for it, without repeating TypeScript parameter types. Comment callback registrations rather than extracting a comment target.
 3. Document each meaningful internal stage or important branch at its smallest cohesive block: validation/early exit, conversion, request sequencing, merging/state commits, interaction boundaries, fallback/retry/deduplication, side effects, recovery, and cleanup. A function comment does not replace distinct internal rules; a single-stage function needs no duplicate explanation. Derive reasons from code and verified contracts.
 4. Document domain interfaces, type aliases, enums, and exported contracts. Important members describe units, source, allowed states, defaults, optional/null meanings, or consumer expectations where relevant. Keep member contracts next to members instead of repeating them at every use.
 5. Keep comments adjacent and accurate. Do not narrate imports, temporary destructuring, loop variables, mechanical map/filter callbacks, obvious accessors, trivial language helpers, mechanical utility types, generated/vendor declarations, or self-evident id/name fields. Use another language only for an explicit project requirement or necessary exact external term. Apply the linked Vue-specific rules when reviewing Vue code.
 6. Prefer `//` whenever an ordinary comment fits on one line, including comments on interfaces, type aliases, and contract members. Do not default to single-line `/* ... */` or `/** ... */`. For a cohesive explanation that genuinely needs multiple lines, consider `/* ... */`; several `//` lines remain valid when clearer. Do not pad a short comment into multiple lines merely to justify a block.
 
-Never introduce a wrapper, intermediate, or guard only to hold a comment; apply [Abstraction and Cleanup](abstraction-and-cleanup.md). Cover affected code without expanding an ordinary change into repository-wide annotation work.
+Never introduce a wrapper, intermediate, or guard only to hold a comment; apply [Wrappers, Intermediates, and Guards](abstraction-and-cleanup.md).
 
 ## Scenario 1: Explain State and Contract Semantics
 
@@ -88,7 +88,7 @@ const handleCandidateSelect = (candidateId: string) => {
 }
 ```
 
-Keep one-use callbacks at the registration site:
+Document callback responsibility at the registration site:
 
 ```ts
 // 路由切换完成后刷新候选人列表。
@@ -99,7 +99,7 @@ router.afterEach(async () => {
 })
 ```
 
-A callback may be extracted for independent responsibility, genuine reuse, focused testing value, or a concrete readability benefit; merely shortening its owner or creating a comment target is insufficient.
+Creating a comment target alone does not justify callback extraction.
 
 **Negative example:**
 

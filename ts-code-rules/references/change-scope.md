@@ -1,20 +1,20 @@
-# Change Scope
+# Contract and Edit Preservation
 
 Owns Core Rule 1.
 
 ## Mandatory Rule
 
-Keep changes limited to the requested feature or defect. Preserve existing comments and do not reformat, rename, reorder imports, or rewrite unrelated code as drive-by cleanup.
+Preserve existing public contracts and pre-existing user edits. Update comments when changed behavior makes them inaccurate or obsolete.
 
-## Scenario 1: Keep the Change Scoped
+## Scenario 1: Preserve the Public Return Contract
 
-Situation: a defect fix changes one status branch in a service that also contains unrelated naming and formatting issues.
+Situation: a retry-boundary fix changes a boolean condition while consumers still expect a boolean return value.
 
 **Positive example:**
 
-Change the defective branch and its directly affected imports, comments, tests, and types. Do not rename neighboring functions, reorder unrelated imports, or retain unrelated whole-file formatting changes. A formatter may process the changed file, but restore its formatting-only changes outside the affected regions against the pre-format state, preserving pre-existing user edits. Preserve existing comments unless the current change makes them inaccurate or obsolete.
+Retain the existing public function name and boolean return shape so its consumers remain compatible.
 
-If the defect is an inclusive retry boundary, keep the correction local:
+The inclusive retry boundary still returns a boolean:
 
 ```ts
 export const canRetryCandidateSync = (retryCount: number) => {
@@ -24,7 +24,7 @@ export const canRetryCandidateSync = (retryCount: number) => {
 
 **Negative example:**
 
-Do not combine the same boundary fix with an unrelated rename and return-shape change:
+Changing the public name and replacing the boolean with an object breaks that existing consumer contract:
 
 ```ts
 export const evaluateCandidateSyncRetry = (retryCount: number) => {
@@ -32,9 +32,12 @@ export const evaluateCandidateSyncRetry = (retryCount: number) => {
 }
 ```
 
-Unrelated renaming, logging rewrites, or conversion of neighboring functions to a new abstraction enlarges regression risk and obscures the actual defect correction.
+## Preserve User Edits during Formatting
+
+Retain the pre-format content when a formatter may rewrite a file containing user edits. When restoring formatter-only changes, restore from that pre-format content rather than resetting the file to HEAD; HEAD may omit the user's uncommitted work.
 
 ## Review Checklist
 
-- The diff contains only requested behavior and directly affected imports, comments, types, tests, and cleanup.
-- Existing comments and pre-existing user edits are preserved unless the task makes them inaccurate or obsolete.
+- Existing public names, argument contracts, and return shapes remain compatible unless the task explicitly changes them.
+- Pre-existing user edits survive formatting and restoration.
+- Comments remain accurate after behavior changes.

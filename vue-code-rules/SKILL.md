@@ -5,7 +5,9 @@ description: "Apply mandatory Vue 3 SFC and component-architecture rules when ed
 
 # Vue Code Rules
 
-These rules are mandatory for changed or reviewed Vue code; existing code does not waive them. Fix directly affected violations without migrating unrelated components. Higher-priority instructions prevail; project overrides apply only where a rule permits them. Report unavoidable conflicts and keep deviations minimal.
+These rules are mandatory for changed or reviewed Vue code; existing code does not waive them. Higher-priority instructions prevail; project overrides apply only where a rule permits them. Report unavoidable conflicts and keep deviations minimal.
+
+Use [pragmatic-coding](../pragmatic-coding/SKILL.md) alongside this skill for general coding behavior.
 
 ## Core Rules
 
@@ -45,4 +47,4 @@ After repository inspection and before implementation or review decisions, open 
 
 2. Apply `ts-code-rules` to TypeScript scripts and `css-code-rules` to styles. All JavaScript and TypeScript script blank lines and top-level SFC separators follow the shared TS Blank Lines reference; JavaScript also reuses its Business Comments reference without activating unrelated TypeScript rules. Vue's own blank-line rule applies only inside templates.
 
-3. Check changed lines against applicable rules and reference checklists. Run targeted formatter, lint, Vue type-check, or tests without rewriting unrelated files. Report unmet rules and unavailable or failed checks; formatting or visual inspection alone does not prove correctness.
+3. Check changed lines against applicable rules and reference checklists. Run targeted formatter, lint, Vue type-check, or tests. Report unmet rules and unavailable or failed checks; formatting or visual inspection alone does not prove correctness.
