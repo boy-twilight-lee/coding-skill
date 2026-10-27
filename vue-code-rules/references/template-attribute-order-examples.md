@@ -12,7 +12,7 @@ Owns Core Rule 3.
 
 4. Keep each group contiguous without decorative blank lines. Preserve relative order within groups unless a concrete reason requires a change; text `icon` before `class` in the supplied example is valid, and `class` or `style` has no universal last-position exception. Continue applying Core Rule 4 when combining class sources: a combined `:class` stays in the binding group, while a lone static `class` stays in the text group.
 
-5. Preserve order-sensitive `v-bind` spread overrides, expression behavior, and event-listener behavior. Keep the relative order of spread bindings and explicit bindings; do not blindly sort duplicate keys or move listeners across spreads when that would change behavior. If grouping would alter behavior, resolve the overlap within the authorized change or report the smallest necessary deviation. Preserve expressions, modifiers, values, and the adjacency of `v-if`/`v-else-if`/`v-else` siblings.
+5. Preserve order-sensitive `v-bind` spread overrides, expression behavior, and event-listener behavior. Keep the relative order of spread bindings and explicit bindings; do not blindly sort duplicate keys or move listeners across spreads when that would change behavior. If grouping would alter behavior, resolve the overlap within the authorized change or report the smallest necessary deviation. Preserve expressions, modifiers, values, and the adjacency of `v-if`/`v-else-if`/`v-else` siblings. Attribute ordering does not authorize unrelated script, DOM, slot, or style rewrites.
 
 ## Attribute Group Map
 
@@ -128,4 +128,4 @@ Moving :name before the spread reverses that override. Inspect overlapping keys 
 - Plain boolean flags precede all event forms, including modifiers and object listeners.
 - Groups stay contiguous; no alphabetical sorting or decorative blank lines are imposed.
 - Spread override semantics, values, expressions, modifiers, event behavior, and conditional-chain adjacency are preserved.
-- Attribute ordering does not reorder template children.
+- Attribute ordering does not reorder template children or trigger unrelated script/style rewrites.

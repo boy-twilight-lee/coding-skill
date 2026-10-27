@@ -16,7 +16,7 @@ Template interiors follow [Vue Template Blank Lines](../../vue-code-rules/refere
 4. Keep tightly coupled imports/exports, state and derived values, related handlers, guards and dependent work, conversions and consumers, members, arguments, and chain steps contiguous. A member's type, optionality, or multiline shape does not create a blank-line boundary. This applies equally to objects, arrays, destructuring, return objects, interfaces, type literals, enums, unions, tuples, macro contracts, and JSX children.
 5. A single separator may distinguish imports from runtime logic, genuinely different responsibilities, or a hook's implementation from its returned public surface. These boundaries are allowed, not mandatory. Preserve Vue macro order and comment exceptions; do not mechanically separate every macro, registration, or declaration.
 6. Between present top-level SFC blocks, allow at most one blank line; do not pad script-block interiors or add empty blocks. Vue owns block order and template interiors; CSS owns style interiors.
-7. Preserve statement order, expressions, comments, public contracts, and meaningful whitespace in literal data or rendered JSX text. Do not change line breaks significant to automatic semicolon insertion.
+7. Limit whitespace corrections to directly affected regions. Preserve statement order, expressions, comments, public contracts, and meaningful whitespace in literal data or rendered JSX text. Do not change line breaks significant to automatic semicolon insertion or rewrite unrelated formatting.
 
 ## Example Context
 

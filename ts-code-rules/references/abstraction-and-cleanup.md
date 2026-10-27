@@ -1,14 +1,83 @@
-# Wrappers, Intermediates, and Guards
+# Abstraction and Change-Owned Cleanup
 
 Owns Core Rule 5.
 
 ## Mandatory Rule
 
-Remove temporary debugging code.
+Avoid unnecessary abstraction. Keep simple one-off logic inline; extract a function, class, or composable only for real complexity, reuse, or a clear responsibility boundary.
+
+Remove unused imports, variables, functions, types, temporary debugging code, obsolete comments, redundant aliases, and pass-through wrappers when they belong to the current change.
 
 Do not introduce or preserve redundant code merely to create a name or comment target. Prohibit pass-through functions that only call and return another function, one-use callback wrappers that separate a continuous workflow without an independent responsibility, single-use intermediate variables that add no business meaning, reuse, type narrowing, or readability, and validation or guard conditions already guaranteed by the only caller, framework, or API contract. Inline the underlying expression, callback, or call instead. Keep a wrapper, intermediate value, callback extraction, or guard only when it has an independent responsibility or a concrete correctness benefit; a comment does not justify redundant structure.
 
-## Scenario 1: Remove Redundant Wrappers, Intermediates, and Guards
+## Scenario 1: Avoid a One-Off Abstraction
+
+**Positive example:**
+
+Keep a clear one-time transformation at its call site:
+
+```ts
+const candidateName = form.name.trim()
+try {
+  await saveCandidate({ ...form, name: candidateName })
+} catch {}
+```
+
+**Negative example:**
+
+Do not create a wrapper that only renames or forwards one operation:
+
+```ts
+const getCandidateName = (name: string) => {
+  return name.trim()
+}
+```
+
+```ts
+try {
+  await saveCandidate({ ...form, name: getCandidateName(form.name) })
+} catch {}
+```
+
+Extract when logic is reused, independently testable, genuinely complex, or forms a clear responsibility boundary.
+
+## Scenario 2: Remove Only Change-Owned Dead Code
+
+After an implementation change, remove imports, variables, types, debug logging, aliases, and wrappers made unused by that change:
+
+**Positive example:**
+
+After cleanup, keep only the imports and behavior required by the new path:
+
+```ts
+import { saveCandidate } from '@/apis'
+
+const candidatePayload = buildCandidatePayload(form)
+try {
+  await saveCandidate(candidatePayload)
+} catch {}
+```
+
+**Negative example:**
+
+Before cleanup, the same changed path still contains the removed debugger dependency, console output, and pass-through wrapper:
+
+```ts
+import { debugCandidate, saveCandidate } from '@/apis'
+
+const submitCandidateRequest = (payload: CandidatePayload) => {
+  return saveCandidate(payload)
+}
+const candidatePayload = buildCandidatePayload(form)
+console.log(debugCandidate(candidatePayload))
+try {
+  await submitCandidateRequest(candidatePayload)
+} catch {}
+```
+
+Do not remove unrelated legacy code merely because it appears unused unless the task includes that cleanup and project tooling confirms it is safe. Cleanup follows ownership of the current change, not a file-wide desire for tidiness.
+
+## Scenario 3: Remove Redundant Wrappers, Intermediates, and Guards
 
 **Positive example:**
 
@@ -49,6 +118,7 @@ The try/catch required around an await that can throw or reject by [Async and Tr
 
 ## Review Checklist
 
-- Temporary debugging artifacts are removed.
+- Abstractions represent reuse, complexity, or an independent responsibility.
+- Change-owned dead code and debugging artifacts are removed without unrelated legacy cleanup.
 - No comment justifies a pass-through wrapper, meaningless intermediate, or redundant guard.
-- Caller and framework contracts are verified before removing guards; retained intermediate values have a concrete business, narrowing, reuse, or readability purpose.
+- One-use continuations remain inline unless extraction has concrete value; caller and framework contracts are verified before removing guards.

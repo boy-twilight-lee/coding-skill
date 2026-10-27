@@ -6,7 +6,7 @@ For component names, allowed directories, style-file forms, and public export pl
 
 ## Mandatory Rules
 
-1. Keep each `.vue` file at or below 1000 lines. Consider decomposition before that limit when content or responsibilities make the file hard to maintain: extract cohesive child components when the template/HTML is large, deeply nested, repeated, or contains independently maintainable business regions; extract focused hooks when the script is large or mixes distinct functional responsibilities; extract styles according to `css-code-rules` when style volume or complexity requires it. Each resulting Vue file must remain within the limit. Split by actual responsibility rather than arbitrary line chunks, and do not wait for 1000 lines before applying CSS's independent mandatory thresholds. Keep simple orchestration in the SFC. When splitting, moving, or changing directory form, update public entries, consumers, and automatic component discovery.
+1. Keep each `.vue` file at or below 1000 lines. Consider decomposition before that limit when content or responsibilities make the file hard to maintain: extract cohesive child components when the template/HTML is large, deeply nested, repeated, or contains independently maintainable business regions; extract focused hooks when the script is large or mixes distinct functional responsibilities; extract styles according to `css-code-rules` when style volume or complexity requires it. Each resulting Vue file must remain within the limit. Split by actual responsibility rather than arbitrary line chunks, and do not wait for 1000 lines before applying CSS's independent mandatory thresholds. Keep simple orchestration in the SFC. When splitting, moving, or changing directory form, update public entries, consumers, and automatic component discovery without migrating unrelated components.
 
 ## Scenario 1: Split by Template, Script, and Style Responsibilities
 
@@ -43,4 +43,4 @@ The summary remains a simple private child. The chart uses directory form becaus
 - Large/complex templates are considered for cohesive children, large scripts for responsibility-focused hooks, and large styles for CSS-governed extraction rather than arbitrary line slicing.
 - Splits preserve state and lifecycle ownership, prop/event/slot contracts, scope, consumers, public entries, and component discovery.
 - CSS extraction decisions follow the matching css-code-rules reference; destination layout and public exports follow Core Rule 9.
-- Keep compiler macros and simple coordination in the SFC; do not create module-level shared state during a split.
+- Keep compiler macros and simple coordination in the SFC; do not create module-level shared state or unrelated cleanup during a split.
