@@ -4,12 +4,11 @@
 
 | Skill                                                       | 适用范围与主要要求                                                                                                                                                                          | 上下文占用：入口 / 含全部引用 |
 | ----------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ----------------------------: |
-| [pragmatic-coding](pragmatic-coding/SKILL.md)               | 编写、分析代码或思考实现方案时明确假设，避免过度设计，限制改动范围，并按可验证目标检查结果；单纯提交、推送等操作不触发。基于 [multica-ai/andrej-karpathy-skills](https://github.com/multica-ai/andrej-karpathy-skills)（MIT）。 |                 0.63k / 4.27k |
 | [command-execution-rules](command-execution-rules/SKILL.md) | 执行命令或编写自动化时，选择直接命令或 Python 编排，规范参数安全、工作目录、输出编码、超时处理和失败报告。                                                                                  |                 1.22k / 2.42k |
 | [ts-code-rules](ts-code-rules/SKILL.md)                     | 约束 TypeScript、TSX 和 Vue TS 脚本的改动范围、源码分层、公共入口、导入、抽象与清理、中文业务注释、空行、异步异常和运行时兼容性。                                                           |                1.23k / 10.35k |
 | [vue-code-rules](vue-code-rules/SKILL.md)                   | 约束 Vue 3 的 SFC 顺序、模板属性与 class 写法、自动导入、编译宏、props 访问、组件目录与拆分，以及 provide/inject 上下文模式；脚本和样式同时配合 TS、CSS 规则。                              |                1.59k / 13.53k |
 | [css-code-rules](css-code-rules/SKILL.md)                   | 约束 CSS、Less、Sass、SCSS 和 Vue 样式块的语言选择、作用域与提取、类名、DOM 嵌套、deep、布局、冗余声明、注释、空行、属性顺序和兼容性。                                                      |                2.04k / 15.31k |
-| **合计**                                                    | 五个 Skill 的文本量，按未舍入的 token 数求和。                                                                                                                                              |            **6.70k / 45.89k** |
+| **合计**                                                    | 四个 Skill 的文本量，按表中参考值求和。                                                                                                                                                    |            **6.08k / 41.61k** |
 
 上下文占用为本次路由调整前的参考值。
 
@@ -18,20 +17,15 @@
 克隆并打开本仓库后，将以下提示词发送给 Codex：
 
 ```text
-请安装或更新当前仓库中的五个 Skill：
+请安装或更新当前仓库中的四个 Skill：
 
-- pragmatic-coding
 - command-execution-rules
 - ts-code-rules
 - vue-code-rules
 - css-code-rules
 
-1. 将五个完整目录同步到 CODEX_HOME/skills；未配置 CODEX_HOME 时使用当前用户目录下的 .codex/skills。保留目录结构和其他已安装 Skill。
+1. 将四个完整目录同步到 CODEX_HOME/skills；未配置 CODEX_HOME 时使用当前用户目录下的 .codex/skills。保留目录结构和其他已安装 Skill。
 2. 在同一 Codex 根目录的 AGENTS.md 中写入以下路由；文件不存在时创建，已有路由更新并去重，保留其他规则。
-
-# Pragmatic Coding Skill Routing
-
-Use the pragmatic-coding skill only when the current action involves writing or changing code, analyzing code for debugging or review, or reasoning about an implementation plan, even if no files will be edited. Read its SKILL.md in full before that work and apply its four principles: Think Before Coding, Simplicity First, Surgical Changes, and Goal-Driven Execution. Follow its Codex Reference Routing section when concrete examples are useful. Do not load it solely because the task concerns a repository or follows coding work: routine Git and delivery actions, including status checks, diff inspection for commit messages, staging, committing, pushing, and opening a PR, do not trigger it. If those actions require code fixes, conflict resolution, or implementation reasoning, apply it to that code-related work. Use it alongside applicable language, framework, styling, and command-execution rules, unless higher-priority instructions conflict.
 
 # Command Execution Skill Routing
 
@@ -52,7 +46,7 @@ For every task that writes, modifies, refactors, reviews, debugs, or completes C
 3. 检查安装文件与引用是否完整，报告安装目录、AGENTS.md 路径及结果。
 ```
 
-安装后在新的 Codex 任务中使用；如尚未识别，可重启 Codex。显式调用示例：`使用 $pragmatic-coding 审查这次改动`。
+安装后在新的 Codex 任务中使用；如尚未识别，可重启 Codex。显式调用示例：`使用 $ts-code-rules 审查这次改动`。
 
 ## License
 
